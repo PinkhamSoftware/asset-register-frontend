@@ -1,25 +1,53 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import AssetList from "./Components/AssetList";
+import SearchBox from "./Components/SearchBox";
+import "./App.css";
+import AssetProvider from "./Components/AssetProvider";
+
+class SearchAssets {
+  execute() {
+    return [
+      {
+        id: "1",
+        name: "The Big Cat House",
+        address: "1 Cat Street",
+        value: "£ 1,000,000.00"
+      },
+      {
+        id: "2",
+        name: "The Big Dog House",
+        address: "2 Woofer Road",
+        value: "£ 5,500,000.00"
+      },
+      {
+        id: "3",
+        name: "The Big Duck Pond",
+        address: "Pond Street",
+        value: "£ 10,000,000.00"
+      }
+    ];
+  }
+}
+
+const searchAssetsUseCase = new SearchAssets();
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = { assets: [] };
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div>
+        <AssetProvider searchAssets={searchAssetsUseCase}>
+          {({ onSearch, assets }) => (
+            <div>
+              <SearchBox onSearch={onSearch} />
+              <AssetList assets={assets} />
+            </div>
+          )}
+        </AssetProvider>
       </div>
     );
   }
