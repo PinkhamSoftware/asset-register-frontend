@@ -1,0 +1,23 @@
+.asset-label {
+  margin: 0 0 10px 0;
+}
+
+.asset-list {
+  width: 960px;
+}
+
+.asset {
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+  grid-template-rows: 33% 33% 33%;
+  width: 100%;
+  padding: 15px 0;
+}
+
+.asset:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+.col {
+  margin: 0 20px;
+}
