@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "antd": "^3.10.1",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-scripts": "2.0.5"
@@ -11,7 +12,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "storybook": "./node_modules/.bin/start-storybook -p 9009 -s public"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -21,5 +23,14 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.6.0",
+    "react-test-renderer": "^16.5.2",
+    "@storybook/addon-actions": "4.0.0-alpha.24",
+    "@storybook/addon-links": "4.0.0-alpha.24",
+    "@storybook/addons": "4.0.0-alpha.24",
+    "@storybook/react": "4.0.0-alpha.24"
+  }
 }
