@@ -1,0 +1,21 @@
+version: "3"
+services:
+  storybook:
+    build: .
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - /app/build
+    ports:
+      - "9009:9009"
+    privileged: true
+    command: "npm run storybook"
+  web:
+    build: .
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - /app/build
+    ports:
+      - "3000:3000"
+    privileged: true
