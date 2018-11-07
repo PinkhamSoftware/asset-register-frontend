@@ -1,6 +1,6 @@
 ---
 applications:
-- name: asset-register-frontend-production
+- name: asset-register-frontend-staging-dark
   memory: 512M
   buildpacks:
     - https://github.com/faissalMT/create-react-app-buildpack

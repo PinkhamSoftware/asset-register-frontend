@@ -22,34 +22,82 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: npm test
 
-  deploy_staging:
+  deploy_dark_staging:
     executor: node
     steps:
       - checkout
-      - run: bin/deploy.sh staging
+      - run: bin/deploy-dark.sh staging
 
-  deploy_production:
+  flip_staging:
     executor: node
     steps:
       - checkout
-      - run: bin/deploy.sh production
+      - run: bin/flip-dark-to-live.sh staging
+
+  revert_staging:
+    executor: node
+    steps:
+      - checkout
+      - run: bin/flip-dark-to-live.sh staging
+
+  deploy_dark_production:
+    executor: node
+    steps:
+      - checkout
+      - run: bin/deploy-dark.sh production
+
+  flip_production:
+    executor: node
+    steps:
+      - checkout
+      - run: bin/flip-dark-to-live.sh production
+
+  revert_production:
+    executor: node
+    steps:
+      - checkout
+      - run: bin/flip-dark-to-live.sh production
 
 workflows:
   version: 2
   build_test_deploy:
     jobs:
       - test
-      - deploy_staging:
+      - deploy_dark_staging:
           requires:
             - test
           filters:
             branches:
               only:
                 - master
-      - hold:
+      - flip_staging:
+          requires:
+            - deploy_dark_staging
+      - hold_revert_staging:
+          type: approval
+          requires: 
+            - flip_staging
+      - revert_staging:
+          requires: 
+            - hold_revert_staging
+      - hold_production_deploy:
           type: approval
           requires:
-            - deploy_staging
-      - deploy_production:
+            - flip_staging
+      - deploy_dark_production:
           requires:
-            - hold
+            - hold_production_deploy
+      - hold_flip_production:
+          type: approval
+          requires:
+            - deploy_dark_production
+      - flip_production:
+          requires:
+            - hold_flip_production
+      - hold_revert_production:
+          type: approval
+          requires:
+            - flip_production
+      - revert_production:
+          requires: 
+            - hold_revert_production
