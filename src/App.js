@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import AssetList from "./Components/AssetList";
 import SearchBox from "./Components/SearchBox";
 import "./App.css";
-import AssetProvider from "./Components/AssetProvider";
+import AssetsProvider from "./Components/AssetsProvider";
 
 class SearchAssets {
   execute() {
@@ -40,14 +40,14 @@ class App extends Component {
   render() {
     return (
       <div>
-        <AssetProvider searchAssets={searchAssetsUseCase}>
+        <AssetsProvider searchAssets={searchAssetsUseCase}>
           {({ onSearch, assets }) => (
             <div>
               <SearchBox onSearch={onSearch} />
               <AssetList assets={assets} />
             </div>
           )}
-        </AssetProvider>
+        </AssetsProvider>
       </div>
     );
   }

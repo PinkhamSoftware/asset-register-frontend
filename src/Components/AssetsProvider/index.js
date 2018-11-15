@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-export default class AssetProvider extends Component {
+export default class AssetsProvider extends Component {
   constructor() {
     super();
     this.state = { assets: [] };

@@ -1,6 +1,6 @@
 import React from "react";
 import { mount, shallow } from "enzyme";
-import AssetProvider from ".";
+import AssetsProvider from ".";
 
 class ChildrenFake {
   constructor(searchValue) {
@@ -17,16 +17,16 @@ class ChildrenFake {
   };
 }
 
-describe("<AssetProvider>", () => {
+describe("<AssetsProvider>", () => {
   describe("Example One", () => {
     it("Can call the searchAssets prop from the children", () => {
       let searchAssetsSpy = { execute: jest.fn() };
       let childrenFake = new ChildrenFake("Cats");
 
       shallow(
-        <AssetProvider searchAssets={searchAssetsSpy}>
+        <AssetsProvider searchAssets={searchAssetsSpy}>
           {childrenFake.render}
-        </AssetProvider>
+        </AssetsProvider>
       );
 
       childrenFake.executeOnSearch();
@@ -39,9 +39,9 @@ describe("<AssetProvider>", () => {
       let childrenFake = new ChildrenFake("Cats");
 
       shallow(
-        <AssetProvider searchAssets={searchAssetsSpy}>
+        <AssetsProvider searchAssets={searchAssetsSpy}>
           {childrenFake.render}
-        </AssetProvider>
+        </AssetsProvider>
       );
 
       childrenFake.executeOnSearch();
@@ -54,9 +54,9 @@ describe("<AssetProvider>", () => {
       let childrenFake = new ChildrenFake();
 
       shallow(
-        <AssetProvider searchAssets={searchAssetsDummy}>
+        <AssetsProvider searchAssets={searchAssetsDummy}>
           {childrenFake.render}
-        </AssetProvider>
+        </AssetsProvider>
       );
 
       expect(childrenFake.assetsReceived).toEqual([]);
@@ -67,9 +67,9 @@ describe("<AssetProvider>", () => {
       let childrenFake = new ChildrenFake();
 
       mount(
-        <AssetProvider searchAssets={searchAssetsStub}>
+        <AssetsProvider searchAssets={searchAssetsStub}>
           {childrenFake.render}
-        </AssetProvider>
+        </AssetsProvider>
       );
 
       childrenFake.executeOnSearch();
@@ -84,9 +84,9 @@ describe("<AssetProvider>", () => {
       let childrenFake = new ChildrenFake("Dogs");
 
       shallow(
-        <AssetProvider searchAssets={searchAssetsSpy}>
+        <AssetsProvider searchAssets={searchAssetsSpy}>
           {childrenFake.render}
-        </AssetProvider>
+        </AssetsProvider>
       );
 
       childrenFake.executeOnSearch();
@@ -99,9 +99,9 @@ describe("<AssetProvider>", () => {
       let childrenFake = new ChildrenFake("Dogs");
 
       shallow(
-        <AssetProvider searchAssets={searchAssetsSpy}>
+        <AssetsProvider searchAssets={searchAssetsSpy}>
           {childrenFake.render}
-        </AssetProvider>
+        </AssetsProvider>
       );
 
       childrenFake.executeOnSearch();
@@ -114,9 +114,9 @@ describe("<AssetProvider>", () => {
       let childrenFake = new ChildrenFake();
 
       mount(
-        <AssetProvider searchAssets={searchAssetsStub}>
+        <AssetsProvider searchAssets={searchAssetsStub}>
           {childrenFake.render}
-        </AssetProvider>
+        </AssetsProvider>
       );
 
       childrenFake.executeOnSearch();

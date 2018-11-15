@@ -1,13 +1,13 @@
 import React from "react";
-import AssetProvider from ".";
+import AssetsProvider from ".";
 
 import { storiesOf } from "@storybook/react";
 
-storiesOf("AssetProvider", module).add("Default", () => {
+storiesOf("AssetsProvider", module).add("Default", () => {
   let searchAssetsStub = { execute: () => [{ cat: "meow" }] };
 
   return (
-    <AssetProvider searchAssets={searchAssetsStub}>
+    <AssetsProvider searchAssets={searchAssetsStub}>
       {({ onSearch, assets }) => (
         <div>
           <button type="button" onClick={onSearch}>
@@ -16,6 +16,6 @@ storiesOf("AssetProvider", module).add("Default", () => {
           <p>Asset count = {assets.length}</p>
         </div>
       )}
-    </AssetProvider>
+    </AssetsProvider>
   );
 });
