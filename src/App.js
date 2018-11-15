@@ -1,35 +1,14 @@
 import React, { Component } from "react";
-import AssetList from "./Components/AssetList";
-import SearchBox from "./Components/SearchBox";
 import "./App.css";
-import AssetsProvider from "./Components/AssetsProvider";
 
-class SearchAssets {
-  execute() {
-    return [
-      {
-        id: "1",
-        name: "The Big Cat House",
-        address: "1 Cat Street",
-        value: "£ 1,000,000.00"
-      },
-      {
-        id: "2",
-        name: "The Big Dog House",
-        address: "2 Woofer Road",
-        value: "£ 5,500,000.00"
-      },
-      {
-        id: "3",
-        name: "The Big Duck Pond",
-        address: "Pond Street",
-        value: "£ 10,000,000.00"
-      }
-    ];
-  }
-}
+import AssetGateway from "./Gateway/AssetGateway";
+import GetAsset from "./UseCase/GetAsset";
 
-const searchAssetsUseCase = new SearchAssets();
+import AssetProvider from "./Components/AssetProvider";
+import Asset from "./Components/Asset";
+
+const assetGateway = new AssetGateway();
+const getAssetUsecase = new GetAsset({ assetGateway });
 
 class App extends Component {
   constructor() {
@@ -40,14 +19,9 @@ class App extends Component {
   render() {
     return (
       <div>
-        <AssetsProvider searchAssets={searchAssetsUseCase}>
-          {({ onSearch, assets }) => (
-            <div>
-              <SearchBox onSearch={onSearch} />
-              <AssetList assets={assets} />
-            </div>
-          )}
-        </AssetsProvider>
+        <AssetProvider assetId={1} getAsset={getAssetUsecase}>
+          {({ asset }) => <Asset asset={asset} />}
+        </AssetProvider>
       </div>
     );
   }

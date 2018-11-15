@@ -7,7 +7,7 @@ function formatDate(date) {
 }
 
 const Asset = ({ asset }) => (
-  <ul>
+  <ul data-test="asset">
     <li data-test="asset-id">{asset.id}</li>
     <li data-test="asset-modified-date-time">
       {formatDate(asset.modifiedDateTime)}
