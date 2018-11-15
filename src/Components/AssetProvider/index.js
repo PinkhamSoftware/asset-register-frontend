@@ -1,24 +1,35 @@
-import React, { Component } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 
-export default class AssetProvider extends Component {
+class AssetProvider extends React.Component {
   constructor() {
     super();
-    this.state = { assets: [] };
+
+    this.state = { asset: undefined };
   }
 
-  onSearch = searchRequest => {
-    let assets = this.props.searchAssets.execute(searchRequest);
-    this.setState({ assets });
-  };
+  async componentDidMount() {
+    let { asset } = await this.props.getAsset.execute({
+      id: this.props.assetId
+    });
+
+    this.setState({ asset });
+  }
 
   render() {
-    return (
-      <div>
-        {this.props.children({
-          onSearch: this.onSearch,
-          assets: this.state.assets
-        })}
-      </div>
-    );
+    if (this.state.asset) {
+      return <div>{this.props.children({ asset: this.state.asset })}</div>;
+    } else {
+      return <div />;
+    }
   }
 }
+
+AssetProvider.propTypes = {
+  assetId: PropTypes.number.isRequired,
+  getAsset: PropTypes.shape({
+    execute: PropTypes.func.isRequired
+  }).isRequired
+};
+
+export default AssetProvider;
