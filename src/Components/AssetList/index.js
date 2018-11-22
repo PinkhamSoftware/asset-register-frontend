@@ -7,18 +7,10 @@ export default class AssetList extends Component {
     return (
       <div className="asset-list">
         {this.props.assets.map(asset => (
-          <div key={asset.id} data-test="asset" className="asset">
-            <div className="col">
-              <h3 className="asset-label">Name</h3>
-              <div data-test="asset-name">{asset.name}</div>
-            </div>
+          <div key={asset.schemeId} data-test="asset" className="asset">
             <div className="col">
               <h3 className="asset-label">Address</h3>
               <div data-test="asset-address">{asset.address}</div>
-            </div>
-            <div className="col">
-              <h3 className="asset-label">Value</h3>
-              <div data-test="asset-value">{asset.value}</div>
             </div>
           </div>
         ))}
@@ -30,9 +22,8 @@ export default class AssetList extends Component {
 AssetList.propTypes = {
   assets: PropTypes.arrayOf(
     PropTypes.shape({
-      name: PropTypes.string.isRequired,
+      schemeId: PropTypes.number.isRequired,
       address: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired
     })
   ).isRequired
 };

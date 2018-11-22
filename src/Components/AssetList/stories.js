@@ -9,10 +9,8 @@ storiesOf("AssetList", module)
       <AssetList
         assets={[
           {
-            id: "1",
-            name: "The Big Cat House",
+            schemeId: "1",
             address: "1 Cat Street",
-            value: "£ 1,000,000.00"
           }
         ]}
       />
@@ -23,22 +21,16 @@ storiesOf("AssetList", module)
       <AssetList
         assets={[
           {
-            id: "1",
-            name: "The Big Cat House",
+            schemeId: "1",
             address: "1 Cat Street",
-            value: "£ 1,000,000.00"
           },
           {
-            id: "2",
-            name: "The Big Dog House",
+            schemeId: "2",
             address: "2 Woofer Road",
-            value: "£ 5,500,000.00"
           },
           {
-            id: "3",
-            name: "The Big Duck Pond",
+            schemeId: "3",
             address: "Pond Street",
-            value: "£ 10,000,000.00"
           }
         ]}
       />

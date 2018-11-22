@@ -6,8 +6,8 @@ export default class AssetsProvider extends Component {
     this.state = { assets: [] };
   }
 
-  onSearch = searchRequest => {
-    let assets = this.props.searchAssets.execute(searchRequest);
+  onSearch = async searchRequest => {
+    let { assets } = await this.props.searchAssets.execute(searchRequest);
     this.setState({ assets });
   };
 

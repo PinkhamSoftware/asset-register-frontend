@@ -9,7 +9,7 @@ class ChildrenFake {
     this.searchValue = searchValue;
   }
 
-  executeOnSearch = () => this.onSearchReceived({ value: this.searchValue });
+  executeOnSearch = async () => await this.onSearchReceived({ value: this.searchValue });
 
   render = ({ onSearch, assets }) => {
     this.onSearchReceived = onSearch;
@@ -20,7 +20,11 @@ class ChildrenFake {
 describe("<AssetsProvider>", () => {
   describe("Example One", () => {
     it("Can call the searchAssets prop from the children", () => {
-      let searchAssetsSpy = { execute: jest.fn() };
+      let searchAssetsSpy = {
+        execute: jest.fn(() => ({
+          assets: []
+        }))
+      };
       let childrenFake = new ChildrenFake("Cats");
 
       shallow(
@@ -35,7 +39,11 @@ describe("<AssetsProvider>", () => {
     });
 
     it("Passes the value from the children to the searchAssets prop", () => {
-      let searchAssetsSpy = { execute: jest.fn() };
+      let searchAssetsSpy = {
+        execute: jest.fn(() => ({
+          assets: []
+        }))
+      };
       let childrenFake = new ChildrenFake("Cats");
 
       shallow(
@@ -62,8 +70,12 @@ describe("<AssetsProvider>", () => {
       expect(childrenFake.assetsReceived).toEqual([]);
     });
 
-    it("Passes the found assets from the searchAssets prop to the children", () => {
-      let searchAssetsStub = { execute: () => [{ cat: "meow" }] };
+    it("Passes the found assets from the searchAssets prop to the children", async () => {
+      let searchAssetsStub = {
+        execute: () => ({
+          assets: [{ cat: "meow" }]
+        })
+      };
       let childrenFake = new ChildrenFake();
 
       mount(
@@ -72,7 +84,7 @@ describe("<AssetsProvider>", () => {
         </AssetsProvider>
       );
 
-      childrenFake.executeOnSearch();
+      await childrenFake.executeOnSearch();
 
       expect(childrenFake.assetsReceived).toEqual([{ cat: "meow" }]);
     });
@@ -80,7 +92,11 @@ describe("<AssetsProvider>", () => {
 
   describe("Example Two", () => {
     it("Can call the searchAssets prop from the children", () => {
-      let searchAssetsSpy = { execute: jest.fn() };
+      let searchAssetsSpy = {
+        execute: jest.fn(() => ({
+          assets: []
+        }))
+      };
       let childrenFake = new ChildrenFake("Dogs");
 
       shallow(
@@ -95,7 +111,11 @@ describe("<AssetsProvider>", () => {
     });
 
     it("Passes the value from the children to the searchAssets prop", () => {
-      let searchAssetsSpy = { execute: jest.fn() };
+      let searchAssetsSpy = {
+        execute: jest.fn(() => ({
+          assets: []
+        }))
+      };
       let childrenFake = new ChildrenFake("Dogs");
 
       shallow(
@@ -109,8 +129,12 @@ describe("<AssetsProvider>", () => {
       expect(searchAssetsSpy.execute).toHaveBeenCalledWith({ value: "Dogs" });
     });
 
-    it("Passes the found assets from the searchAssets prop to the children", () => {
-      let searchAssetsStub = { execute: () => [{ dog: "woof" }] };
+    it("Passes the found assets from the searchAssets prop to the children", async () => {
+      let searchAssetsStub = {
+        execute: () => ({
+          assets: [{ dog: "woof" }]
+        })
+      };
       let childrenFake = new ChildrenFake();
 
       mount(
@@ -119,7 +143,7 @@ describe("<AssetsProvider>", () => {
         </AssetsProvider>
       );
 
-      childrenFake.executeOnSearch();
+      await childrenFake.executeOnSearch();
 
       expect(childrenFake.assetsReceived).toEqual([{ dog: "woof" }]);
     });

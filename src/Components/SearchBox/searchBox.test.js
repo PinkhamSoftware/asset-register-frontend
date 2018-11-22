@@ -27,7 +27,9 @@ describe("<SearchBox>", () => {
           .find('[data-test="search-form"]')
           .simulate("submit", { preventDefault: jest.fn() });
 
-        expect(onSearchSpy).toHaveBeenCalledWith({ value: "Cats" });
+        expect(onSearchSpy).toHaveBeenCalledWith({
+          filters: { schemeId: "Cats" }
+        });
       });
     });
   });
@@ -51,7 +53,9 @@ describe("<SearchBox>", () => {
           .find('[data-test="search-form"]')
           .simulate("submit", { preventDefault: jest.fn() });
 
-        expect(onSearchSpy).toHaveBeenCalledWith({ value: "Dogs" });
+        expect(onSearchSpy).toHaveBeenCalledWith({
+          filters: { schemeId: "Dogs" }
+        });
       });
     });
   });
