@@ -20,8 +20,9 @@ describe("<AssetList>", () => {
           <AssetList
             assets={[
               {
-                schemeId: 123,
-                address: "1 Cat Street"
+                id: 123,
+                address: "1 Cat Street",
+                schemeId: 12345
               }
             ]}
           />
@@ -43,6 +44,12 @@ describe("<AssetList>", () => {
           "1 Cat Street"
         );
       });
+
+      it("Renders the asset scheme id", () => {
+        expect(assetList.find('[data-test="asset-scheme-id"]').text()).toEqual(
+          "12345"
+        );
+      });
     });
 
     describe("Example two", () => {
@@ -51,8 +58,9 @@ describe("<AssetList>", () => {
           <AssetList
             assets={[
               {
-                schemeId: 234,
-                address: "1 Woofers Street"
+                id: 234,
+                address: "1 Woofers Street",
+                schemeId: 54321
               }
             ]}
           />
@@ -74,6 +82,12 @@ describe("<AssetList>", () => {
           "1 Woofers Street"
         );
       });
+
+      it("Renders the asset scheme id", () => {
+        expect(assetList.find('[data-test="asset-scheme-id"]').text()).toEqual(
+          "54321"
+        );
+      });
     });
   });
 
@@ -85,12 +99,14 @@ describe("<AssetList>", () => {
         <AssetList
           assets={[
             {
-              schemeId: 235,
-              address: "1 Cat Street"
+              id: 235,
+              address: "1 Cat Street",
+              schemeId: 12345
             },
             {
-              schemeId: 236,
-              address: "2 Cat Street"
+              id: 236,
+              address: "2 Cat Street",
+              schemeId: 54321
             }
           ]}
         />
@@ -106,6 +122,22 @@ describe("<AssetList>", () => {
     it("Sets the asset keys", () => {
       expect(assets.at(0).key()).toEqual("235");
       expect(assets.at(1).key()).toEqual("236");
+    });
+
+    it("Renders the asset scheme IDs", () => {
+      expect(
+        assets
+          .at(0)
+          .find('[data-test="asset-scheme-id"]')
+          .text()
+      ).toEqual("12345");
+
+      expect(
+        assets
+          .at(1)
+          .find('[data-test="asset-scheme-id"]')
+          .text()
+      ).toEqual("54321");
     });
 
     it("Renders the asset addresses", () => {
