@@ -10,7 +10,7 @@ export default class SearchBox extends Component {
 
   onFormSubmit = e => {
     e.preventDefault();
-    this.props.onSearch({ value: this.state.searchValue });
+    this.props.onSearch({ filters: { schemeId: this.state.searchValue } });
   };
 
   onSearchChange = searchValue => {

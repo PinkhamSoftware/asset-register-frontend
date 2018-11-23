@@ -1,50 +1,42 @@
 import React from "react";
 import { mount } from "enzyme";
 import App from "./App";
-import GetAssetSimulator from "../test/Simulators/GetAsset";
-
-let asset = {
-  id: 1,
-  modifiedDateTime: "2018-11-13T11:04:23.169Z",
-  monthPaid: "Jan",
-  accountingYear: "2018",
-  schemeId: "12345",
-  locationLaRegionName: "Yorkshire",
-  imsOldRegion: "West Yorkshire",
-  noOfBeds: "5",
-  address: "123 Fake Street",
-  developingRslName: "Meow Meow",
-  completionDateForHpiStart: "2018-11-13T11:04:24.169Z",
-  imsActualCompletionDate: "2018-11-13T11:04:25.169Z",
-  imsExpectedCompletionDate: "2018-11-13T11:04:26.169Z",
-  imsLegalCompletionDate: "2018-11-13T11:04:27.169Z",
-  hopCompletionDate: "2018-11-13T11:04:28.169Z",
-  deposit: 1234,
-  agencyEquityLoan: 5678,
-  developerEquityLoan: 9123,
-  shareOfRestrictedEquity: 4567,
-  differenceFromImsExpectedCompletionToHopCompletionDate: 8912
-};
+import { exampleAssetOne } from "../test/Fixtures/assets";
+import SearchAssetSimulator from "../test/Simulators/SearchAsset";
 
 const waitForRequestToResolve = async () => {
   await new Promise(resolve => setTimeout(resolve, 100));
 };
 
 describe("When rendering the app", () => {
-  it("Renders an asset with data from the API", async () => {
+  it("Searches the API for an asset and displays it in the list", async () => {
     process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
-    let getAssetSimulator = new GetAssetSimulator("https://meow.cat/");
-    getAssetSimulator
-      .getAssetWithId(1)
-      .respondWithData({ asset })
+    let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
+
+    searchAssetSimulator
+      .searchAssetWithFilters({ schemeId: "1" })
+      .respondWithAssets([exampleAssetOne])
       .successfully();
 
     let app = mount(<App />);
+    app
+      .find('[data-test="search-input"]')
+      .simulate("change", { target: { value: "1" } });
+
+    app
+      .find('[data-test="search-form"]')
+      .simulate("submit", { preventDefault: jest.fn() });
+
     await waitForRequestToResolve();
     app.update();
 
     let renderedAsset = app.find({ "data-test": "asset" });
 
-    expect(renderedAsset.length).toEqual(1);
+    expect(
+      renderedAsset.find({ "data-test": "asset-scheme-id" }).text()
+    ).toEqual("12345");
+    expect(
+      renderedAsset.find({ "data-test": "asset-address" }).text()
+    ).toEqual("123 Fake Street");
   });
 });

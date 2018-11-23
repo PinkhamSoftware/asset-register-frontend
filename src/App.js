@@ -1,14 +1,15 @@
 import React, { Component } from "react";
 import "./App.css";
 
-import AssetGateway from "./Gateway/AssetGateway";
-import GetAsset from "./UseCase/GetAsset";
+import SearchGateway from "./Gateway/SearchGateway";
+import SearchAssets from "./UseCase/SearchAssets";
 
-import AssetProvider from "./Components/AssetProvider";
-import Asset from "./Components/Asset";
+import AssetsProvider from "./Components/AssetsProvider";
+import SearchBox from "./Components/SearchBox";
+import AssetList from "./Components/AssetList";
 
-const assetGateway = new AssetGateway();
-const getAssetUsecase = new GetAsset({ assetGateway });
+const searchGateway = new SearchGateway();
+const searchAssetUsecase = new SearchAssets({ searchGateway });
 
 class App extends Component {
   constructor() {
@@ -19,9 +20,14 @@ class App extends Component {
   render() {
     return (
       <div>
-        <AssetProvider assetId={1} getAsset={getAssetUsecase}>
-          {({ asset }) => <Asset asset={asset} />}
-        </AssetProvider>
+        <AssetsProvider searchAssets={searchAssetUsecase}>
+          {({ assets, onSearch }) => (
+            <div>
+              <SearchBox onSearch={onSearch} />
+              <AssetList assets={assets} />
+            </div>
+          )}
+        </AssetsProvider>
       </div>
     );
   }
