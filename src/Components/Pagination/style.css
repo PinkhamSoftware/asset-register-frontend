@@ -1,0 +1,14 @@
+.pagination {
+}
+
+.pagination-link {
+  border: 1px solid black;
+  display: inline-block;
+  min-width: 20px;
+  text-align: center;
+  padding: 10px;
+}
+
+.pagination-active {
+  background: #b3b3b3;
+}
