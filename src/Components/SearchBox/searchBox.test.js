@@ -7,6 +7,12 @@ class SearchBoxComponent {
     this.searchBox = shallow(<SearchBox onSearch={onSearch} />);
   }
 
+  searchForAddress(address) {
+    this.find("search-address").simulate("change", {
+      target: { value: address }
+    });
+  }
+
   searchForSchemeId(schemeId) {
     this.find("search-scheme-id").simulate("change", {
       target: { value: schemeId }
@@ -64,6 +70,86 @@ describe("<SearchBox>", () => {
 
           expect(onSearchSpy).toHaveBeenCalledWith({
             filters: { schemeId: "Dogs" }
+          });
+        });
+      });
+    });
+  });
+
+  describe("When searching by address", () => {
+    describe("Example one", () => {
+      describe("When submitting the form", () => {
+        it("Calls the onSearch prop", () => {
+          searchBox.submitForm();
+          expect(onSearchSpy).toHaveBeenCalled();
+        });
+
+        it("Calls the onSearch prop with the value inside the search box", () => {
+          searchBox.searchForAddress("123 Fake Street");
+          searchBox.submitForm();
+
+          expect(onSearchSpy).toHaveBeenCalledWith({
+            filters: { address: "123 Fake Street" }
+          });
+        });
+      });
+    });
+
+    describe("Example two", () => {
+      describe("When submitting the form", () => {
+        it("Calls the onSearch", () => {
+          searchBox.submitForm();
+
+          expect(onSearchSpy).toHaveBeenCalled();
+        });
+
+        it("Calls the onSearch prop with the value inside the search box", () => {
+          searchBox.searchForAddress("Dog Town");
+          searchBox.submitForm();
+
+          expect(onSearchSpy).toHaveBeenCalledWith({
+            filters: { address: "Dog Town" }
+          });
+        });
+      });
+    });
+  });
+
+  describe("When searching by both address and scheme id", () => {
+    describe("Example one", () => {
+      describe("When submitting the form", () => {
+        it("Calls the onSearch prop", () => {
+          searchBox.submitForm();
+          expect(onSearchSpy).toHaveBeenCalled();
+        });
+
+        it("Calls the onSearch prop with the value inside the search box", () => {
+          searchBox.searchForSchemeId("12345");
+          searchBox.searchForAddress("123 Fake Street");
+          searchBox.submitForm();
+
+          expect(onSearchSpy).toHaveBeenCalledWith({
+            filters: { schemeId: "12345", address: "123 Fake Street" }
+          });
+        });
+      });
+    });
+
+    describe("Example two", () => {
+      describe("When submitting the form", () => {
+        it("Calls the onSearch", () => {
+          searchBox.submitForm();
+
+          expect(onSearchSpy).toHaveBeenCalled();
+        });
+
+        it("Calls the onSearch prop with the value inside the search box", () => {
+          searchBox.searchForSchemeId("54321");
+          searchBox.searchForAddress("Dog Town");
+          searchBox.submitForm();
+
+          expect(onSearchSpy).toHaveBeenCalledWith({
+            filters: { schemeId: "54321", address: "Dog Town" }
           });
         });
       });
