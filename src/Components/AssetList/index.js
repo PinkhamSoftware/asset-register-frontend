@@ -4,22 +4,26 @@ import "./style.css";
 
 export default class AssetList extends Component {
   render() {
-    return (
-      <div className="asset-list">
-        {this.props.assets.map(asset => (
-          <div key={asset.id} data-test="asset" className="asset">
-            <div className="col">
-              <h3 className="asset-label">Scheme ID</h3>
-              <div data-test="asset-scheme-id">{asset.schemeId}</div>
+    if (this.props.assets.length === 0) {
+      return <div data-test="asset-list-no-assets-found">No assets found</div>;
+    } else {
+      return (
+        <div className="asset-list">
+          {this.props.assets.map(asset => (
+            <div key={asset.id} data-test="asset" className="asset">
+              <div className="col">
+                <h3 className="asset-label">Scheme ID</h3>
+                <div data-test="asset-scheme-id">{asset.schemeId}</div>
+              </div>
+              <div className="col">
+                <h3 className="asset-label">Address</h3>
+                <div data-test="asset-address">{asset.address}</div>
+              </div>
             </div>
-            <div className="col">
-              <h3 className="asset-label">Address</h3>
-              <div data-test="asset-address">{asset.address}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
+          ))}
+        </div>
+      );
+    }
   }
 }
 
@@ -28,7 +32,7 @@ AssetList.propTypes = {
     PropTypes.shape({
       id: PropTypes.number.isRequired,
       schemeId: PropTypes.number.isRequired,
-      address: PropTypes.string.isRequired,
+      address: PropTypes.string.isRequired
     })
   ).isRequired
 };
