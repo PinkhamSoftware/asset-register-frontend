@@ -5,24 +5,26 @@ export default class SearchBox extends Component {
   constructor() {
     super();
 
-    this.state = { searchValue: "" };
+    this.state = { filters: {} };
   }
 
   onFormSubmit = e => {
     e.preventDefault();
-    this.props.onSearch({ filters: { schemeId: this.state.searchValue } });
+    this.props.onSearch({ filters:  this.state.filters});
   };
 
-  onSearchChange = searchValue => {
-    this.setState({ searchValue });
+  onSearchChange = (filterName, searchValue) => {
+    let { filters } = this.state
+    filters[filterName] = searchValue;
+    this.setState({ filters });
   };
 
   render() {
     return (
       <form data-test="search-form" onSubmit={this.onFormSubmit}>
         <input
-          data-test="search-input"
-          onChange={e => this.onSearchChange(e.target.value)}
+          data-test="search-scheme-id"
+          onChange={e => this.onSearchChange("schemeId", e.target.value)}
         />
 
         <button data-test="search-button" type="submit">
