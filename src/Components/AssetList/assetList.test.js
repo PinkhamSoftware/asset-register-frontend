@@ -6,10 +6,10 @@ describe("<AssetList>", () => {
   let assetList;
 
   describe("Given no assets", () => {
-    it("Renders nothing", () => {
+    it("Renders the no assets are found message", () => {
       let assetList = shallow(<AssetList assets={[]} />);
 
-      expect(assetList.find('[data-test="asset"]').length).toEqual(0);
+      expect(assetList.find({'data-test': 'asset-list-no-assets-found'}).length).toEqual(1);
     });
   });
 
