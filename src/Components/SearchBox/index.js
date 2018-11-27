@@ -26,6 +26,7 @@ export default class SearchBox extends Component {
           <span>Scheme ID: </span>
           <input
             data-test="search-scheme-id"
+            type="number"
             onChange={e => this.onSearchChange("schemeId", e.target.value)}
           />
         </div>
