@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@sentry/browser": "^4.2.4",
+    "@sentry/browser": "^4.3.4",
     "isomorphic-fetch": "^2.2.1",
     "moment": "^2.22.2",
-    "react": "^16.5.2",
-    "react-dom": "^16.5.2",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
     "react-scripts": "2.0.5"
   },
   "scripts": {
@@ -27,13 +27,13 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "@storybook/addon-actions": "4.0.0-alpha.24",
-    "@storybook/addon-links": "4.0.0-alpha.24",
-    "@storybook/addons": "4.0.0-alpha.24",
-    "@storybook/react": "4.0.0-alpha.24",
+    "@storybook/addon-actions": "4.0.9",
+    "@storybook/addon-links": "4.0.9",
+    "@storybook/addons": "4.0.9",
+    "@storybook/react": "4.0.9",
     "enzyme": "^3.7.0",
-    "enzyme-adapter-react-16": "^1.6.0",
+    "enzyme-adapter-react-16": "^1.7.0",
     "nock": "^10.0.2",
-    "react-test-renderer": "^16.5.2"
+    "react-test-renderer": "^16.6.3"
   }
 }
