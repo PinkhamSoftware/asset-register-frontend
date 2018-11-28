@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import "govuk-frontend/all.scss";
 
 export default class SearchBox extends Component {
   constructor() {
@@ -22,26 +23,43 @@ export default class SearchBox extends Component {
   render() {
     return (
       <form data-test="search-form" onSubmit={this.onFormSubmit}>
-        <div>
-          <span>Scheme ID: </span>
-          <input
-            data-test="search-scheme-id"
-            type="number"
-            onChange={e => this.onSearchChange("schemeId", e.target.value)}
-          />
-        </div>
-        <div>
-          <span>Address: </span>
-          <input
-            data-test="search-address"
-            onChange={e => this.onSearchChange("address", e.target.value)}
-          />
-        </div>
-        <div>
-          <button data-test="search-button" type="submit">
-            Search
-          </button>
-        </div>
+        <fieldset className="govuk-fieldset">
+          <div class="govuk-form-group">
+            <label class="govuk-label" for="scheme-id">
+              Scheme ID
+            </label>
+            <input
+              class="govuk-input"
+              id="scheme-id"
+              data-test="search-scheme-id"
+              name="scheme-id"
+              type="number"
+              onChange={e => this.onSearchChange("schemeId", e.target.value)}
+            />
+          </div>
+          <div class="govuk-form-group">
+            <label class="govuk-label" for="address">
+              Address
+            </label>
+            <input
+              class="govuk-input"
+              id="address"
+              data-test="search-address"
+              name="address"
+              type="text"
+              onChange={e => this.onSearchChange("address", e.target.value)}
+            />
+          </div>
+          <div>
+            <button
+              className="govuk-button"
+              data-test="search-button"
+              type="submit"
+            >
+              Search
+            </button>
+          </div>
+        </fieldset>
       </form>
     );
   }

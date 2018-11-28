@@ -1,7 +1,6 @@
 FROM node:10.12.0-alpine
 
 RUN apk --no-cache add git
-RUN npm install -g @storybook/cli
 
 WORKDIR /app
 
