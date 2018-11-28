@@ -14,14 +14,18 @@ describe("When rendering the app", () => {
     let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
 
     searchAssetSimulator
-      .searchAssetWithFilters({ schemeId: "1" })
+      .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
       .respondWithAssets([exampleAssetOne])
       .successfully();
 
     let app = mount(<App />);
     app
-      .find('[data-test="search-input"]')
+      .find('[data-test="search-scheme-id"]')
       .simulate("change", { target: { value: "1" } });
+
+    app
+      .find('[data-test="search-address"]')
+      .simulate("change", { target: { value: "Fake Street" } });
 
     app
       .find('[data-test="search-form"]')

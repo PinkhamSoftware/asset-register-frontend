@@ -30,7 +30,7 @@ export default class GetAsset {
 
   queryStringFromFilters() {
     return Object.entries(this.filters)
-      .map(([key, value]) => `${key}=${value}`)
+      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
       .join("&");
   }
 }

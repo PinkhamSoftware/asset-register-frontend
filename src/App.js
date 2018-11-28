@@ -12,11 +12,6 @@ const searchGateway = new SearchGateway();
 const searchAssetUsecase = new SearchAssets({ searchGateway });
 
 class App extends Component {
-  constructor() {
-    super();
-    this.state = { assets: [] };
-  }
-
   render() {
     return (
       <div>
