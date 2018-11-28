@@ -118,16 +118,20 @@ export default class Pagination extends Component {
   };
 
   render() {
-    return (
-      <div className="pagination">
-        {this.renderFirstButton()}
-        {this.renderLeftJumpButton()}
-        {this.renderPreviousButton()}
-        {this.renderCurrentButton()}
-        {this.renderNextButton()}
-        {this.renderRightJumpButton()}
-        {this.renderLastButton()}
-      </div>
-    );
+    if (this.props.max < 1) {
+      return <div className="pagination" />;
+    } else {
+      return (
+        <div className="pagination">
+          {this.renderFirstButton()}
+          {this.renderLeftJumpButton()}
+          {this.renderPreviousButton()}
+          {this.renderCurrentButton()}
+          {this.renderNextButton()}
+          {this.renderRightJumpButton()}
+          {this.renderLastButton()}
+        </div>
+      );
+    }
   }
 }

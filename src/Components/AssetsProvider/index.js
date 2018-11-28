@@ -3,12 +3,29 @@ import React, { Component } from "react";
 export default class AssetsProvider extends Component {
   constructor() {
     super();
-    this.state = { assets: [] };
+    this.state = {
+      assets: [],
+      page: 1,
+      searchParameters: {},
+      pages: 0
+    };
   }
 
   onSearch = async searchRequest => {
-    let { assets } = await this.props.searchAssets.execute(searchRequest);
-    this.setState({ assets });
+    let { assets, pages } = await this.props.searchAssets.execute({
+      ...searchRequest,
+      page: 1
+    });
+    this.setState({ searchParameters: searchRequest, assets, pages, page: 1 });
+  };
+
+  onPageSelect = async ({ page }) => {
+    let { assets } = await this.props.searchAssets.execute({
+      ...this.state.searchParameters,
+      page
+    });
+
+    this.setState({ page, assets });
   };
 
   render() {
@@ -16,7 +33,10 @@ export default class AssetsProvider extends Component {
       <div>
         {this.props.children({
           onSearch: this.onSearch,
-          assets: this.state.assets
+          onPageSelect: this.onPageSelect,
+          assets: this.state.assets,
+          numberOfPages: this.state.pages,
+          currentPage: this.state.page
         })}
       </div>
     );

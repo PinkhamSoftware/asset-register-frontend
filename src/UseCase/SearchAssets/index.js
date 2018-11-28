@@ -5,7 +5,7 @@ export default class SearchAssets {
 
   async execute({ filters }) {
     let foundAssets = await this.searchGateway.searchWithFilters(filters);
-    return { assets: this.buildAssetResponseFromFoundAssets(foundAssets) };
+    return { assets: this.buildAssetResponseFromFoundAssets(foundAssets), pages: 10 };
   }
 
   buildAssetResponseFromFoundAssets(foundAssets) {
