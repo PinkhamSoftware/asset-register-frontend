@@ -3,17 +3,17 @@ import "./style.css";
 
 export default class Pagination extends Component {
   renderFirstButton = () => {
-    if (this.props.current == 1) {
+    if (this.props.current === 1) {
       return <span />;
     } else {
       return (
-        <a
+        <span
           className="pagination-link"
           data-test="pagination-first-page"
           onClick={() => this.props.onPageSelect({ page: 1 })}
         >
           1
-        </a>
+        </span>
       );
     }
   };
@@ -23,7 +23,7 @@ export default class Pagination extends Component {
       return <span />;
     } else {
       return (
-        <a
+        <span
           className="pagination-link"
           data-test="pagination-left-jump"
           onClick={() =>
@@ -31,7 +31,7 @@ export default class Pagination extends Component {
           }
         >
           &laquo;
-        </a>
+        </span>
       );
     }
   };
@@ -41,7 +41,7 @@ export default class Pagination extends Component {
       return <span />;
     } else {
       return (
-        <a
+        <span
           className="pagination-link"
           data-test={`pagination-page-${this.props.current - 1}`}
           onClick={() =>
@@ -49,19 +49,19 @@ export default class Pagination extends Component {
           }
         >
           {this.props.current - 1}
-        </a>
+        </span>
       );
     }
   };
 
   renderCurrentButton = () => {
     return (
-      <a
+      <span
         className="pagination-link pagination-active"
         data-test="pagination-current-page"
       >
         {this.props.current}
-      </a>
+      </span>
     );
   };
 
@@ -70,7 +70,7 @@ export default class Pagination extends Component {
       return <span />;
     } else {
       return (
-        <a
+        <span
           className="pagination-link"
           data-test={`pagination-page-${this.props.current + 1}`}
           onClick={() =>
@@ -78,7 +78,7 @@ export default class Pagination extends Component {
           }
         >
           {this.props.current + 1}
-        </a>
+        </span>
       );
     }
   };
@@ -88,7 +88,7 @@ export default class Pagination extends Component {
       return <span />;
     } else {
       return (
-        <a
+        <span
           className="pagination-link"
           data-test="pagination-right-jump"
           onClick={() =>
@@ -96,23 +96,23 @@ export default class Pagination extends Component {
           }
         >
           &raquo;
-        </a>
+        </span>
       );
     }
   };
 
   renderLastButton = () => {
-    if (this.props.current == this.props.max) {
+    if (this.props.current === this.props.max) {
       return <span />;
     } else {
       return (
-        <a
+        <span
           className="pagination-link"
           data-test="pagination-last-page"
           onClick={() => this.props.onPageSelect({ page: this.props.max })}
         >
           {this.props.max}
-        </a>
+        </span>
       );
     }
   };
