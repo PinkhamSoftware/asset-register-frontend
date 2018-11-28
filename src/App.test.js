@@ -15,6 +15,7 @@ describe("When rendering the app", () => {
 
     searchAssetSimulator
       .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
+      .searchAssetWithPage(1)
       .respondWithAssets([exampleAssetOne])
       .successfully();
 
@@ -39,8 +40,8 @@ describe("When rendering the app", () => {
     expect(
       renderedAsset.find({ "data-test": "asset-scheme-id" }).text()
     ).toEqual("12345");
-    expect(
-      renderedAsset.find({ "data-test": "asset-address" }).text()
-    ).toEqual("123 Fake Street");
+    expect(renderedAsset.find({ "data-test": "asset-address" }).text()).toEqual(
+      "123 Fake Street"
+    );
   });
 });

@@ -83,21 +83,29 @@ describe("SearchAssets", () => {
   describe("Example one", () => {
     let foundAsset;
 
-    describe("Given search parameters", () => {
+    describe("Given search parameters and a page", () => {
       describe("and the search finds assets", () => {
         beforeEach(() => {
           foundAsset = buildAssetFromData(exampleAssetOne);
-          searchGatewaySpy = { searchWithFilters: jest.fn(() => [foundAsset]) };
+          searchGatewaySpy = {
+            searchWithFilters: jest.fn(() => ({ assets: [foundAsset], pages: 10 }))
+          };
           useCase = new SearchAssets({ searchGateway: searchGatewaySpy });
         });
 
         it("Calls the search gateway with the filters", async () => {
-          await useCase.execute({ filters: { cat: "meow", dog: "woof" } });
-
-          expect(searchGatewaySpy.searchWithFilters).toHaveBeenCalledWith({
-            cat: "meow",
-            dog: "woof"
+          await useCase.execute({
+            filters: { cat: "meow", dog: "woof" },
+            page: 1
           });
+
+          expect(searchGatewaySpy.searchWithFilters).toHaveBeenCalledWith(
+            {
+              cat: "meow",
+              dog: "woof"
+            },
+            1
+          );
         });
 
         it("Returns the assets from the gateway", async () => {
@@ -108,12 +116,20 @@ describe("SearchAssets", () => {
           let firstAsset = assets[0];
           expectFoundAssetToEqual(firstAsset, exampleAssetOne);
         });
+
+        it("Returns the pages from the gateway", async () => {
+          let { pages } = await useCase.execute({
+            filters: { cat: "meow", dog: "woof" }
+          });
+
+          expect(pages).toEqual(10)
+        });
       });
 
       describe("and the search does not find assets", () => {
         it("Returns an empty array", async () => {
           let searchGatewaySpy = {
-            searchWithFilters: jest.fn(() => [])
+            searchWithFilters: jest.fn(() => ({ assets: [] }))
           };
 
           let useCase = new SearchAssets({ searchGateway: searchGatewaySpy });
@@ -137,19 +153,28 @@ describe("SearchAssets", () => {
           foundAssetTwo = buildAssetFromData(exampleAssetOne);
 
           searchGatewaySpy = {
-            searchWithFilters: jest.fn(() => [foundAssetOne, foundAssetTwo])
+            searchWithFilters: jest.fn(() => ({
+              assets: [foundAssetOne, foundAssetTwo],
+              pages: 5
+            }))
           };
 
           useCase = new SearchAssets({ searchGateway: searchGatewaySpy });
         });
 
         it("Calls the search gateway with the filters", async () => {
-          await useCase.execute({ filters: { duck: "quack", cow: "moo" } });
-
-          expect(searchGatewaySpy.searchWithFilters).toHaveBeenCalledWith({
-            duck: "quack",
-            cow: "moo"
+          await useCase.execute({
+            filters: { duck: "quack", cow: "moo" },
+            page: 5
           });
+
+          expect(searchGatewaySpy.searchWithFilters).toHaveBeenCalledWith(
+            {
+              duck: "quack",
+              cow: "moo"
+            },
+            5
+          );
         });
 
         it("Returns the assets from the gateway", async () => {
@@ -162,12 +187,20 @@ describe("SearchAssets", () => {
           expectFoundAssetToEqual(firstAsset, exampleAssetTwo);
           expectFoundAssetToEqual(secondAsset, exampleAssetOne);
         });
+
+        it("Returns the pages from the gateway", async () => {
+          let { pages } = await useCase.execute({
+            filters: { duck: "quack", cow: "moo" }
+          });
+
+          expect(pages).toEqual(5);
+        });
       });
 
       describe("and the search does not find assets", () => {
         it("Returns an empty array", async () => {
           let searchGatewaySpy = {
-            searchWithFilters: jest.fn(() => [])
+            searchWithFilters: jest.fn(() => ({ assets: [] }))
           };
 
           let useCase = new SearchAssets({ searchGateway: searchGatewaySpy });
