@@ -18,6 +18,22 @@ describe("<Pagination>", () => {
     });
   };
 
+  describe("Given undefined pages", () => {
+    it("Doesn't display any buttons", () => {
+      pagination = new PaginationComponent({
+        current: 0,
+        max: undefined,
+        onPageSelect: () => {}
+      });
+
+      expect(pagination.displaysFirstPageButton()).toBeFalsy();
+      expect(pagination.displaysLeftJumpButton()).toBeFalsy();
+      expect(pagination.displaysCurrentButton()).toBeFalsy();
+      expect(pagination.displaysRightJumpButton()).toBeFalsy();
+      expect(pagination.displaysLastPageButton()).toBeFalsy();
+    });
+  });
+
   describe("Given 0 pages", () => {
     it("Doesn't display any buttons", () => {
       pagination = new PaginationComponent({

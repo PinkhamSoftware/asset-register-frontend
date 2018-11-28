@@ -118,7 +118,7 @@ export default class Pagination extends Component {
   };
 
   render() {
-    if (this.props.max < 1) {
+    if (this.props.max === undefined || this.props.max < 1) {
       return <div className="pagination" />;
     } else {
       return (
