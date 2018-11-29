@@ -4,10 +4,16 @@ export default class GetAsset {
   constructor(baseUrl) {
     this.baseUrl = baseUrl;
     this.responseData = {};
+    this.filters = {};
   }
 
   searchAssetWithFilters(filters) {
-    this.filters = filters;
+    this.filters = {...filters};
+    return this;
+  }
+
+  searchAssetWithPage(page) {
+    this.filters.page = page;
     return this;
   }
 
@@ -16,10 +22,15 @@ export default class GetAsset {
     return this;
   }
 
+  respondWithPages(pages) {
+    this.pages = pages
+    return this;
+  }
+
   successfully() {
     return nock(this.baseUrl)
       .get(`/api/v1/asset/search?${this.queryStringFromFilters()}`)
-      .reply(200, { data: { assets: this.assets } });
+      .reply(200, { data: { assets: this.assets, pages: this.pages } });
   }
 
   unsuccessfully(status = 500) {

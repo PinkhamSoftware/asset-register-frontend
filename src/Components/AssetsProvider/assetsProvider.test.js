@@ -3,149 +3,232 @@ import { mount, shallow } from "enzyme";
 import AssetsProvider from ".";
 
 class ChildrenFake {
-  constructor(searchValue) {
+  constructor() {
     this.onSearchReceived = undefined;
+    this.onPageSelect = undefined;
     this.assetsReceived = undefined;
-    this.searchValue = searchValue;
+    this.numberOfPagesReceived = undefined;
+    this.currentPageReceived = undefined;
   }
 
-  executeOnSearch = async () => await this.onSearchReceived({ value: this.searchValue });
+  selectPage = async page => await this.onPageSelect({ page });
 
-  render = ({ onSearch, assets }) => {
+  executeOnSearch = async searchParams =>
+    await this.onSearchReceived(searchParams);
+
+  render = ({ onSearch, assets, onPageSelect, numberOfPages, currentPage }) => {
     this.onSearchReceived = onSearch;
+    this.onPageSelect = onPageSelect;
     this.assetsReceived = assets;
+    this.numberOfPagesReceived = numberOfPages;
+    this.currentPageReceived = currentPage;
   };
 }
 
 describe("<AssetsProvider>", () => {
   describe("Example One", () => {
-    it("Can call the searchAssets prop from the children", () => {
-      let searchAssetsSpy = {
+    let childrenFake, searchAssetsSpy, provider;
+
+    beforeEach(() => {
+      searchAssetsSpy = {
         execute: jest.fn(() => ({
-          assets: []
+          assets: [{ cat: "meow" }],
+          pages: 5
         }))
       };
-      let childrenFake = new ChildrenFake("Cats");
 
-      shallow(
+      childrenFake = new ChildrenFake();
+
+      provider = mount(
         <AssetsProvider searchAssets={searchAssetsSpy}>
           {childrenFake.render}
         </AssetsProvider>
       );
+    });
 
+    it("Can call the searchAssets prop from the children", () => {
       childrenFake.executeOnSearch();
 
       expect(searchAssetsSpy.execute).toHaveBeenCalled();
     });
 
+    it("Defaults the page to one", () => {
+      expect(provider.state().page).toEqual(1);
+    });
+
+    it("Defaults the number of pages to 0", () => {
+      expect(provider.state().pages).toEqual(0);
+    });
+
     it("Passes the value from the children to the searchAssets prop", () => {
-      let searchAssetsSpy = {
-        execute: jest.fn(() => ({
-          assets: []
-        }))
-      };
-      let childrenFake = new ChildrenFake("Cats");
+      childrenFake.executeOnSearch({ value: "Cats" });
 
-      shallow(
-        <AssetsProvider searchAssets={searchAssetsSpy}>
-          {childrenFake.render}
-        </AssetsProvider>
-      );
+      expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
+        value: "Cats",
+        page: 1
+      });
+    });
 
-      childrenFake.executeOnSearch();
+    it("Stores the search parameters in the state", async () => {
+      await childrenFake.executeOnSearch({ value: "Cats" });
 
-      expect(searchAssetsSpy.execute).toHaveBeenCalledWith({ value: "Cats" });
+      expect(provider.state().searchParameters).toEqual({ value: "Cats" });
     });
 
     it("Passes an empty assets array by default", () => {
-      let searchAssetsDummy = {};
-      let childrenFake = new ChildrenFake();
-
-      shallow(
-        <AssetsProvider searchAssets={searchAssetsDummy}>
-          {childrenFake.render}
-        </AssetsProvider>
-      );
-
       expect(childrenFake.assetsReceived).toEqual([]);
     });
 
     it("Passes the found assets from the searchAssets prop to the children", async () => {
-      let searchAssetsStub = {
-        execute: () => ({
-          assets: [{ cat: "meow" }]
-        })
-      };
-      let childrenFake = new ChildrenFake();
-
-      mount(
-        <AssetsProvider searchAssets={searchAssetsStub}>
-          {childrenFake.render}
-        </AssetsProvider>
-      );
-
       await childrenFake.executeOnSearch();
 
       expect(childrenFake.assetsReceived).toEqual([{ cat: "meow" }]);
     });
+
+    it("Passes the total number of pages into the children", async () => {
+      await childrenFake.executeOnSearch();
+
+      expect(childrenFake.numberOfPagesReceived).toEqual(5);
+    });
+
+    it("Passes the current page into the children", () => {
+      expect(childrenFake.currentPageReceived).toEqual(1);
+    });
+
+    describe("Selecting a page", () => {
+      it("Can set the page from the children", async () => {
+        await childrenFake.selectPage(5);
+
+        expect(provider.state().page).toEqual(5);
+      });
+
+      it("Passes the new page to the children", async () => {
+        await childrenFake.selectPage(5);
+
+        expect(childrenFake.currentPageReceived).toEqual(5);
+      });
+
+      it("Searches with the previous parameters when selecting a page", async () => {
+        await childrenFake.executeOnSearch({ value: "Cat" });
+        await childrenFake.selectPage(3);
+
+        expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
+          value: "Cat",
+          page: 3
+        });
+      });
+
+      it("Resets the page to one when searching with new terms", async () => {
+        await childrenFake.selectPage(3);
+        await childrenFake.executeOnSearch({ value: "Cat" });
+
+        expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
+          value: "Cat",
+          page: 1
+        });
+        expect(childrenFake.currentPageReceived).toEqual(1);
+      });
+    });
   });
 
   describe("Example Two", () => {
-    it("Can call the searchAssets prop from the children", () => {
-      let searchAssetsSpy = {
+    let childrenFake, searchAssetsSpy, provider;
+
+    beforeEach(() => {
+      searchAssetsSpy = {
         execute: jest.fn(() => ({
-          assets: []
+          assets: [{ dog: "woof" }],
+          pages: 10
         }))
       };
-      let childrenFake = new ChildrenFake("Dogs");
 
-      shallow(
+      childrenFake = new ChildrenFake();
+
+      provider = mount(
         <AssetsProvider searchAssets={searchAssetsSpy}>
           {childrenFake.render}
         </AssetsProvider>
       );
+    });
 
+    it("Can call the searchAssets prop from the children", () => {
       childrenFake.executeOnSearch();
 
       expect(searchAssetsSpy.execute).toHaveBeenCalled();
     });
 
+    it("Defaults the page to one", () => {
+      expect(provider.state().page).toEqual(1);
+    });
+
+    it("Defaults the number of pages to 0", () => {
+      expect(provider.state().pages).toEqual(0);
+    });
+
     it("Passes the value from the children to the searchAssets prop", () => {
-      let searchAssetsSpy = {
-        execute: jest.fn(() => ({
-          assets: []
-        }))
-      };
-      let childrenFake = new ChildrenFake("Dogs");
+      childrenFake.executeOnSearch({ filter: "Dogs" });
 
-      shallow(
-        <AssetsProvider searchAssets={searchAssetsSpy}>
-          {childrenFake.render}
-        </AssetsProvider>
-      );
+      expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
+        filter: "Dogs",
+        page: 1
+      });
+    });
 
-      childrenFake.executeOnSearch();
+    it("Stores the search parameters in the state", async () => {
+      await childrenFake.executeOnSearch({ filter: "Dogs" });
 
-      expect(searchAssetsSpy.execute).toHaveBeenCalledWith({ value: "Dogs" });
+      expect(provider.state().searchParameters).toEqual({ filter: "Dogs" });
     });
 
     it("Passes the found assets from the searchAssets prop to the children", async () => {
-      let searchAssetsStub = {
-        execute: () => ({
-          assets: [{ dog: "woof" }]
-        })
-      };
-      let childrenFake = new ChildrenFake();
-
-      mount(
-        <AssetsProvider searchAssets={searchAssetsStub}>
-          {childrenFake.render}
-        </AssetsProvider>
-      );
-
       await childrenFake.executeOnSearch();
 
       expect(childrenFake.assetsReceived).toEqual([{ dog: "woof" }]);
+    });
+
+    it("Passes the total number of pages into the children", async () => {
+      await childrenFake.executeOnSearch();
+
+      expect(childrenFake.numberOfPagesReceived).toEqual(10);
+    });
+
+    it("Passes the current page into the children", () => {
+      expect(childrenFake.currentPageReceived).toEqual(1);
+    });
+
+    describe("Selecting a page", () => {
+      it("Can set the page from the children", async () => {
+        await childrenFake.selectPage(3);
+
+        expect(provider.state().page).toEqual(3);
+      });
+
+      it("Passes the new page to the children", async () => {
+        await childrenFake.selectPage(3);
+
+        expect(childrenFake.currentPageReceived).toEqual(3);
+      });
+
+      it("Searches with the previous parameters when selecting a page", async () => {
+        await childrenFake.executeOnSearch({ filter: "Dogs" });
+        await childrenFake.selectPage(3);
+
+        expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
+          filter: "Dogs",
+          page: 3
+        });
+      });
+
+      it("Resets the page to one when searching with new terms", async () => {
+        await childrenFake.selectPage(5);
+        await childrenFake.executeOnSearch({ filter: "Dogs" });
+
+        expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
+          filter: "Dogs",
+          page: 1
+        });
+        expect(childrenFake.currentPageReceived).toEqual(1);
+      });
     });
   });
 });

@@ -2,11 +2,14 @@ import fetch from "isomorphic-fetch";
 import Asset from "../../Domain/Asset";
 
 export default class SearchGateway {
-  async searchWithFilters(filters) {
+  async searchWithFilters(filters, page) {
     let response = await fetch(
       `${
         process.env.REACT_APP_ASSET_REGISTER_API_URL
-      }api/v1/asset/search?${this.buildQueryStringFromFilters(filters)}`
+      }api/v1/asset/search?${this.buildQueryStringFromFiltersAndPage(
+        filters,
+        page
+      )}`
     );
 
     if (response.ok) {
@@ -16,14 +19,14 @@ export default class SearchGateway {
         this.buildAssetFromResponseData(foundAsset)
       );
 
-      return assets;
+      return { assets, pages: data.pages };
     } else {
-      return [];
+      return { assets: [], pages: 0 };
     }
   }
 
-  buildQueryStringFromFilters(filters) {
-    return Object.entries(filters)
+  buildQueryStringFromFiltersAndPage(filters, page) {
+    return Object.entries({ ...filters, page })
       .map(([key, value]) => `${key}=${value}`)
       .join("&");
   }
