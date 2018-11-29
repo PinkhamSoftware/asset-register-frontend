@@ -2,10 +2,6 @@
   margin: 0 0 10px 0;
 }
 
-.asset-list {
-  width: 960px;
-}
-
 .asset {
   display: grid;
   grid-template-columns: 33% 33% 33%;

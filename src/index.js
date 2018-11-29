@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { init } from "@sentry/browser";
+import 'govuk-frontend/all.js'
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
