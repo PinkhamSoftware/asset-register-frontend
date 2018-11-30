@@ -24,12 +24,12 @@ export default class SearchBox extends Component {
     return (
       <form data-test="search-form" onSubmit={this.onFormSubmit}>
         <fieldset className="govuk-fieldset">
-          <div class="govuk-form-group">
-            <label class="govuk-label" for="scheme-id">
+          <div className="govuk-form-group">
+            <label className="govuk-label" htmlFor="scheme-id">
               Scheme ID
             </label>
             <input
-              class="govuk-input"
+              className="govuk-input"
               id="scheme-id"
               data-test="search-scheme-id"
               name="scheme-id"
@@ -37,12 +37,12 @@ export default class SearchBox extends Component {
               onChange={e => this.onSearchChange("schemeId", e.target.value)}
             />
           </div>
-          <div class="govuk-form-group">
-            <label class="govuk-label" for="address">
+          <div className="govuk-form-group">
+            <label className="govuk-label" htmlFor="address">
               Address
             </label>
             <input
-              class="govuk-input"
+              className="govuk-input"
               id="address"
               data-test="search-address"
               name="address"

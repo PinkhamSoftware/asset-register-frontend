@@ -36,10 +36,10 @@ const SearchPage = props => (
       currentPage
     }) => (
       <div className="govuk-grid-row">
-        <div class="govuk-grid-column-one-third">
+        <div className="govuk-grid-column-one-third">
           <SearchBox onSearch={onSearch} />
         </div>
-        <div class="govuk-grid-column-two-thirds">
+        <div className="govuk-grid-column-two-thirds">
           <AssetList assets={assets} />
           <Pagination
             onPageSelect={onPageSelect}

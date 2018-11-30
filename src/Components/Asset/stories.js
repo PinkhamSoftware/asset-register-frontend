@@ -9,7 +9,7 @@ storiesOf("Asset", module).add("Default", () => {
     modifiedDateTime: "2018-11-13T11:04:23.169Z",
     monthPaid: "Jan",
     accountingYear: "2018",
-    schemeId: "12345",
+    schemeId: 12345,
     locationLaRegionName: "Yorkshire",
     imsOldRegion: "West Yorkshire",
     noOfBeds: "5",
