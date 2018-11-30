@@ -21,7 +21,12 @@ describe("When rendering the app", () => {
       .respondWithAssets([exampleAssetOne])
       .successfully();
 
-    let app = mount(<App />);
+    let app = mount(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>
+    );
+
     app
       .find('[data-test="search-scheme-id"]')
       .simulate("change", { target: { value: "1" } });
@@ -46,17 +51,27 @@ describe("When rendering the app", () => {
       "123 Fake Street"
     );
   });
-  it("Get and asset from API and display it on the page", async () => {
+
+  it("Get an asset from API and display it on the page", async () => {
     process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
     
     let getAssetSimulator = new GetAssetSimulator("https://meow.cat/");
 
-    getAssetSimulator.getAssetWithId(1).respondWithData(exampleAssetOne).successfully();
+    getAssetSimulator.getAssetWithId(1).respondWithData({asset: exampleAssetOne}).successfully();
 
     let app = mount(
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={['/asset/1']}>
         <App />
       </MemoryRouter>
     );
-    });
+
+    await waitForRequestToResolve();
+    app.update();
+    
+    expect(app.find({ "data-test": "asset-scheme-id" }).text())
+    .toEqual("12345");
+    
+    expect(app.find({ "data-test": "asset-accounting-year" }).text())
+    .toEqual("2018");
+  });
 });
