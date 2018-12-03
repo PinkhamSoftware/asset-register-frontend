@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Link} from "react-router-dom";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
@@ -34,7 +34,7 @@ const SearchPage = props => (
           <SearchBox onSearch={onSearch} />
         </div>
         <div className="govuk-grid-column-two-thirds">
-          <AssetList assets={assets} />
+          <AssetList linkComponent={Link} assets={assets} />
           <Pagination
             onPageSelect={onPageSelect}
             max={numberOfPages}
