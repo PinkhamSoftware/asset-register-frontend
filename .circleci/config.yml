@@ -22,29 +22,17 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: npm test
 
-  deploy_dark_staging:
+  deploy_staging:
     executor: node
     steps:
       - checkout
-      - run: bin/deploy-dark.sh staging
-
-  flip_staging:
-    executor: node
-    steps:
-      - checkout
-      - run: bin/flip-dark-to-live.sh staging
-
-  revert_staging:
-    executor: node
-    steps:
-      - checkout
-      - run: bin/flip-dark-to-live.sh staging
+      - run: bin/deploy.sh staging
 
   deploy_dark_production:
     executor: node
     steps:
       - checkout
-      - run: bin/deploy-dark.sh production
+      - run: bin/deploy.sh production
 
   flip_production:
     executor: node
@@ -63,27 +51,17 @@ workflows:
   build_test_deploy:
     jobs:
       - test
-      - deploy_dark_staging:
+      - deploy_staging:
           requires:
             - test
           filters:
             branches:
               only:
                 - master
-      - flip_staging:
-          requires:
-            - deploy_dark_staging
-      - hold_revert_staging:
-          type: approval
-          requires: 
-            - flip_staging
-      - revert_staging:
-          requires: 
-            - hold_revert_staging
       - hold_production_deploy:
           type: approval
           requires:
-            - flip_staging
+            - deploy_staging
       - deploy_dark_production:
           requires:
             - hold_production_deploy
@@ -99,5 +77,5 @@ workflows:
           requires:
             - flip_production
       - revert_production:
-          requires: 
+          requires:
             - hold_revert_production
