@@ -26,15 +26,9 @@ const searchAssetUsecase = new SearchAssets({ searchGateway });
 const assetGateway = new AssetGateway();
 const getAssetUsecase = new GetAsset({ assetGateway });
 
-const SearchPage = props => (                
+const SearchPage = props => (
   <AssetsProvider searchAssets={searchAssetUsecase}>
-    {({
-      assets,
-      onSearch,
-      onPageSelect,
-      numberOfPages,
-      currentPage
-    }) => (
+    {({ assets, onSearch, onPageSelect, numberOfPages, currentPage }) => (
       <div className="govuk-grid-row">
         <div className="govuk-grid-column-one-third">
           <SearchBox onSearch={onSearch} />
@@ -53,8 +47,11 @@ const SearchPage = props => (
 );
 
 const AssetPage = props => (
-  <AssetProvider assetId={1} getAsset={getAssetUsecase} >
-    {({ asset }) => (<Asset asset={asset}></Asset>)}
+  <AssetProvider
+    assetId={parseInt(props.match.params.assetId)}
+    getAsset={getAssetUsecase}
+  >
+    {({ asset }) => <Asset asset={asset} />}
   </AssetProvider>
 );
 
@@ -63,17 +60,13 @@ class App extends Component {
     return (
       <Router>
         <div>
-          <Header/>
+          <Header />
           <div className="govuk-width-container">
             <main className="govuk-main-wrapper">
               <Switch>
-                <Route exact path='/'>
-                  <SearchPage/>
-                </Route>
-                <Route path="/asset/:assetId">
-                  <AssetPage/>
-                </Route>
-              </Switch> 
+                <Route exact path="/" component={SearchPage} />
+                <Route path="/asset/:assetId" component={AssetPage} />
+              </Switch>
             </main>
           </div>
           <Footer />
