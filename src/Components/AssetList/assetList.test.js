@@ -1,23 +1,32 @@
 import React from "react";
-import { shallow } from "enzyme";
+import { mount, shallow } from "enzyme";
 import AssetList from ".";
 
 describe("<AssetList>", () => {
   let assetList;
 
+  const LinkStub = props => (
+    <div {...props} data-test="asset-link-spy">
+      {props.children}
+    </div>
+  );
+
   describe("Given no assets", () => {
     it("Renders the no assets are found message", () => {
       let assetList = shallow(<AssetList assets={[]} />);
 
-      expect(assetList.find({'data-test': 'asset-list-no-assets-found'}).length).toEqual(1);
+      expect(
+        assetList.find({ "data-test": "asset-list-no-assets-found" }).length
+      ).toEqual(1);
     });
   });
 
   describe("Given one asset", () => {
     describe("Example one", () => {
       beforeEach(() => {
-        assetList = shallow(
+        assetList = mount(
           <AssetList
+            linkComponent={LinkStub}
             assets={[
               {
                 id: 123,
@@ -50,12 +59,25 @@ describe("<AssetList>", () => {
           "12345"
         );
       });
+
+      it("Renders the link component handed in via props", () => {
+        expect(assetList.find('[data-test="asset-link-spy"]').length).toEqual(
+          1
+        );
+      });
+
+      it("Renders the link to view the single asset.", () => {
+        expect(assetList.find('[data-test="asset-link"]').props().to).toEqual(
+          "/asset/123"
+        );
+      });
     });
 
     describe("Example two", () => {
       beforeEach(() => {
-        assetList = shallow(
+        assetList = mount(
           <AssetList
+            linkComponent={LinkStub}
             assets={[
               {
                 id: 234,
@@ -88,6 +110,18 @@ describe("<AssetList>", () => {
           "54321"
         );
       });
+
+      it("Renders the link component handed in via props", () => {
+        expect(assetList.find('[data-test="asset-link-spy"]').length).toEqual(
+          1
+        );
+      });
+
+      it("Renders the link to view the single asset.", () => {
+        expect(assetList.find('[data-test="asset-link"]').props().to).toEqual(
+          "/asset/234"
+        );
+      });
     });
   });
 
@@ -95,8 +129,9 @@ describe("<AssetList>", () => {
     let assets;
 
     beforeEach(() => {
-      assetList = shallow(
+      assetList = mount(
         <AssetList
+          linkComponent={LinkStub}
           assets={[
             {
               id: 235,

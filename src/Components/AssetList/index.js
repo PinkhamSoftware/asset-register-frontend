@@ -12,8 +12,10 @@ export default class AssetList extends Component {
           {this.props.assets.map(asset => (
             <div key={asset.id} data-test="asset" className="asset">
               <div className="col">
-                <h3 className="asset-label">Scheme ID</h3>
-                <div data-test="asset-scheme-id">{asset.schemeId}</div>
+                <this.props.linkComponent data-test="asset-link" to={`/asset/${asset.id}`}>
+                  <h3 className="asset-label">Scheme ID</h3>
+                  <div data-test="asset-scheme-id">{asset.schemeId}</div>
+                </this.props.linkComponent>
               </div>
               <div className="col">
                 <h3 className="asset-label">Address</h3>
