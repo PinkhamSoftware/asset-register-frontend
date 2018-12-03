@@ -55,7 +55,7 @@ Asset.propTypes = {
     modifiedDateTime: PropTypes.string.isRequired,
     monthPaid: PropTypes.string.isRequired,
     accountingYear: PropTypes.string.isRequired,
-    schemeId: PropTypes.string.isRequired,
+    schemeId: PropTypes.number.isRequired,
     locationLaRegionName: PropTypes.string.isRequired,
     imsOldRegion: PropTypes.string.isRequired,
     noOfBeds: PropTypes.string.isRequired,
