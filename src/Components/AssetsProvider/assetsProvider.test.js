@@ -64,7 +64,7 @@ describe("<AssetsProvider>", () => {
       childrenFake.executeOnSearch({ value: "Cats" });
 
       expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-        value: "Cats",
+        filters: { value: "Cats" },
         page: 1
       });
     });
@@ -113,7 +113,7 @@ describe("<AssetsProvider>", () => {
         await childrenFake.selectPage(3);
 
         expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-          value: "Cat",
+          filters: { value: "Cat" },
           page: 3
         });
       });
@@ -123,7 +123,7 @@ describe("<AssetsProvider>", () => {
         await childrenFake.executeOnSearch({ value: "Cat" });
 
         expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-          value: "Cat",
+          filters: { value: "Cat" },
           page: 1
         });
         expect(childrenFake.currentPageReceived).toEqual(1);
@@ -166,18 +166,18 @@ describe("<AssetsProvider>", () => {
     });
 
     it("Passes the value from the children to the searchAssets prop", () => {
-      childrenFake.executeOnSearch({ filter: "Dogs" });
+      childrenFake.executeOnSearch({ animal: "Dogs" });
 
       expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-        filter: "Dogs",
+        filters: { animal: "Dogs" },
         page: 1
       });
     });
 
     it("Stores the search parameters in the state", async () => {
-      await childrenFake.executeOnSearch({ filter: "Dogs" });
+      await childrenFake.executeOnSearch({ animal: "Dogs" });
 
-      expect(provider.state().searchParameters).toEqual({ filter: "Dogs" });
+      expect(provider.state().searchParameters).toEqual({ animal: "Dogs" });
     });
 
     it("Passes the found assets from the searchAssets prop to the children", async () => {
@@ -210,21 +210,21 @@ describe("<AssetsProvider>", () => {
       });
 
       it("Searches with the previous parameters when selecting a page", async () => {
-        await childrenFake.executeOnSearch({ filter: "Dogs" });
+        await childrenFake.executeOnSearch({ animal: "Dogs" });
         await childrenFake.selectPage(3);
 
         expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-          filter: "Dogs",
+          filters: { animal: "Dogs" },
           page: 3
         });
       });
 
       it("Resets the page to one when searching with new terms", async () => {
         await childrenFake.selectPage(5);
-        await childrenFake.executeOnSearch({ filter: "Dogs" });
+        await childrenFake.executeOnSearch({ animal: "Dogs" });
 
         expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-          filter: "Dogs",
+          filters: { animal: "Dogs" },
           page: 1
         });
         expect(childrenFake.currentPageReceived).toEqual(1);

@@ -13,7 +13,7 @@ export default class AssetsProvider extends Component {
 
   onSearch = async searchRequest => {
     let { assets, pages } = await this.props.searchAssets.execute({
-      ...searchRequest,
+      filters: searchRequest,
       page: 1
     });
     this.setState({ searchParameters: searchRequest, assets, pages, page: 1 });
@@ -21,7 +21,7 @@ export default class AssetsProvider extends Component {
 
   onPageSelect = async ({ page }) => {
     let { assets } = await this.props.searchAssets.execute({
-      ...this.state.searchParameters,
+      filters: this.state.searchParameters,
       page
     });
 

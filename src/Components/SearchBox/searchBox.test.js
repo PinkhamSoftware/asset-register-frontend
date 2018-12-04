@@ -50,7 +50,7 @@ describe("<SearchBox>", () => {
           searchBox.submitForm();
 
           expect(onSearchSpy).toHaveBeenCalledWith({
-            filters: { schemeId: "Cats" }
+            schemeId: "Cats"
           });
         });
       });
@@ -69,7 +69,7 @@ describe("<SearchBox>", () => {
           searchBox.submitForm();
 
           expect(onSearchSpy).toHaveBeenCalledWith({
-            filters: { schemeId: "Dogs" }
+            schemeId: "Dogs"
           });
         });
       });
@@ -89,7 +89,7 @@ describe("<SearchBox>", () => {
           searchBox.submitForm();
 
           expect(onSearchSpy).toHaveBeenCalledWith({
-            filters: { address: "123 Fake Street" }
+            address: "123 Fake Street"
           });
         });
       });
@@ -108,7 +108,7 @@ describe("<SearchBox>", () => {
           searchBox.submitForm();
 
           expect(onSearchSpy).toHaveBeenCalledWith({
-            filters: { address: "Dog Town" }
+            address: "Dog Town"
           });
         });
       });
@@ -129,7 +129,8 @@ describe("<SearchBox>", () => {
           searchBox.submitForm();
 
           expect(onSearchSpy).toHaveBeenCalledWith({
-            filters: { schemeId: "12345", address: "123 Fake Street" }
+            schemeId: "12345",
+            address: "123 Fake Street"
           });
         });
       });
@@ -149,7 +150,8 @@ describe("<SearchBox>", () => {
           searchBox.submitForm();
 
           expect(onSearchSpy).toHaveBeenCalledWith({
-            filters: { schemeId: "54321", address: "Dog Town" }
+            schemeId: "54321",
+            address: "Dog Town"
           });
         });
       });

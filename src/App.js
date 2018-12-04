@@ -65,6 +65,7 @@ class App extends Component {
             <main className="govuk-main-wrapper">
               <Switch>
                 <Route exact path="/" component={SearchPage} />
+                <Route exact path="/search" component={SearchPage} />
                 <Route path="/asset/:assetId" component={AssetPage} />
               </Switch>
             </main>
