@@ -18,25 +18,17 @@ export default class AssetsProvider extends Component {
       page
     });
 
-    this.setState(
-      {
-        searchParameters: parameters,
-        assets,
-        pages,
-        page
-      },
-      () => {
-        this.props.history.storeSearch({ ...parameters, page });
-      }
-    );
+    await this.setState({ searchParameters: parameters, assets, pages, page });
   };
 
   onSearch = async searchRequest => {
     await this.searchAssets({ parameters: searchRequest, page: 1 });
+    this.props.history.storeSearch({ ...searchRequest, page: 1 });
   };
 
   onPageSelect = async ({ page }) => {
     await this.searchAssets({ parameters: this.state.searchParameters, page });
+    this.props.history.storeSearch({ ...this.state.searchParameters, page });
   };
 
   componentDidMount() {

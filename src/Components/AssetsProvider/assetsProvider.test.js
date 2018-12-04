@@ -182,6 +182,23 @@ describe("<AssetsProvider>", () => {
         });
       });
 
+      it("Doesn't store the search in the history", () => {
+        provider = mount(
+          <AssetsProvider
+            initialSearchParameters={{
+              searchParameters: { dog: "woof" },
+              page: 2
+            }}
+            history={historyGatewaySpy}
+            searchAssets={searchAssetsSpy}
+          >
+            {childrenFake.render}
+          </AssetsProvider>
+        );
+
+        expect(historyGatewaySpy.storeSearch).not.toHaveBeenCalled();
+      });
+
       it("Doesn't call search assets with empty initial search parameters", () => {
         provider = mount(
           <AssetsProvider
@@ -343,9 +360,7 @@ describe("<AssetsProvider>", () => {
         };
 
         childrenFake = new ChildrenFake();
-      });
 
-      it("Calls search assets with the initial search parameters", () => {
         provider = mount(
           <AssetsProvider
             initialSearchParameters={{
@@ -358,11 +373,17 @@ describe("<AssetsProvider>", () => {
             {childrenFake.render}
           </AssetsProvider>
         );
+      });
 
+      it("Calls search assets with the initial search parameters", () => {
         expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
           filters: { cat: "meow" },
           page: 5
         });
+      });
+
+      it("Doesn't store the search in the history", () => {
+        expect(historyGatewaySpy.storeSearch).not.toHaveBeenCalled();
       });
     });
   });
