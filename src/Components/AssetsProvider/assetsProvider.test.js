@@ -27,9 +27,13 @@ class ChildrenFake {
 
 describe("<AssetsProvider>", () => {
   describe("Example One", () => {
-    let childrenFake, searchAssetsSpy, provider;
+    let childrenFake, historyGatewaySpy, searchAssetsSpy, provider;
 
     beforeEach(() => {
+      historyGatewaySpy = {
+        storeSearch: jest.fn()
+      };
+
       searchAssetsSpy = {
         execute: jest.fn(() => ({
           assets: [{ cat: "meow" }],
@@ -40,7 +44,10 @@ describe("<AssetsProvider>", () => {
       childrenFake = new ChildrenFake();
 
       provider = mount(
-        <AssetsProvider searchAssets={searchAssetsSpy}>
+        <AssetsProvider
+          history={historyGatewaySpy}
+          searchAssets={searchAssetsSpy}
+        >
           {childrenFake.render}
         </AssetsProvider>
       );
@@ -65,6 +72,15 @@ describe("<AssetsProvider>", () => {
 
       expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
         filters: { value: "Cats" },
+        page: 1
+      });
+    });
+
+    it("Stores the search in the history", async () => {
+      await childrenFake.executeOnSearch({ value: "Cats" });
+
+      expect(historyGatewaySpy.storeSearch).toHaveBeenCalledWith({
+        value: "Cats",
         page: 1
       });
     });
@@ -129,12 +145,53 @@ describe("<AssetsProvider>", () => {
         expect(childrenFake.currentPageReceived).toEqual(1);
       });
     });
+
+    describe("Given initial search parameters", () => {
+      beforeEach(() => {
+        historyGatewaySpy = {
+          storeSearch: jest.fn()
+        };
+
+        searchAssetsSpy = {
+          execute: jest.fn(() => ({
+            assets: [{ cat: "meow" }],
+            pages: 5
+          }))
+        };
+
+        childrenFake = new ChildrenFake();
+
+        provider = mount(
+          <AssetsProvider
+            initialSearchParameters={{
+              searchParameters: { dog: "woof" },
+              page: 2
+            }}
+            history={historyGatewaySpy}
+            searchAssets={searchAssetsSpy}
+          >
+            {childrenFake.render}
+          </AssetsProvider>
+        );
+      });
+
+      it("Calls search assets with the initial search parameters", () => {
+        expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
+          filters: { dog: "woof" },
+          page: 2
+        });
+      });
+    });
   });
 
   describe("Example Two", () => {
-    let childrenFake, searchAssetsSpy, provider;
+    let childrenFake, historyGatewaySpy, searchAssetsSpy, provider;
 
     beforeEach(() => {
+      historyGatewaySpy = {
+        storeSearch: jest.fn()
+      };
+
       searchAssetsSpy = {
         execute: jest.fn(() => ({
           assets: [{ dog: "woof" }],
@@ -145,7 +202,10 @@ describe("<AssetsProvider>", () => {
       childrenFake = new ChildrenFake();
 
       provider = mount(
-        <AssetsProvider searchAssets={searchAssetsSpy}>
+        <AssetsProvider
+          history={historyGatewaySpy}
+          searchAssets={searchAssetsSpy}
+        >
           {childrenFake.render}
         </AssetsProvider>
       );
@@ -175,9 +235,22 @@ describe("<AssetsProvider>", () => {
     });
 
     it("Stores the search parameters in the state", async () => {
-      await childrenFake.executeOnSearch({ animal: "Dogs" });
+      await childrenFake.executeOnSearch({ animal: "Dogs", noise: "Woof" });
 
-      expect(provider.state().searchParameters).toEqual({ animal: "Dogs" });
+      expect(provider.state().searchParameters).toEqual({
+        animal: "Dogs",
+        noise: "Woof"
+      });
+    });
+
+    it("Stores the search in the history", async () => {
+      await childrenFake.executeOnSearch({ animal: "Dogs", noise: "Woof" });
+
+      expect(historyGatewaySpy.storeSearch).toHaveBeenCalledWith({
+        animal: "Dogs",
+        noise: "Woof",
+        page: 1
+      });
     });
 
     it("Passes the found assets from the searchAssets prop to the children", async () => {
@@ -210,24 +283,72 @@ describe("<AssetsProvider>", () => {
       });
 
       it("Searches with the previous parameters when selecting a page", async () => {
-        await childrenFake.executeOnSearch({ animal: "Dogs" });
+        await childrenFake.executeOnSearch({ animal: "Dogs", noise: "Woof" });
         await childrenFake.selectPage(3);
 
         expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-          filters: { animal: "Dogs" },
+          filters: { animal: "Dogs", noise: "Woof" },
+          page: 3
+        });
+      });
+
+      it("Stores the page in the history", async () => {
+        await childrenFake.executeOnSearch({ animal: "Dogs", noise: "Woof" });
+        await childrenFake.selectPage(3);
+
+        expect(historyGatewaySpy.storeSearch).toHaveBeenCalledWith({
+          animal: "Dogs",
+          noise: "Woof",
           page: 3
         });
       });
 
       it("Resets the page to one when searching with new terms", async () => {
         await childrenFake.selectPage(5);
-        await childrenFake.executeOnSearch({ animal: "Dogs" });
+        await childrenFake.executeOnSearch({ animal: "Dogs", noise: "Woof" });
 
         expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-          filters: { animal: "Dogs" },
+          filters: { animal: "Dogs", noise: "Woof" },
           page: 1
         });
         expect(childrenFake.currentPageReceived).toEqual(1);
+      });
+    });
+
+    describe("Given initial search parameters", () => {
+      beforeEach(() => {
+        historyGatewaySpy = {
+          storeSearch: jest.fn()
+        };
+
+        searchAssetsSpy = {
+          execute: jest.fn(() => ({
+            assets: [{ dog: "woof" }],
+            pages: 10
+          }))
+        };
+
+        childrenFake = new ChildrenFake();
+      });
+
+      it("Calls search assets with the initial search parameters", () => {
+        provider = mount(
+          <AssetsProvider
+            initialSearchParameters={{
+              searchParameters: { cat: "meow" },
+              page: 5
+            }}
+            history={historyGatewaySpy}
+            searchAssets={searchAssetsSpy}
+          >
+            {childrenFake.render}
+          </AssetsProvider>
+        );
+
+        expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
+          filters: { cat: "meow" },
+          page: 5
+        });
       });
     });
   });

@@ -3,6 +3,7 @@ import React, { Component } from "react";
 export default class AssetsProvider extends Component {
   constructor() {
     super();
+
     this.state = {
       assets: [],
       page: 1,
@@ -11,22 +12,39 @@ export default class AssetsProvider extends Component {
     };
   }
 
-  onSearch = async searchRequest => {
+  searchAssets = async ({ parameters, page }) => {
     let { assets, pages } = await this.props.searchAssets.execute({
-      filters: searchRequest,
-      page: 1
-    });
-    this.setState({ searchParameters: searchRequest, assets, pages, page: 1 });
-  };
-
-  onPageSelect = async ({ page }) => {
-    let { assets } = await this.props.searchAssets.execute({
-      filters: this.state.searchParameters,
+      filters: parameters,
       page
     });
 
-    this.setState({ page, assets });
+    this.setState(
+      {
+        searchParameters: parameters,
+        assets,
+        pages,
+        page
+      },
+      () => {
+        this.props.history.storeSearch({ ...parameters, page });
+      }
+    );
   };
+
+  onSearch = async searchRequest => {
+    await this.searchAssets({ parameters: searchRequest, page: 1 });
+  };
+
+  onPageSelect = async ({ page }) => {
+    await this.searchAssets({ parameters: this.state.searchParameters, page });
+  };
+
+  componentDidMount() {
+    if (this.props.initialSearchParameters) {
+      let { searchParameters, page } = this.props.initialSearchParameters;
+      this.searchAssets({ parameters: searchParameters, page });
+    }
+  }
 
   render() {
     return (
