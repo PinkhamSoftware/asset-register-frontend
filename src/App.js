@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch, Link} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
@@ -60,7 +60,7 @@ class App extends Component {
     return (
       <Router>
         <div>
-          <Header />
+          <Header linkComponent={Link} />
           <div className="govuk-width-container">
             <main className="govuk-main-wrapper">
               <Switch>
