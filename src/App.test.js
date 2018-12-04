@@ -10,124 +10,175 @@ const waitForRequestToResolve = async () => {
   await new Promise(resolve => setTimeout(resolve, 100));
 };
 
-describe("When rendering the app", () => {
-  it("Searches the API for an asset and displays it in the list", async () => {
-    process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
-    let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
-
-    searchAssetSimulator
-      .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
-      .searchAssetWithPage(1)
-      .respondWithAssets([exampleAssetOne])
-      .successfully();
-
-    let app = mount(
-      <MemoryRouter initialEntries={["/"]}>
+class AppPage {
+  constructor(path) {
+    this.page = mount(
+      <MemoryRouter initialEntries={[path]}>
         <App />
       </MemoryRouter>
     );
+  }
 
-    app
-      .find('[data-test="search-scheme-id"]')
-      .simulate("change", { target: { value: "1" } });
+  async load() {
+    await this.waitForRequestToResolve();
+    this.update();
+  }
 
-    app
-      .find('[data-test="search-address"]')
-      .simulate("change", { target: { value: "Fake Street" } });
+  async waitForRequestToResolve() {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
 
-    app
-      .find('[data-test="search-form"]')
-      .simulate("submit", { preventDefault: jest.fn() });
+  find(params) {
+    return this.page.find(params);
+  }
 
-    await waitForRequestToResolve();
-    app.update();
+  update() {
+    this.page.update();
+  }
 
-    let renderedAsset = app.find({ "data-test": "asset" });
+  searchForSchemeId(schemeId) {
+    this.find('[data-test="search-scheme-id"]').simulate("change", {
+      target: { value: schemeId }
+    });
+  }
 
-    expect(
-      renderedAsset.find({ "data-test": "asset-scheme-id" }).text()
-    ).toEqual("12345");
-    expect(renderedAsset.find({ "data-test": "asset-address" }).text()).toEqual(
-      "123 Fake Street"
-    );
+  searchForAddress(address) {
+    this.find('[data-test="search-address"]').simulate("change", {
+      target: { value: address }
+    });
+  }
+
+  async executeSearch() {
+    this.find('[data-test="search-form"]').simulate("submit", {
+      preventDefault: jest.fn()
+    });
+
+    await this.waitForRequestToResolve();
+    this.update();
+  }
+}
+
+describe("When using the asset register", () => {
+  describe("When searching for an asset", () => {
+    it("Searches the API for an asset and displays it in the list", async () => {
+      process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
+      let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
+
+      searchAssetSimulator
+        .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
+        .searchAssetWithPage(1)
+        .respondWithAssets([exampleAssetOne])
+        .successfully();
+
+      let app = new AppPage("/");
+
+      app.searchForSchemeId("1");
+
+      app.searchForAddress("Fake Street");
+
+      await app.executeSearch();
+
+      let renderedAsset = app.find({ "data-test": "asset" });
+
+      expect(
+        renderedAsset.find({ "data-test": "asset-scheme-id" }).text()
+      ).toEqual("12345");
+      expect(
+        renderedAsset.find({ "data-test": "asset-address" }).text()
+      ).toEqual("123 Fake Street");
+    });
+
+    it("Allows us to navigate to a found asset from the search", async () => {
+      process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
+      let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
+      let getAssetSimulator = new GetAssetSimulator("https://meow.cat/");
+
+      searchAssetSimulator
+        .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
+        .searchAssetWithPage(1)
+        .respondWithAssets([exampleAssetOne])
+        .successfully();
+
+      getAssetSimulator
+        .getAssetWithId(1)
+        .respondWithData({ asset: exampleAssetOne })
+        .successfully();
+
+      let app = new AppPage("/");
+
+      app.searchForSchemeId("1");
+
+      app.searchForAddress("Fake Street");
+
+      await app.executeSearch();
+
+      app.find("Link[data-test='asset-link']").simulate("click", { button: 0 });
+
+      await waitForRequestToResolve();
+      app.update();
+
+      expect(app.find({ "data-test": "asset-scheme-id" }).text()).toEqual(
+        "12345"
+      );
+
+      expect(app.find({ "data-test": "asset-accounting-year" }).text()).toEqual(
+        "2018"
+      );
+    });
   });
 
-  it("Allows us to navigate to a found asset from the search", async () => {
-    process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
-    let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
-    let getAssetSimulator = new GetAssetSimulator("https://meow.cat/");
+  describe("When viewing search results", () => {
+    it("Gets the search results from the API and displays them on the page", async () => {
+      process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
+      let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
 
-    searchAssetSimulator
-      .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
-      .searchAssetWithPage(1)
-      .respondWithAssets([exampleAssetOne])
-      .successfully();
+      searchAssetSimulator
+        .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
+        .searchAssetWithPage(1)
+        .respondWithAssets([exampleAssetOne])
+        .successfully();
 
-    getAssetSimulator
-      .getAssetWithId(1)
-      .respondWithData({ asset: exampleAssetOne })
-      .successfully();
+      let app = new AppPage("/search?schemeId=1&address=Fake Street&page=1");
+      await app.load();
 
-    let app = mount(
-      <MemoryRouter initialEntries={["/"]}>
-        <App />
-      </MemoryRouter>
-    );
+      let renderedAsset = app.find({ "data-test": "asset" });
 
-    app
-      .find('[data-test="search-scheme-id"]')
-      .simulate("change", { target: { value: "1" } });
-
-    app
-      .find('[data-test="search-address"]')
-      .simulate("change", { target: { value: "Fake Street" } });
-
-    app
-      .find('[data-test="search-form"]')
-      .simulate("submit", { preventDefault: jest.fn() });
-
-    await waitForRequestToResolve();
-    app.update();
-
-    app.find("Link[data-test='asset-link']").simulate('click', { button: 0 });
-
-    await waitForRequestToResolve();
-    app.update();
-
-    expect(app.find({ "data-test": "asset-scheme-id" }).text()).toEqual(
-      "12345"
-    );
-
-    expect(app.find({ "data-test": "asset-accounting-year" }).text()).toEqual(
-      "2018"
-    );
+      expect(
+        renderedAsset.find({ "data-test": "asset-scheme-id" }).text()
+      ).toEqual("12345");
+      expect(
+        renderedAsset.find({ "data-test": "asset-address" }).text()
+      ).toEqual("123 Fake Street");
+    });
   });
 
-  it("Get an asset from API and display it on the page", async () => {
-    process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
+  describe("When viewing an asset", () => {
+    it("Get an asset from API and display it on the page", async () => {
+      process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
 
-    let getAssetSimulator = new GetAssetSimulator("https://meow.cat/");
+      let getAssetSimulator = new GetAssetSimulator("https://meow.cat/");
 
-    getAssetSimulator
-      .getAssetWithId(1)
-      .respondWithData({ asset: exampleAssetOne })
-      .successfully();
+      getAssetSimulator
+        .getAssetWithId(1)
+        .respondWithData({ asset: exampleAssetOne })
+        .successfully();
 
-    let app = mount(
-      <MemoryRouter initialEntries={["/asset/1"]}>
-        <App />
-      </MemoryRouter>
-    );
+      let app = mount(
+        <MemoryRouter initialEntries={["/asset/1"]}>
+          <App />
+        </MemoryRouter>
+      );
 
-    await waitForRequestToResolve();
-    app.update();
+      await waitForRequestToResolve();
+      app.update();
 
-    expect(app.find({ "data-test": "asset-scheme-id" }).text()).toEqual(
-      "12345"
-    );
+      expect(app.find({ "data-test": "asset-scheme-id" }).text()).toEqual(
+        "12345"
+      );
 
-    expect(app.find({ "data-test": "asset-accounting-year" }).text()).toEqual(
-      "2018"
-    );
+      expect(app.find({ "data-test": "asset-accounting-year" }).text()).toEqual(
+        "2018"
+      );
+    });
   });
 });

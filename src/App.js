@@ -3,6 +3,10 @@ import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
+import GetInitialSearchParameters from "./UseCase/GetInitialSearchParameters";
+
+import HistoryGateway from "./Gateway/HistoryGateway";
+
 import SearchGateway from "./Gateway/SearchGateway";
 import SearchAssets from "./UseCase/SearchAssets";
 
@@ -26,25 +30,34 @@ const searchAssetUsecase = new SearchAssets({ searchGateway });
 const assetGateway = new AssetGateway();
 const getAssetUsecase = new GetAsset({ assetGateway });
 
-const SearchPage = props => (
-  <AssetsProvider searchAssets={searchAssetUsecase}>
-    {({ assets, onSearch, onPageSelect, numberOfPages, currentPage }) => (
-      <div className="govuk-grid-row">
-        <div className="govuk-grid-column-one-third">
-          <SearchBox onSearch={onSearch} />
+const getInitialSearchParameters = new GetInitialSearchParameters();
+
+const SearchPage = props => {
+  const historyGateway = new HistoryGateway(props.history);
+  let { searchParameters, page } = getInitialSearchParameters.execute(
+    props.location.search
+  );
+
+  return (
+    <AssetsProvider history={historyGateway} searchAssets={searchAssetUsecase} initialSearchParameters={{searchParameters, page}}>
+      {({ assets, onSearch, onPageSelect, numberOfPages, currentPage }) => (
+        <div className="govuk-grid-row">
+          <div className="govuk-grid-column-one-third">
+            <SearchBox onSearch={onSearch} />
+          </div>
+          <div className="govuk-grid-column-two-thirds">
+            <AssetList linkComponent={Link} assets={assets} />
+            <Pagination
+              onPageSelect={onPageSelect}
+              max={numberOfPages}
+              current={currentPage}
+            />
+          </div>
         </div>
-        <div className="govuk-grid-column-two-thirds">
-          <AssetList linkComponent={Link} assets={assets} />
-          <Pagination
-            onPageSelect={onPageSelect}
-            max={numberOfPages}
-            current={currentPage}
-          />
-        </div>
-      </div>
-    )}
-  </AssetsProvider>
-);
+      )}
+    </AssetsProvider>
+  );
+};
 
 const AssetPage = props => (
   <AssetProvider
@@ -65,6 +78,7 @@ class App extends Component {
             <main className="govuk-main-wrapper">
               <Switch>
                 <Route exact path="/" component={SearchPage} />
+                <Route exact path="/search" component={SearchPage} />
                 <Route path="/asset/:assetId" component={AssetPage} />
               </Switch>
             </main>

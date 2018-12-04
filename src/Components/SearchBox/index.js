@@ -11,7 +11,7 @@ export default class SearchBox extends Component {
 
   onFormSubmit = e => {
     e.preventDefault();
-    this.props.onSearch({ filters: this.state.filters });
+    this.props.onSearch(this.state.filters);
   };
 
   onSearchChange = (filterName, searchValue) => {
