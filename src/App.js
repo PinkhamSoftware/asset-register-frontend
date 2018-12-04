@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
-import HistoryGateway from "./Gateway/HistoryGateway"
+import GetInitialSearchParameters from "./UseCase/GetInitialSearchParameters";
+
+import HistoryGateway from "./Gateway/HistoryGateway";
 
 import SearchGateway from "./Gateway/SearchGateway";
 import SearchAssets from "./UseCase/SearchAssets";
@@ -28,11 +30,16 @@ const searchAssetUsecase = new SearchAssets({ searchGateway });
 const assetGateway = new AssetGateway();
 const getAssetUsecase = new GetAsset({ assetGateway });
 
+const getInitialSearchParameters = new GetInitialSearchParameters();
+
 const SearchPage = props => {
-  const historyGateway = new HistoryGateway(props.history)
+  const historyGateway = new HistoryGateway(props.history);
+  let { searchParameters, page } = getInitialSearchParameters.execute(
+    props.location.search
+  );
 
   return (
-    <AssetsProvider history={historyGateway} searchAssets={searchAssetUsecase}>
+    <AssetsProvider history={historyGateway} searchAssets={searchAssetUsecase} initialSearchParameters={{searchParameters, page}}>
       {({ assets, onSearch, onPageSelect, numberOfPages, currentPage }) => (
         <div className="govuk-grid-row">
           <div className="govuk-grid-column-one-third">

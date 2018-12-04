@@ -42,7 +42,9 @@ export default class AssetsProvider extends Component {
   componentDidMount() {
     if (this.props.initialSearchParameters) {
       let { searchParameters, page } = this.props.initialSearchParameters;
-      this.searchAssets({ parameters: searchParameters, page });
+      if (searchParameters !== undefined && page !== undefined) {
+        this.searchAssets({ parameters: searchParameters, page });
+      }
     }
   }
 

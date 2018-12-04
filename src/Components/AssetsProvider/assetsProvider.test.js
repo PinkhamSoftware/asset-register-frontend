@@ -160,7 +160,9 @@ describe("<AssetsProvider>", () => {
         };
 
         childrenFake = new ChildrenFake();
+      });
 
+      it("Calls search assets with the initial search parameters", () => {
         provider = mount(
           <AssetsProvider
             initialSearchParameters={{
@@ -173,13 +175,25 @@ describe("<AssetsProvider>", () => {
             {childrenFake.render}
           </AssetsProvider>
         );
-      });
 
-      it("Calls search assets with the initial search parameters", () => {
         expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
           filters: { dog: "woof" },
           page: 2
         });
+      });
+
+      it("Doesn't call search assets with empty initial search parameters", () => {
+        provider = mount(
+          <AssetsProvider
+            initialSearchParameters={{}}
+            history={historyGatewaySpy}
+            searchAssets={searchAssetsSpy}
+          >
+            {childrenFake.render}
+          </AssetsProvider>
+        );
+
+        expect(searchAssetsSpy.execute).not.toHaveBeenCalled();
       });
     });
   });
