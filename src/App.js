@@ -39,14 +39,18 @@ const SearchPage = props => {
   );
 
   return (
-    <AssetsProvider history={historyGateway} searchAssets={searchAssetUsecase} initialSearchParameters={{searchParameters, page}}>
-      {({ assets, onSearch, onPageSelect, numberOfPages, currentPage }) => (
+    <AssetsProvider
+      history={historyGateway}
+      searchAssets={searchAssetUsecase}
+      initialSearchParameters={{ searchParameters, page }}
+    >
+      {({ assets, onSearch, onPageSelect, numberOfPages, currentPage, loading}) => (
         <div className="govuk-grid-row">
           <div className="govuk-grid-column-one-third">
             <SearchBox onSearch={onSearch} />
           </div>
           <div className="govuk-grid-column-two-thirds">
-            <AssetList linkComponent={Link} assets={assets} />
+            <AssetList linkComponent={Link} assets={assets} loading={loading} />
             <Pagination
               onPageSelect={onPageSelect}
               max={numberOfPages}

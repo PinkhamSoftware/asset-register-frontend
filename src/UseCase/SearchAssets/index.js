@@ -3,13 +3,13 @@ export default class SearchAssets {
     this.searchGateway = searchGateway;
   }
 
-  async execute({ filters, page }) {
-    let { assets, pages } = await this.searchGateway.searchWithFilters(filters, page);
+  async execute(presenter, { filters, page }) {
+    let { assets, pages } = await this.searchGateway.searchWithFilters(
+      filters,
+      page
+    );
 
-    return {
-      assets: this.buildAssetResponseFromFoundAssets(assets),
-      pages
-    };
+    presenter.present({ assets, pages });
   }
 
   buildAssetResponseFromFoundAssets(foundAssets) {

@@ -13,10 +13,24 @@ describe("<AssetList>", () => {
 
   describe("Given no assets", () => {
     it("Renders the no assets are found message", () => {
-      let assetList = shallow(<AssetList assets={[]} />);
+      let assetList = shallow(
+        <AssetList linkComponent={LinkStub} assets={[]} />
+      );
 
       expect(
         assetList.find({ "data-test": "asset-list-no-assets-found" }).length
+      ).toEqual(1);
+    });
+  });
+
+  describe("Given loading", () => {
+    it("Renders the loading message", () => {
+      let assetList = shallow(
+        <AssetList linkComponent={LinkStub} assets={[]} loading={true} />
+      );
+
+      expect(
+        assetList.find({ "data-test": "asset-list-loading" }).length
       ).toEqual(1);
     });
   });

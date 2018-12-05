@@ -9,6 +9,7 @@ class ChildrenFake {
     this.assetsReceived = undefined;
     this.numberOfPagesReceived = undefined;
     this.currentPageReceived = undefined;
+    this.loadingReceived = undefined;
   }
 
   selectPage = async page => await this.onPageSelect({ page });
@@ -16,13 +17,31 @@ class ChildrenFake {
   executeOnSearch = async searchParams =>
     await this.onSearchReceived(searchParams);
 
-  render = ({ onSearch, assets, onPageSelect, numberOfPages, currentPage }) => {
+  render = ({
+    onSearch,
+    assets,
+    onPageSelect,
+    numberOfPages,
+    currentPage,
+    loading
+  }) => {
     this.onSearchReceived = onSearch;
     this.onPageSelect = onPageSelect;
     this.assetsReceived = assets;
     this.numberOfPagesReceived = numberOfPages;
     this.currentPageReceived = currentPage;
+    this.loadingReceived = loading;
   };
+}
+
+class SearchAssetsFake {
+  execute(presenter) {
+    this.presenter = presenter;
+  }
+
+  presentWith({ assets, pages }) {
+    this.presenter.present({ assets, pages });
+  }
 }
 
 describe("<AssetsProvider>", () => {
@@ -35,10 +54,12 @@ describe("<AssetsProvider>", () => {
       };
 
       searchAssetsSpy = {
-        execute: jest.fn(() => ({
-          assets: [{ cat: "meow" }],
-          pages: 5
-        }))
+        execute: jest.fn(presenter => {
+          presenter.present({
+            assets: [{ cat: "meow" }],
+            pages: 5
+          });
+        })
       };
 
       childrenFake = new ChildrenFake();
@@ -67,10 +88,14 @@ describe("<AssetsProvider>", () => {
       expect(provider.state().pages).toEqual(0);
     });
 
+    it("Defaults loading to false", () => {
+      expect(provider.state().loading).toEqual(false);
+    });
+
     it("Passes the value from the children to the searchAssets prop", () => {
       childrenFake.executeOnSearch({ value: "Cats" });
 
-      expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
+      expect(searchAssetsSpy.execute).toHaveBeenCalledWith(expect.anything(), {
         filters: { value: "Cats" },
         page: 1
       });
@@ -93,6 +118,10 @@ describe("<AssetsProvider>", () => {
 
     it("Passes an empty assets array by default", () => {
       expect(childrenFake.assetsReceived).toEqual([]);
+    });
+
+    it("Passes the loading state to the children", () => {
+      expect(childrenFake.loadingReceived).toBeFalsy();
     });
 
     it("Passes the found assets from the searchAssets prop to the children", async () => {
@@ -128,21 +157,64 @@ describe("<AssetsProvider>", () => {
         await childrenFake.executeOnSearch({ value: "Cat" });
         await childrenFake.selectPage(3);
 
-        expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-          filters: { value: "Cat" },
-          page: 3
-        });
+        expect(searchAssetsSpy.execute).toHaveBeenCalledWith(
+          expect.anything(),
+          {
+            filters: { value: "Cat" },
+            page: 3
+          }
+        );
       });
 
       it("Resets the page to one when searching with new terms", async () => {
         await childrenFake.selectPage(3);
         await childrenFake.executeOnSearch({ value: "Cat" });
 
-        expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-          filters: { value: "Cat" },
-          page: 1
-        });
+        expect(searchAssetsSpy.execute).toHaveBeenCalledWith(
+          expect.anything(),
+          {
+            filters: { value: "Cat" },
+            page: 1
+          }
+        );
         expect(childrenFake.currentPageReceived).toEqual(1);
+      });
+    });
+
+    describe("While search results are loading", () => {
+      let searchAssetsFake;
+
+      beforeEach(() => {
+        let historyGatewayDummy = {
+          storeSearch: jest.fn()
+        };
+
+        searchAssetsFake = new SearchAssetsFake();
+
+        provider = mount(
+          <AssetsProvider
+            history={historyGatewayDummy}
+            searchAssets={searchAssetsFake}
+          >
+            {childrenFake.render}
+          </AssetsProvider>
+        );
+      });
+
+      it("Sets the state to loading", () => {
+        childrenFake.executeOnSearch({ cat: "meow" });
+        expect(provider.state().loading).toEqual(true);
+      });
+
+      it("Passes the loading state to the children", () => {
+        childrenFake.executeOnSearch({ cat: "meow" });
+        expect(childrenFake.loadingReceived).toBeTruthy();
+      });
+
+      it("Sets loading to false when results are presented", () => {
+        childrenFake.executeOnSearch({ cat: "meow" });
+        searchAssetsFake.presentWith({ assets: [], pages: 1 });
+        expect(provider.state().loading).toEqual(false);
       });
     });
 
@@ -153,10 +225,12 @@ describe("<AssetsProvider>", () => {
         };
 
         searchAssetsSpy = {
-          execute: jest.fn(() => ({
-            assets: [{ cat: "meow" }],
-            pages: 5
-          }))
+          execute: jest.fn(presenter => {
+            presenter.present({
+              assets: [{ cat: "meow" }],
+              pages: 5
+            });
+          })
         };
 
         childrenFake = new ChildrenFake();
@@ -176,10 +250,13 @@ describe("<AssetsProvider>", () => {
           </AssetsProvider>
         );
 
-        expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-          filters: { dog: "woof" },
-          page: 2
-        });
+        expect(searchAssetsSpy.execute).toHaveBeenCalledWith(
+          expect.anything(),
+          {
+            filters: { dog: "woof" },
+            page: 2
+          }
+        );
       });
 
       it("Doesn't store the search in the history", () => {
@@ -224,10 +301,12 @@ describe("<AssetsProvider>", () => {
       };
 
       searchAssetsSpy = {
-        execute: jest.fn(() => ({
-          assets: [{ dog: "woof" }],
-          pages: 10
-        }))
+        execute: jest.fn(presenter => {
+          presenter.present({
+            assets: [{ dog: "woof" }],
+            pages: 10
+          });
+        })
       };
 
       childrenFake = new ChildrenFake();
@@ -256,10 +335,14 @@ describe("<AssetsProvider>", () => {
       expect(provider.state().pages).toEqual(0);
     });
 
+    it("Passes the loading state to the children", () => {
+      expect(childrenFake.loadingReceived).toBeFalsy();
+    });
+
     it("Passes the value from the children to the searchAssets prop", () => {
       childrenFake.executeOnSearch({ animal: "Dogs" });
 
-      expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
+      expect(searchAssetsSpy.execute).toHaveBeenCalledWith(expect.anything(), {
         filters: { animal: "Dogs" },
         page: 1
       });
@@ -317,10 +400,13 @@ describe("<AssetsProvider>", () => {
         await childrenFake.executeOnSearch({ animal: "Dogs", noise: "Woof" });
         await childrenFake.selectPage(3);
 
-        expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-          filters: { animal: "Dogs", noise: "Woof" },
-          page: 3
-        });
+        expect(searchAssetsSpy.execute).toHaveBeenCalledWith(
+          expect.anything(),
+          {
+            filters: { animal: "Dogs", noise: "Woof" },
+            page: 3
+          }
+        );
       });
 
       it("Stores the page in the history", async () => {
@@ -338,11 +424,51 @@ describe("<AssetsProvider>", () => {
         await childrenFake.selectPage(5);
         await childrenFake.executeOnSearch({ animal: "Dogs", noise: "Woof" });
 
-        expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-          filters: { animal: "Dogs", noise: "Woof" },
-          page: 1
-        });
+        expect(searchAssetsSpy.execute).toHaveBeenCalledWith(
+          expect.anything(),
+          {
+            filters: { animal: "Dogs", noise: "Woof" },
+            page: 1
+          }
+        );
         expect(childrenFake.currentPageReceived).toEqual(1);
+      });
+    });
+
+    describe("While search results are loading", () => {
+      let searchAssetsFake;
+
+      beforeEach(() => {
+        let historyGatewayDummy = {
+          storeSearch: jest.fn()
+        };
+
+        searchAssetsFake = new SearchAssetsFake();
+
+        provider = mount(
+          <AssetsProvider
+            history={historyGatewayDummy}
+            searchAssets={searchAssetsFake}
+          >
+            {childrenFake.render}
+          </AssetsProvider>
+        );
+      });
+
+      it("Sets the state to loading", () => {
+        childrenFake.executeOnSearch({ dog: "woof" });
+        expect(provider.state().loading).toEqual(true);
+      });
+
+      it("Passes the loading state to the children", () => {
+        childrenFake.executeOnSearch({ cat: "meow" });
+        expect(childrenFake.loadingReceived).toBeTruthy();
+      });
+
+      it("Sets loading to false when results are presented", () => {
+        childrenFake.executeOnSearch({ dog: "woof" });
+        searchAssetsFake.presentWith({ assets: [], pages: 1 });
+        expect(provider.state().loading).toEqual(false);
       });
     });
 
@@ -376,10 +502,13 @@ describe("<AssetsProvider>", () => {
       });
 
       it("Calls search assets with the initial search parameters", () => {
-        expect(searchAssetsSpy.execute).toHaveBeenCalledWith({
-          filters: { cat: "meow" },
-          page: 5
-        });
+        expect(searchAssetsSpy.execute).toHaveBeenCalledWith(
+          expect.anything(),
+          {
+            filters: { cat: "meow" },
+            page: 5
+          }
+        );
       });
 
       it("Doesn't store the search in the history", () => {

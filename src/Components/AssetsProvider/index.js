@@ -8,26 +8,31 @@ export default class AssetsProvider extends Component {
       assets: [],
       page: 1,
       searchParameters: {},
-      pages: 0
+      pages: 0,
+      loading: false
     };
   }
 
-  searchAssets = async ({ parameters, page }) => {
-    let { assets, pages } = await this.props.searchAssets.execute({
+  present = ({ assets, pages }) => {
+    this.setState({ assets, pages, loading: false });
+  };
+
+  searchAssets = ({ parameters, page }) => {
+    this.props.searchAssets.execute(this, {
       filters: parameters,
       page
     });
 
-    await this.setState({ searchParameters: parameters, assets, pages, page });
+    this.setState({ searchParameters: parameters, page, loading: true });
   };
 
-  onSearch = async searchRequest => {
-    await this.searchAssets({ parameters: searchRequest, page: 1 });
+  onSearch = searchRequest => {
+    this.searchAssets({ parameters: searchRequest, page: 1 });
     this.props.history.storeSearch({ ...searchRequest, page: 1 });
   };
 
-  onPageSelect = async ({ page }) => {
-    await this.searchAssets({ parameters: this.state.searchParameters, page });
+  onPageSelect = ({ page }) => {
+    this.searchAssets({ parameters: this.state.searchParameters, page });
     this.props.history.storeSearch({ ...this.state.searchParameters, page });
   };
 
@@ -48,7 +53,8 @@ export default class AssetsProvider extends Component {
           onPageSelect: this.onPageSelect,
           assets: this.state.assets,
           numberOfPages: this.state.pages,
-          currentPage: this.state.page
+          currentPage: this.state.page,
+          loading: this.state.loading
         })}
       </div>
     );
