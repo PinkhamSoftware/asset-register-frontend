@@ -11,6 +11,9 @@ export default class AssetList extends Component {
     } else {
       return (
         <div className="asset-list">
+          <span data-test="asset-list-total-count">
+            {this.props.totalCount}
+          </span>
           {this.props.assets.map(asset => (
             <div key={asset.id} data-test="asset" className="asset">
               <div className="col">
@@ -43,5 +46,6 @@ AssetList.propTypes = {
     })
   ).isRequired,
   linkComponent: PropTypes.func.isRequired,
+  totalCount: PropTypes.number.isRequired,
   loading: PropTypes.bool
 };
