@@ -21,3 +21,7 @@ storybook:
 .PHONY: test
 test: docker-down docker-build
 	docker-compose run --rm web npm test
+
+.PHONY: lint
+lint: docker-down docker-build
+	docker-compose run --rm web npm run lint
