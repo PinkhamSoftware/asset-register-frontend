@@ -21,3 +21,7 @@ storybook:
 .PHONY: test
 test: docker-down docker-build
 	docker-compose run --rm web npm test
+
+.PHONY: coverage
+coverage: docker-down docker-build
+	docker-compose run --rm web npm run coverage
