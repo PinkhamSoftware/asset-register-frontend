@@ -68,6 +68,7 @@ describe("When using the asset register", () => {
         .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
         .searchAssetWithPage(1)
         .respondWithAssets([exampleAssetOne])
+        .respondWithTotal(10)
         .successfully();
 
       let app = new AppPage("/");
@@ -81,8 +82,13 @@ describe("When using the asset register", () => {
       let renderedAsset = app.find({ "data-test": "asset" });
 
       expect(
+        app.find({ "data-test": "asset-list-total-count" }).text()
+      ).toEqual("10");
+
+      expect(
         renderedAsset.find({ "data-test": "asset-scheme-id" }).text()
       ).toEqual("12345");
+
       expect(
         renderedAsset.find({ "data-test": "asset-address" }).text()
       ).toEqual("123 Fake Street");
@@ -97,6 +103,7 @@ describe("When using the asset register", () => {
         .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
         .searchAssetWithPage(1)
         .respondWithAssets([exampleAssetOne])
+        .respondWithTotal(1)
         .successfully();
 
       getAssetSimulator
@@ -136,6 +143,7 @@ describe("When using the asset register", () => {
         .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
         .searchAssetWithPage(1)
         .respondWithAssets([exampleAssetOne])
+        .respondWithTotal(5)
         .successfully();
 
       let app = new AppPage("/search?schemeId=1&address=Fake Street&page=1");
@@ -144,8 +152,13 @@ describe("When using the asset register", () => {
       let renderedAsset = app.find({ "data-test": "asset" });
 
       expect(
+        app.find({ "data-test": "asset-list-total-count" }).text()
+      ).toEqual("5");
+
+      expect(
         renderedAsset.find({ "data-test": "asset-scheme-id" }).text()
       ).toEqual("12345");
+
       expect(
         renderedAsset.find({ "data-test": "asset-address" }).text()
       ).toEqual("123 Fake Street");

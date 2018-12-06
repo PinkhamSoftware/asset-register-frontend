@@ -9,12 +9,13 @@ export default class AssetsProvider extends Component {
       page: 1,
       searchParameters: {},
       pages: 0,
-      loading: false
+      loading: false,
+      totalCount: 0
     };
   }
 
-  present = ({ assets, pages }) => {
-    this.setState({ assets, pages, loading: false });
+  present = ({ assets, pages, totalCount }) => {
+    this.setState({ assets, pages, totalCount, loading: false });
   };
 
   searchAssets = ({ parameters, page }) => {
@@ -54,7 +55,8 @@ export default class AssetsProvider extends Component {
           assets: this.state.assets,
           numberOfPages: this.state.pages,
           currentPage: this.state.page,
-          loading: this.state.loading
+          loading: this.state.loading,
+          totalCount: this.state.totalCount
         })}
       </div>
     );

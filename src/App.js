@@ -44,13 +44,26 @@ const SearchPage = props => {
       searchAssets={searchAssetUsecase}
       initialSearchParameters={{ searchParameters, page }}
     >
-      {({ assets, onSearch, onPageSelect, numberOfPages, currentPage, loading}) => (
+      {({
+        assets,
+        onSearch,
+        onPageSelect,
+        numberOfPages,
+        currentPage,
+        loading,
+        totalCount
+      }) => (
         <div className="govuk-grid-row">
           <div className="govuk-grid-column-one-third">
             <SearchBox onSearch={onSearch} />
           </div>
           <div className="govuk-grid-column-two-thirds">
-            <AssetList linkComponent={Link} assets={assets} loading={loading} />
+            <AssetList
+              linkComponent={Link}
+              assets={assets}
+              totalCount={totalCount}
+              loading={loading}
+            />
             <Pagination
               onPageSelect={onPageSelect}
               max={numberOfPages}

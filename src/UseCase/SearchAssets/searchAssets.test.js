@@ -82,11 +82,13 @@ describe("SearchAssets", () => {
     constructor() {
       this.assetsPresented = undefined;
       this.pagesPresented = undefined;
+      this.totalCountPresented = undefined;
     }
 
-    present({ assets, pages }) {
+    present({ assets, pages, totalCount }) {
       this.assetsPresented = assets;
       this.pagesPresented = pages;
+      this.totalCountPresented = totalCount;
     }
   }
 
@@ -103,6 +105,7 @@ describe("SearchAssets", () => {
           searchGatewaySpy = {
             searchWithFilters: jest.fn(() => ({
               assets: [foundAsset],
+              totalCount: 100,
               pages: 10
             }))
           };
@@ -142,6 +145,14 @@ describe("SearchAssets", () => {
 
           expect(presenterSpy.pagesPresented).toEqual(10);
         });
+
+        it("Returns the total count from the gateway", async () => {
+          await useCase.execute(presenterSpy, {
+            filters: { cat: "meow", dog: "woof" }
+          });
+
+          expect(presenterSpy.totalCountPresented).toEqual(100);
+        });
       });
 
       describe("and the search does not find assets", () => {
@@ -177,6 +188,7 @@ describe("SearchAssets", () => {
           searchGatewaySpy = {
             searchWithFilters: jest.fn(() => ({
               assets: [foundAssetOne, foundAssetTwo],
+              totalCount: 200,
               pages: 5
             }))
           };
@@ -220,6 +232,14 @@ describe("SearchAssets", () => {
           let pages = presenterSpy.pagesPresented;
 
           expect(pages).toEqual(5);
+        });
+
+        it("Returns the total count from the gateway", async () => {
+          await useCase.execute(presenterSpy, {
+            filters: { cat: "meow", dog: "woof" }
+          });
+
+          expect(presenterSpy.totalCountPresented).toEqual(200);
         });
       });
 

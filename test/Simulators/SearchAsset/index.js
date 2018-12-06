@@ -8,7 +8,7 @@ export default class GetAsset {
   }
 
   searchAssetWithFilters(filters) {
-    this.filters = {...filters};
+    this.filters = { ...filters };
     return this;
   }
 
@@ -23,14 +23,21 @@ export default class GetAsset {
   }
 
   respondWithPages(pages) {
-    this.pages = pages
+    this.pages = pages;
+    return this;
+  }
+
+  respondWithTotal(total) {
+    this.total = total;
     return this;
   }
 
   successfully() {
     return nock(this.baseUrl)
       .get(`/api/v1/asset/search?${this.queryStringFromFilters()}`)
-      .reply(200, { data: { assets: this.assets, pages: this.pages } });
+      .reply(200, {
+        data: { assets: this.assets, pages: this.pages, totalCount: this.total }
+      });
   }
 
   unsuccessfully(status = 500) {

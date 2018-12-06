@@ -10,6 +10,7 @@ class ChildrenFake {
     this.numberOfPagesReceived = undefined;
     this.currentPageReceived = undefined;
     this.loadingReceived = undefined;
+    this.totalCountReceived = undefined;
   }
 
   selectPage = async page => await this.onPageSelect({ page });
@@ -23,7 +24,8 @@ class ChildrenFake {
     onPageSelect,
     numberOfPages,
     currentPage,
-    loading
+    loading,
+    totalCount
   }) => {
     this.onSearchReceived = onSearch;
     this.onPageSelect = onPageSelect;
@@ -31,6 +33,7 @@ class ChildrenFake {
     this.numberOfPagesReceived = numberOfPages;
     this.currentPageReceived = currentPage;
     this.loadingReceived = loading;
+    this.totalCountReceived = totalCount;
   };
 }
 
@@ -39,8 +42,8 @@ class SearchAssetsFake {
     this.presenter = presenter;
   }
 
-  presentWith({ assets, pages }) {
-    this.presenter.present({ assets, pages });
+  presentWith({ assets, pages, totalCount }) {
+    this.presenter.present({ assets, pages, totalCount });
   }
 }
 
@@ -57,6 +60,7 @@ describe("<AssetsProvider>", () => {
         execute: jest.fn(presenter => {
           presenter.present({
             assets: [{ cat: "meow" }],
+            totalCount: 100,
             pages: 5
           });
         })
@@ -128,6 +132,12 @@ describe("<AssetsProvider>", () => {
       await childrenFake.executeOnSearch();
 
       expect(childrenFake.assetsReceived).toEqual([{ cat: "meow" }]);
+    });
+
+    it("Passes the total count from searchAssets to the children", async () => {
+      await childrenFake.executeOnSearch();
+
+      expect(childrenFake.totalCountReceived).toEqual(100);
     });
 
     it("Passes the total number of pages into the children", async () => {
@@ -304,7 +314,8 @@ describe("<AssetsProvider>", () => {
         execute: jest.fn(presenter => {
           presenter.present({
             assets: [{ dog: "woof" }],
-            pages: 10
+            pages: 10,
+            totalCount: 200
           });
         })
       };
@@ -371,6 +382,12 @@ describe("<AssetsProvider>", () => {
       await childrenFake.executeOnSearch();
 
       expect(childrenFake.assetsReceived).toEqual([{ dog: "woof" }]);
+    });
+
+    it("Passes the total count from searchAssets to the children", async () => {
+      await childrenFake.executeOnSearch();
+
+      expect(childrenFake.totalCountReceived).toEqual(200);
     });
 
     it("Passes the total number of pages into the children", async () => {

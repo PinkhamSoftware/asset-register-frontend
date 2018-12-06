@@ -11,8 +11,11 @@ export default class AssetList extends Component {
     } else {
       return (
         <div className="asset-list">
-          <span data-test="asset-list-total-count">
-            {this.props.totalCount}
+          <span>
+            Total number of assets:
+            <span data-test="asset-list-total-count">
+              {this.props.totalCount}
+            </span>
           </span>
           {this.props.assets.map(asset => (
             <div key={asset.id} data-test="asset" className="asset">

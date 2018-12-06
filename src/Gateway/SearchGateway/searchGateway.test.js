@@ -23,6 +23,7 @@ describe("SearchGateway", () => {
           .searchAssetWithFilters(filters)
           .searchAssetWithPage(page)
           .respondWithAssets([exampleAssetOne])
+          .respondWithTotal(100)
           .respondWithPages(10)
           .successfully();
         gateway = new SearchGateway();
@@ -49,6 +50,12 @@ describe("SearchGateway", () => {
         let { pages } = await gateway.searchWithFilters(filters, page);
 
         expect(pages).toEqual(10);
+      });
+
+      it("Returns the total number of assets", async () => {
+        let { totalCount } = await gateway.searchWithFilters(filters, page);
+
+        expect(totalCount).toEqual(100);
       });
     });
 
@@ -86,6 +93,7 @@ describe("SearchGateway", () => {
           .searchAssetWithFilters(filters)
           .searchAssetWithPage(page)
           .respondWithAssets([exampleAssetTwo, exampleAssetOne])
+          .respondWithTotal(50)
           .respondWithPages(5)
           .successfully();
         gateway = new SearchGateway();
@@ -125,6 +133,12 @@ describe("SearchGateway", () => {
         let { pages } = await gateway.searchWithFilters(filters, page);
 
         expect(pages).toEqual(5);
+      });
+
+      it("Returns the total number of assets", async () => {
+        let { totalCount } = await gateway.searchWithFilters(filters, page);
+
+        expect(totalCount).toEqual(50);
       });
     });
 
