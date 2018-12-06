@@ -23,14 +23,14 @@
   },
   "jest": {
     "collectCoverageFrom": [
-        "**/*.{js,jsx}",
-        "!**/node_modules/**",
-        "!**/stories.js",
-        "!**/coverage/**",
-        "!**/src/index.js",
-        "!**/src/registerServiceWorker.js",
-        "!**/src/serviceWorker.js",
-        "!**/src/setupTests.js"
+      "**/*.{js,jsx}",
+      "!**/node_modules/**",
+      "!**/stories.js",
+      "!**/coverage/**",
+      "!**/src/index.js",
+      "!**/src/registerServiceWorker.js",
+      "!**/src/serviceWorker.js",
+      "!**/src/setupTests.js"
     ],
     "coverageThreshold": {
       "global": {
