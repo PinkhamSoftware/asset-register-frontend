@@ -17,8 +17,29 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "coverage": "react-scripts test --coverage",
     "eject": "react-scripts eject",
     "storybook": "./node_modules/.bin/start-storybook -p 9009 -s public"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "**/*.{js,jsx}",
+      "!**/node_modules/**",
+      "!**/stories.js",
+      "!**/coverage/**",
+      "!**/src/index.js",
+      "!**/src/registerServiceWorker.js",
+      "!**/src/serviceWorker.js",
+      "!**/src/setupTests.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 90,
+        "statements": 90,
+        "lines": 90
+      }
+    }
   },
   "eslintConfig": {
     "extends": "react-app"
