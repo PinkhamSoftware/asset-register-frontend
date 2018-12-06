@@ -21,6 +21,8 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: npm test
+      - run: make lint
+      - run: make coverage
 
   deploy_staging:
     executor: node
