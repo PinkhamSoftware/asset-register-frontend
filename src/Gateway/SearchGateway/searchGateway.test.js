@@ -1,5 +1,4 @@
 import SearchGateway from ".";
-import nock from "nock";
 import SeachAssetSimulator from "../../../test/Simulators/SearchAsset";
 import {
   exampleAssetOne,
