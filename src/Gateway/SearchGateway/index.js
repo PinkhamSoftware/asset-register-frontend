@@ -19,7 +19,7 @@ export default class SearchGateway {
         this.buildAssetFromResponseData(foundAsset)
       );
 
-      return { assets, pages: data.pages };
+      return { assets, pages: data.pages, totalCount: data.totalCount };
     } else {
       return { assets: [], pages: 0 };
     }

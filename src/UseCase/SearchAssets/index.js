@@ -4,12 +4,13 @@ export default class SearchAssets {
   }
 
   async execute(presenter, { filters, page }) {
-    let { assets, pages } = await this.searchGateway.searchWithFilters(
-      filters,
-      page
-    );
+    let {
+      assets,
+      pages,
+      totalCount
+    } = await this.searchGateway.searchWithFilters(filters, page);
 
-    presenter.present({ assets, pages });
+    presenter.present({ assets, pages, totalCount });
   }
 
   buildAssetResponseFromFoundAssets(foundAssets) {

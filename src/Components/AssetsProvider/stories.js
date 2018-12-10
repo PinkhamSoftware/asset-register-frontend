@@ -3,17 +3,34 @@ import AssetsProvider from ".";
 
 import { storiesOf } from "@storybook/react";
 
+const historyStub = {
+  storeSearch: route => {
+    console.log(route);
+  }
+};
+
 storiesOf("AssetsProvider", module).add("Default", () => {
-  let searchAssetsStub = { execute: () => [{ cat: "meow" }] };
+  let searchAssetsStub = {
+    execute: presenter =>
+      presenter.present({
+        assets: [{ cat: "meow" }],
+        pages: 10,
+        totalCount: 100
+      })
+  };
 
   return (
-    <AssetsProvider searchAssets={searchAssetsStub}>
-      {({ onSearch, assets }) => (
+    <AssetsProvider history={historyStub} searchAssets={searchAssetsStub}>
+      {({ onSearch, assets, totalCount, numberOfPages }) => (
         <div>
-          <button type="button" onClick={onSearch}>
+          <button
+            type="button"
+            onClick={() => onSearch({ params: "Searched" })}
+          >
             Click me to search the assets
           </button>
-          <p>Asset count = {assets.length}</p>
+          <p>Asset count = {totalCount}</p>
+          <p>Asset pages = {numberOfPages}</p>
         </div>
       )}
     </AssetsProvider>

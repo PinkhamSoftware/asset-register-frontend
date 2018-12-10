@@ -14,7 +14,7 @@ describe("<AssetList>", () => {
   describe("Given no assets", () => {
     it("Renders the no assets are found message", () => {
       let assetList = shallow(
-        <AssetList linkComponent={LinkStub} assets={[]} />
+        <AssetList linkComponent={LinkStub} totalCount={0} assets={[]} />
       );
 
       expect(
@@ -26,7 +26,12 @@ describe("<AssetList>", () => {
   describe("Given loading", () => {
     it("Renders the loading message", () => {
       let assetList = shallow(
-        <AssetList linkComponent={LinkStub} assets={[]} loading={true} />
+        <AssetList
+          linkComponent={LinkStub}
+          totalCount={0}
+          assets={[]}
+          loading={true}
+        />
       );
 
       expect(
@@ -40,6 +45,7 @@ describe("<AssetList>", () => {
       beforeEach(() => {
         assetList = mount(
           <AssetList
+            totalCount={1}
             linkComponent={LinkStub}
             assets={[
               {
@@ -92,6 +98,7 @@ describe("<AssetList>", () => {
         assetList = mount(
           <AssetList
             linkComponent={LinkStub}
+            totalCount={1}
             assets={[
               {
                 id: 234,
@@ -146,6 +153,7 @@ describe("<AssetList>", () => {
       assetList = mount(
         <AssetList
           linkComponent={LinkStub}
+          totalCount={2}
           assets={[
             {
               id: 235,
@@ -203,6 +211,52 @@ describe("<AssetList>", () => {
           .find('[data-test="asset-address"]')
           .text()
       ).toEqual("2 Cat Street");
+    });
+  });
+
+  describe("Given the total number of assets", () => {
+    describe("Example one", () => {
+      it("Displays the total", () => {
+        assetList = mount(
+          <AssetList
+            linkComponent={LinkStub}
+            totalCount={100}
+            assets={[
+              {
+                id: 234,
+                address: "1 Woofers Street",
+                schemeId: 54321
+              }
+            ]}
+          />
+        );
+
+        expect(
+          assetList.find({ "data-test": "asset-list-total-count" }).text()
+        ).toEqual("100");
+      });
+    });
+
+    describe("Example two", () => {
+      it("Displays the total", () => {
+        assetList = mount(
+          <AssetList
+            linkComponent={LinkStub}
+            totalCount={250}
+            assets={[
+              {
+                id: 234,
+                address: "1 Woofers Street",
+                schemeId: 54321
+              }
+            ]}
+          />
+        );
+
+        expect(
+          assetList.find({ "data-test": "asset-list-total-count" }).text()
+        ).toEqual("250");
+      });
     });
   });
 });
