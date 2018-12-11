@@ -2,6 +2,21 @@ import React from "react";
 import { mount } from "enzyme";
 import CSVDownloadButton from ".";
 describe("<CSVDownloadButton>", () => {
+  describe("When there are no search parameters", () => {
+    it("Doesn't display the button", () => {
+      let button = mount(
+        <CSVDownloadButton
+          presenter={() => {}}
+          searchParameters={{}}
+          downloadSearch={() => {}}
+        />
+      );
+
+      expect(button.find({ "data-test": "csv-download-link" }).length).toEqual(
+        0
+      );
+    });
+  });
   describe("When clicking the button", () => {
     describe("Example one", () => {
       let button, downloadSearchSpy, presenterStub;
