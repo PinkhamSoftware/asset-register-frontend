@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
-import fileDownload from "js-file-download";
 import "./App.css";
 import "govuk-frontend/all.scss";
+
+import FileDownloadPresenter from "./Presenters/FileDownload";
 
 import GetInitialSearchParameters from "./UseCase/GetInitialSearchParameters";
 import DownloadSearchResults from "./UseCase/DownloadSearchResults";
@@ -37,6 +38,7 @@ const assetGateway = new AssetGateway();
 const getAssetUsecase = new GetAsset({ assetGateway });
 
 const getInitialSearchParameters = new GetInitialSearchParameters();
+const fileDownloadPresenter = new FileDownloadPresenter();
 
 const SearchPage = props => {
   const historyGateway = new HistoryGateway(props.history);
@@ -74,7 +76,7 @@ const SearchPage = props => {
             <CSVDownloadButton
               searchParameters={searchParameters}
               downloadSearch={downloadSearchResultsUsecase}
-              presenter={downloadPresenter}
+              presenter={fileDownloadPresenter}
             />
             <Pagination
               onPageSelect={onPageSelect}
@@ -96,12 +98,6 @@ const AssetPage = props => (
     {({ asset }) => <Asset asset={asset} />}
   </AssetProvider>
 );
-
-const downloadPresenter = {
-  present: async file => {
-    fileDownload(file, "results.csv");
-  }
-};
 
 class App extends Component {
   render() {
