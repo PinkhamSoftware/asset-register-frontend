@@ -1,5 +1,5 @@
 import SearchGateway from ".";
-import SeachAssetSimulator from "../../../test/Simulators/SearchAsset";
+import SearchAssetSimulator from "../../../test/Simulators/SearchAsset";
 import {
   exampleAssetOne,
   exampleAssetTwo
@@ -17,7 +17,7 @@ describe("SearchGateway", () => {
 
     describe("Given it finds an asset", () => {
       beforeEach(() => {
-        let simulator = new SeachAssetSimulator("http://meow.cat/");
+        let simulator = new SearchAssetSimulator("http://meow.cat/");
         searchRequest = simulator
           .searchAssetWithFilters(filters)
           .searchAssetWithPage(page)
@@ -60,7 +60,7 @@ describe("SearchGateway", () => {
 
     describe("Given no asset is found", () => {
       it("Returns an empty array", async () => {
-        let simulator = new SeachAssetSimulator("http://meow.cat/");
+        let simulator = new SearchAssetSimulator("http://meow.cat/");
         simulator
           .searchAssetWithFilters(filters)
           .searchAssetWithPage(page)
@@ -87,7 +87,7 @@ describe("SearchGateway", () => {
 
     describe("Given it finds an asset", () => {
       beforeEach(() => {
-        let simulator = new SeachAssetSimulator("http://dog.woof/");
+        let simulator = new SearchAssetSimulator("http://dog.woof/");
         searchRequest = simulator
           .searchAssetWithFilters(filters)
           .searchAssetWithPage(page)
@@ -143,7 +143,7 @@ describe("SearchGateway", () => {
 
     describe("Given no asset is found", () => {
       it("Returns an empty array", async () => {
-        let simulator = new SeachAssetSimulator("http://dog.woof/");
+        let simulator = new SearchAssetSimulator("http://dog.woof/");
         simulator
           .searchAssetWithFilters(filters)
           .searchAssetWithPage(10)
@@ -153,6 +153,76 @@ describe("SearchGateway", () => {
         let { assets, pages } = await gateway.searchWithFilters(filters, page);
         expect(assets).toEqual([]);
         expect(pages).toEqual(0);
+      });
+    });
+  });
+
+  describe("Downloading search results", () => {
+    describe("Example one", () => {
+      let request;
+
+      beforeEach(() => {
+        process.env.REACT_APP_ASSET_REGISTER_API_URL = "http://meow.cat/";
+
+        let simulator = new SearchAssetSimulator("http://meow.cat");
+
+        request = simulator
+          .searchAssetWithFilters({
+            cat: "meow",
+            pageSize: "1000000"
+          })
+          .searchAssetWithPage(1)
+          .downloadSearchAsCsv()
+          .respondWithFile("File")
+          .successfully();
+
+        gateway = new SearchGateway();
+      });
+
+      it("Hits the API with the correct request", async () => {
+        await gateway.download({ cat: "meow" });
+
+        expect(request.isDone()).toEqual(true);
+      });
+
+      it("Returns the text from the api response", async () => {
+        let response = await gateway.download({ cat: "meow" });
+
+        expect(response.file).toEqual("File");
+      });
+    });
+
+    describe("Example one", () => {
+      let request;
+
+      beforeEach(() => {
+        process.env.REACT_APP_ASSET_REGISTER_API_URL = "http://meow.cat/";
+
+        let simulator = new SearchAssetSimulator("http://meow.cat");
+
+        request = simulator
+          .searchAssetWithFilters({
+            dog: "woof",
+            pageSize: "1000000"
+          })
+          .searchAssetWithPage(1)
+          .downloadSearchAsCsv()
+          .respondWithFile("Super duper mega file")
+          .successfully();
+
+        gateway = new SearchGateway();
+      });
+
+      it("Hits the API with the correct request", async () => {
+        await gateway.download({ dog: "woof" });
+
+        expect(request.isDone()).toEqual(true);
+      });
+
+      it("Returns the text from the api response", async () => {
+        let response = await gateway.download({ dog: "woof" });
+
+        expect(response.file).toEqual("Super duper mega file");
       });
     });
   });

@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import fileDownload from "js-file-download";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
 import GetInitialSearchParameters from "./UseCase/GetInitialSearchParameters";
+import DownloadSearchResults from "./UseCase/DownloadSearchResults";
 
 import HistoryGateway from "./Gateway/HistoryGateway";
 
@@ -23,9 +25,13 @@ import Footer from "./Components/Footer";
 import Header from "./Components/Header";
 import Pagination from "./Components/Pagination";
 import SearchBox from "./Components/SearchBox";
+import CSVDownloadButton from "./Components/CSVDownloadButton";
 
 const searchGateway = new SearchGateway();
 const searchAssetUsecase = new SearchAssets({ searchGateway });
+const downloadSearchResultsUsecase = new DownloadSearchResults({
+  searchGateway
+});
 
 const assetGateway = new AssetGateway();
 const getAssetUsecase = new GetAsset({ assetGateway });
@@ -51,7 +57,8 @@ const SearchPage = props => {
         numberOfPages,
         currentPage,
         loading,
-        totalCount
+        totalCount,
+        searchParameters
       }) => (
         <div className="govuk-grid-row">
           <div className="govuk-grid-column-one-third">
@@ -63,6 +70,11 @@ const SearchPage = props => {
               assets={assets}
               totalCount={totalCount}
               loading={loading}
+            />
+            <CSVDownloadButton
+              searchParameters={searchParameters}
+              downloadSearch={downloadSearchResultsUsecase}
+              presenter={downloadPresenter}
             />
             <Pagination
               onPageSelect={onPageSelect}
@@ -84,6 +96,12 @@ const AssetPage = props => (
     {({ asset }) => <Asset asset={asset} />}
   </AssetProvider>
 );
+
+const downloadPresenter = {
+  present: async file => {
+    fileDownload(file, "results.csv");
+  }
+};
 
 class App extends Component {
   render() {

@@ -5,6 +5,8 @@ export default class GetAsset {
     this.baseUrl = baseUrl;
     this.responseData = {};
     this.filters = {};
+    this.downloadCSV = false;
+    this.fileResponse = undefined;
   }
 
   searchAssetWithFilters(filters) {
@@ -12,8 +14,18 @@ export default class GetAsset {
     return this;
   }
 
+  downloadSearchAsCsv() {
+    this.downloadCSV = true;
+    return this;
+  }
+
   searchAssetWithPage(page) {
     this.filters.page = page;
+    return this;
+  }
+
+  respondWithFile(file) {
+    this.fileResponse = file;
     return this;
   }
 
@@ -33,11 +45,19 @@ export default class GetAsset {
   }
 
   successfully() {
-    return nock(this.baseUrl)
-      .get(`/api/v1/asset/search?${this.queryStringFromFilters()}`)
-      .reply(200, {
-        data: { assets: this.assets, pages: this.pages, totalCount: this.total }
+    let request = nock(this.baseUrl).get(
+      `/api/v1/asset/search?${this.queryStringFromFilters()}`
+    );
+
+    if (!this.downloadCSV) {
+      return request.reply(200, {
+        data: { assets: this.assets, pages: this.pages, pages: this.pages, totalCount: this.total }
       });
+    } else {
+      return request
+        .matchHeader("accept", "text/csv")
+        .reply(200, this.fileResponse);
+    }
   }
 
   unsuccessfully(status = 500) {
