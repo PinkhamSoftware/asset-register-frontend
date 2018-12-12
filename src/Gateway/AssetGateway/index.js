@@ -1,4 +1,4 @@
-import fetch from "isomorphic-fetch";
+import fetch from "cross-fetch";
 import Asset from "../../Domain/Asset";
 
 export default class AssetGateway {
