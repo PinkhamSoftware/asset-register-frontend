@@ -11,6 +11,7 @@ class ChildrenFake {
     this.currentPageReceived = undefined;
     this.loadingReceived = undefined;
     this.totalCountReceived = undefined;
+    this.searchParametersReceived = undefined;
   }
 
   selectPage = async page => await this.onPageSelect({ page });
@@ -25,7 +26,8 @@ class ChildrenFake {
     numberOfPages,
     currentPage,
     loading,
-    totalCount
+    totalCount,
+    searchParameters
   }) => {
     this.onSearchReceived = onSearch;
     this.onPageSelect = onPageSelect;
@@ -34,6 +36,7 @@ class ChildrenFake {
     this.currentPageReceived = currentPage;
     this.loadingReceived = loading;
     this.totalCountReceived = totalCount;
+    this.searchParametersReceived = searchParameters;
   };
 }
 
@@ -144,6 +147,12 @@ describe("<AssetsProvider>", () => {
       await childrenFake.executeOnSearch();
 
       expect(childrenFake.numberOfPagesReceived).toEqual(5);
+    });
+
+    it("Passes the search parameters to the children", async () => {
+      await childrenFake.executeOnSearch({ cat: "meow" });
+
+      expect(childrenFake.searchParametersReceived).toEqual({ cat: "meow" });
     });
 
     it("Passes the current page into the children", () => {
@@ -348,6 +357,12 @@ describe("<AssetsProvider>", () => {
 
     it("Passes the loading state to the children", () => {
       expect(childrenFake.loadingReceived).toBeFalsy();
+    });
+
+    it("Passes the search parameters to the children", async () => {
+      await childrenFake.executeOnSearch({ dog: "woof" });
+
+      expect(childrenFake.searchParametersReceived).toEqual({ dog: "woof" });
     });
 
     it("Passes the value from the children to the searchAssets prop", () => {

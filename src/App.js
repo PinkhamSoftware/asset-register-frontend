@@ -3,7 +3,10 @@ import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
+import FileDownloadPresenter from "./Presenters/FileDownload";
+
 import GetInitialSearchParameters from "./UseCase/GetInitialSearchParameters";
+import DownloadSearchResults from "./UseCase/DownloadSearchResults";
 
 import HistoryGateway from "./Gateway/HistoryGateway";
 
@@ -23,14 +26,19 @@ import Footer from "./Components/Footer";
 import Header from "./Components/Header";
 import Pagination from "./Components/Pagination";
 import SearchBox from "./Components/SearchBox";
+import CSVDownloadButton from "./Components/CSVDownloadButton";
 
 const searchGateway = new SearchGateway();
 const searchAssetUsecase = new SearchAssets({ searchGateway });
+const downloadSearchResultsUsecase = new DownloadSearchResults({
+  searchGateway
+});
 
 const assetGateway = new AssetGateway();
 const getAssetUsecase = new GetAsset({ assetGateway });
 
 const getInitialSearchParameters = new GetInitialSearchParameters();
+const fileDownloadPresenter = new FileDownloadPresenter();
 
 const SearchPage = props => {
   const historyGateway = new HistoryGateway(props.history);
@@ -51,7 +59,8 @@ const SearchPage = props => {
         numberOfPages,
         currentPage,
         loading,
-        totalCount
+        totalCount,
+        searchParameters
       }) => (
         <div className="govuk-grid-row">
           <div className="govuk-grid-column-one-third">
@@ -63,6 +72,11 @@ const SearchPage = props => {
               assets={assets}
               totalCount={totalCount}
               loading={loading}
+            />
+            <CSVDownloadButton
+              searchParameters={searchParameters}
+              downloadSearch={downloadSearchResultsUsecase}
+              presenter={fileDownloadPresenter}
             />
             <Pagination
               onPageSelect={onPageSelect}

@@ -1,4 +1,4 @@
-import fetch from "isomorphic-fetch";
+import fetch from "cross-fetch";
 import Asset from "../../Domain/Asset";
 
 export default class SearchGateway {
@@ -23,6 +23,23 @@ export default class SearchGateway {
     } else {
       return { assets: [], pages: 0 };
     }
+  }
+
+  async download(filters) {
+    filters = { ...filters, pageSize: 1000000 };
+    let response = await fetch(
+      `${
+        process.env.REACT_APP_ASSET_REGISTER_API_URL
+      }api/v1/asset/search?${this.buildQueryStringFromFiltersAndPage(
+        filters,
+        1
+      )}`,
+      { headers: { accept: "text/csv" } }
+    );
+
+    let responseBody = await response.text();
+
+    return { file: responseBody };
   }
 
   buildQueryStringFromFiltersAndPage(filters, page) {
