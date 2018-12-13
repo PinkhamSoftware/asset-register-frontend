@@ -6,7 +6,7 @@ export default class CSVDownloadButton extends React.Component {
       return <span />;
     }
     return (
-      <a
+      <button
         data-test="csv-download-link"
         onClick={() =>
           this.props.downloadSearch.execute(this.props.presenter, {
@@ -15,7 +15,7 @@ export default class CSVDownloadButton extends React.Component {
         }
       >
         Download CSV
-      </a>
+      </button>
     );
   }
 }

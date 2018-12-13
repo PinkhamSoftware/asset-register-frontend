@@ -19,6 +19,19 @@ export default class AssetGateway {
     }
   };
 
+  async download(id) {
+    let response = await fetch(
+      `${
+        process.env.REACT_APP_ASSET_REGISTER_API_URL
+      }api/v1/asset/${id}`,
+      { headers: { accept: "text/csv" } }
+    );
+
+    let responseBody = await response.text();
+
+    return { file: responseBody };
+  }
+
   buildAssetFromResponseData(responseData) {
     let foundAsset = responseData.asset;
     let asset = new Asset();
