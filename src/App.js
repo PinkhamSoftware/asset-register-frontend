@@ -7,6 +7,7 @@ import FileDownloadPresenter from "./Presenters/FileDownload";
 
 import GetInitialSearchParameters from "./UseCase/GetInitialSearchParameters";
 import DownloadSearchResults from "./UseCase/DownloadSearchResults";
+import DownloadAsset from "./UseCase/DownloadAsset";
 
 import HistoryGateway from "./Gateway/HistoryGateway";
 
@@ -26,6 +27,7 @@ import Footer from "./Components/Footer";
 import Header from "./Components/Header";
 import Pagination from "./Components/Pagination";
 import SearchBox from "./Components/SearchBox";
+import AssetDownloadButton from "./Components/AssetDownloadButton";
 import CSVDownloadButton from "./Components/CSVDownloadButton";
 
 const searchGateway = new SearchGateway();
@@ -36,6 +38,7 @@ const downloadSearchResultsUsecase = new DownloadSearchResults({
 
 const assetGateway = new AssetGateway();
 const getAssetUsecase = new GetAsset({ assetGateway });
+const downloadAssetUsecase = new DownloadAsset({ assetGateway });
 
 const getInitialSearchParameters = new GetInitialSearchParameters();
 const fileDownloadPresenter = new FileDownloadPresenter();
@@ -95,7 +98,16 @@ const AssetPage = props => (
     assetId={parseInt(props.match.params.assetId)}
     getAsset={getAssetUsecase}
   >
-    {({ asset }) => <Asset asset={asset} />}
+    {({ asset }) => (
+      <div>
+        <Asset asset={asset} />
+        <AssetDownloadButton
+          assetId={asset.id}
+          downloadAsset={downloadAssetUsecase}
+          presenter={fileDownloadPresenter}
+        />
+      </div>
+    )}
   </AssetProvider>
 );
 
