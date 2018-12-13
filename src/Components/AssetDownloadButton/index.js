@@ -6,7 +6,8 @@ export default class AssetDownloadButton extends React.Component {
       return <span />;
     }
     return (
-      <a
+      <button
+        href="#"
         data-test="asset-download-link"
         onClick={() =>
           this.props.downloadAsset.execute(this.props.presenter, {
@@ -15,7 +16,7 @@ export default class AssetDownloadButton extends React.Component {
         }
       >
         Download CSV
-      </a>
+      </button>
     );
   }
 }
