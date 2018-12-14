@@ -21,6 +21,11 @@ import AssetList from "./Components/AssetList";
 import AssetsProvider from "./Components/AssetsProvider";
 import AssetProvider from "./Components/AssetProvider";
 
+import AggregateGateway from "./Gateway/AggregateGatewayy";
+import GetAggregateValues from "./UseCase/GetAggregateValues";
+import AggregatesProvider from "./Components/AggregatesProvider";
+import Aggregates from "./Components/Aggregates";
+
 import Asset from "./Components/Asset";
 
 import Footer from "./Components/Footer";
@@ -40,8 +45,46 @@ const assetGateway = new AssetGateway();
 const getAssetUsecase = new GetAsset({ assetGateway });
 const downloadAssetUsecase = new DownloadAsset({ assetGateway });
 
+const aggregateGateway = new AggregateGateway();
+const getAggregateValuesUseCase = new GetAggregateValues({ aggregateGateway });
+
 const getInitialSearchParameters = new GetInitialSearchParameters();
 const fileDownloadPresenter = new FileDownloadPresenter();
+
+const LandingPage = props => {
+  const historyGateway = new HistoryGateway(props.history);
+  let { searchParameters, page } = getInitialSearchParameters.execute(
+    props.location.search
+  );
+
+  return (
+    <div>
+      <AggregatesProvider
+        getAggregates={getAggregateValuesUseCase}
+        searchParameters={{}}
+      >
+        {({ aggregates }) => <Aggregates aggregateValues={aggregates} />}
+      </AggregatesProvider>
+      <Link to="/search">Search the register</Link>
+    </div>
+  );
+};
+
+const renderSearchPageAggregates = (searchQuery, searchParameters) => {
+  if (Object.keys(searchParameters).length === 0) {
+    return <span />;
+  }
+
+  return (
+    <AggregatesProvider
+      key={searchQuery}
+      getAggregates={getAggregateValuesUseCase}
+      searchParameters={searchParameters}
+    >
+      {({ aggregates }) => <Aggregates aggregateValues={aggregates} />}
+    </AggregatesProvider>
+  );
+};
 
 const SearchPage = props => {
   const historyGateway = new HistoryGateway(props.history);
@@ -65,29 +108,37 @@ const SearchPage = props => {
         totalCount,
         searchParameters
       }) => (
-        <div className="govuk-grid-row">
-          <div className="govuk-grid-column-one-third">
-            <SearchBox onSearch={onSearch} />
+        <React.Fragment>
+          <div className="govuk-grid-row">
+            {renderSearchPageAggregates(
+              props.location.search,
+              searchParameters
+            )}
           </div>
-          <div className="govuk-grid-column-two-thirds">
-            <AssetList
-              linkComponent={Link}
-              assets={assets}
-              totalCount={totalCount}
-              loading={loading}
-            />
-            <CSVDownloadButton
-              searchParameters={searchParameters}
-              downloadSearch={downloadSearchResultsUsecase}
-              presenter={fileDownloadPresenter}
-            />
-            <Pagination
-              onPageSelect={onPageSelect}
-              max={numberOfPages}
-              current={currentPage}
-            />
+          <div className="govuk-grid-row">
+            <div className="govuk-grid-column-one-third">
+              <SearchBox onSearch={onSearch} />
+            </div>
+            <div className="govuk-grid-column-two-thirds">
+              <AssetList
+                linkComponent={Link}
+                assets={assets}
+                totalCount={totalCount}
+                loading={loading}
+              />
+              <CSVDownloadButton
+                searchParameters={searchParameters}
+                downloadSearch={downloadSearchResultsUsecase}
+                presenter={fileDownloadPresenter}
+              />
+              <Pagination
+                onPageSelect={onPageSelect}
+                max={numberOfPages}
+                current={currentPage}
+              />
+            </div>
           </div>
-        </div>
+        </React.Fragment>
       )}
     </AssetsProvider>
   );
@@ -120,7 +171,7 @@ class App extends Component {
           <div className="govuk-width-container">
             <main className="govuk-main-wrapper">
               <Switch>
-                <Route exact path="/" component={SearchPage} />
+                <Route exact path="/" component={LandingPage} />
                 <Route exact path="/search" component={SearchPage} />
                 <Route path="/asset/:assetId" component={AssetPage} />
               </Switch>

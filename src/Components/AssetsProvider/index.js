@@ -58,7 +58,6 @@ export default class AssetsProvider extends Component {
           loading: this.state.loading,
           totalCount: this.state.totalCount,
           searchParameters: this.state.searchParameters,
-          loading: this.state.loading
         })}
       </div>
     );

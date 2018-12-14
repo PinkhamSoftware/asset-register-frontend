@@ -12,11 +12,13 @@ export default class AggregateGateway {
     if (response.ok) {
       let { data } = await response.json();
 
+      let { assetAggregates } = data
+
       return new Aggregates({
-        uniqueRecords: data.uniqueRecords,
-        moneyPaidOut: data.moneyPaidOut,
-        assetValue: data.assetValue,
-        movementInAssetValue: data.movementInAssetValue
+        uniqueRecords: assetAggregates.uniqueRecords,
+        moneyPaidOut: assetAggregates.moneyPaidOut,
+        assetValue: assetAggregates.assetValue,
+        movementInAssetValue: assetAggregates.movementInAssetValue
       });
     } else {
       return {};

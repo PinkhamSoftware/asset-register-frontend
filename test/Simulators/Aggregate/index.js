@@ -23,7 +23,7 @@ export default class AggregateSimulator {
     return nock(this.baseUrl)
       .get(`/api/v1/asset/search/aggregation?${this.queryStringFromFilters()}`)
       .reply(200, {
-        data: this.values
+        data: { assetAggregates: this.values }
       });
   }
 
