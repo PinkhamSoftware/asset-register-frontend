@@ -5,6 +5,7 @@ import { MemoryRouter } from "react-router-dom";
 import { exampleAssetOne } from "../test/Fixtures/assets";
 import SearchAssetSimulator from "../test/Simulators/SearchAsset";
 import GetAssetSimulator from "../test/Simulators/GetAsset";
+import AggregateSimulator from "../test/Simulators/Aggregate";
 
 const waitForRequestToResolve = async () => {
   await new Promise(resolve => setTimeout(resolve, 100));
@@ -63,6 +64,7 @@ describe("When using the asset register", () => {
     it("Searches the API for an asset and displays it in the list", async () => {
       process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
       let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
+      let aggregateSimualtor = new AggregateSimulator("https://meow.cat");
 
       searchAssetSimulator
         .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
@@ -71,7 +73,17 @@ describe("When using the asset register", () => {
         .respondWithTotal(10)
         .successfully();
 
-      let app = new AppPage("/");
+      aggregateSimualtor
+        .getAggregatesWithFilters({})
+        .respondWithValues({})
+        .successfully();
+
+      aggregateSimualtor
+        .getAggregatesWithFilters({ schemeId: "1", address: "Fake Street" })
+        .respondWithValues({})
+        .successfully();
+
+      let app = new AppPage("/search");
 
       app.searchForSchemeId("1");
 
@@ -97,6 +109,7 @@ describe("When using the asset register", () => {
     it("Allows us to navigate to a found asset from the search", async () => {
       process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
       let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
+      let aggregateSimualtor = new AggregateSimulator("https://meow.cat");
       let getAssetSimulator = new GetAssetSimulator("https://meow.cat/");
 
       searchAssetSimulator
@@ -111,7 +124,17 @@ describe("When using the asset register", () => {
         .respondWithData({ asset: exampleAssetOne })
         .successfully();
 
-      let app = new AppPage("/");
+      aggregateSimualtor
+        .getAggregatesWithFilters({})
+        .respondWithValues({})
+        .successfully();
+
+      aggregateSimualtor
+        .getAggregatesWithFilters({ schemeId: "1", address: "Fake Street" })
+        .respondWithValues({})
+        .successfully();
+
+      let app = new AppPage("/search");
 
       app.searchForSchemeId("1");
 
@@ -138,12 +161,18 @@ describe("When using the asset register", () => {
     it("Gets the search results from the API and displays them on the page", async () => {
       process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
       let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
+      let aggregateSimualtor = new AggregateSimulator("https://meow.cat");
 
       searchAssetSimulator
         .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
         .searchAssetWithPage(1)
         .respondWithAssets([exampleAssetOne])
         .respondWithTotal(5)
+        .successfully();
+
+      aggregateSimualtor
+        .getAggregatesWithFilters({ schemeId: "1", address: "Fake Street" })
+        .respondWithValues({})
         .successfully();
 
       let app = new AppPage("/search?schemeId=1&address=Fake Street&page=1");
