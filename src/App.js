@@ -172,7 +172,6 @@ class App extends Component {
           <Header linkComponent={Link} />
           <div className="govuk-width-container">
             <main className="govuk-main-wrapper">
-              <Login onLogin={({email})=> console.log(email)}></Login>
               <Switch>
                 <Route exact path="/" component={LandingPage} />
                 <Route exact path="/search" component={SearchPage} />
