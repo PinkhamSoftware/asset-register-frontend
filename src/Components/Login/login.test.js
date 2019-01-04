@@ -2,41 +2,72 @@ import React from "react";
 import { mount } from "enzyme";
 import Login from ".";
 
-describe("<Login>", () => {
+class LoginComponent {
+  constructor({ onLogin }) {
+    this.login = mount(<Login onLogin={onLogin} />);
+  }
 
+  find(params) {
+    return this.login.find(params);
+  }
+
+  displaysEmailInput() {
+    return this.find({ "data-test": "login-email-input" }).length === 1;
+  }
+
+  displaysSubmitButton() {
+    return this.find({ "data-test": "login-email-submit" }).length === 1;
+  }
+
+  submitForm() {
+    var button = this.find({ "data-test": "login-email-submit" });
+    button.simulate("submit");
+  }
+
+  inputEmail(email) {
+    var input = this.find({ "data-test": "login-email-input" });
+
+    input.simulate("change", { target: { value: email } });
+  }
+}
+
+describe("<Login>", () => {
   let login, onLoginSpy;
-  beforeEach( ()=> {
+  beforeEach(() => {
     onLoginSpy = jest.fn();
-    login = mount(<Login onLogin={onLoginSpy} />);
+    login = new LoginComponent({ onLogin: onLoginSpy });
   });
 
   it("Renders the login email input", () => {
-    var input = login.find({ "data-test": "login-email-input" });
-    expect(input.length).toEqual(1);
+    expect(login.displaysEmailInput()).toEqual(true);
   });
 
   it("Renders the login submit button", () => {
-
-    var button = login.find({ "data-test": "login-email-submit" });
-    expect(button.length).toEqual(1);
+    expect(login.displaysSubmitButton()).toEqual(true);
   });
 
   it("Calls the onLogin prop on submission", () => {
-    var button = login.find({ "data-test": "login-email-submit" });
-    button.simulate("submit");
+    login.submitForm();
     expect(onLoginSpy).toHaveBeenCalled();
   });
 
-  it("Calls the onLogin prop on submission with the value inside of the login input", () => {
-    
-    var button = login.find({ "data-test": "login-email-submit" });
-    var input = login.find({"data-test": "login-email-input"});
-    input.simulate("change", {target:{value:"test@example.com"}});
-    button.simulate("submit");
+  describe("Calls the onLogin prop on submission with the value inside of the login input", () => {
+    it("Example 1", () => {
+      login.inputEmail("test@example.com");
+      login.submitForm();
 
-    expect(onLoginSpy).toHaveBeenCalledWith({
-      email: "test@example.com"
+      expect(onLoginSpy).toHaveBeenCalledWith({
+        email: "test@example.com"
+      });
+    });
+    
+    it("Example 2", () => {
+      login.inputEmail("jest@example.com");
+      login.submitForm();
+
+      expect(onLoginSpy).toHaveBeenCalledWith({
+        email: "jest@example.com"
+      });
     });
   });
-
 });
