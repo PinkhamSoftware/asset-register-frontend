@@ -12,3 +12,9 @@ td:last-child {
   border-left: 0;
   text-align: center;
 }
+
+
+.asset-detail-property {
+  text-align: center;
+  background: #f8f4f4;
+}
