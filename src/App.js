@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
+import Login from "./Components/Login";
+
 import FileDownloadPresenter from "./Presenters/FileDownload";
 
 import GetInitialSearchParameters from "./UseCase/GetInitialSearchParameters";
