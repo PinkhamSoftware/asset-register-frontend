@@ -7,11 +7,8 @@ import Login from "./Components/Login";
 
 import FileDownloadPresenter from "./Presenters/FileDownload";
 
-import GetInitialSearchParameters from "./UseCase/GetInitialSearchParameters";
 import DownloadSearchResults from "./UseCase/DownloadSearchResults";
 import DownloadAsset from "./UseCase/DownloadAsset";
-
-import HistoryGateway from "./Gateway/HistoryGateway";
 
 import SearchGateway from "./Gateway/SearchGateway";
 import SearchAssets from "./UseCase/SearchAssets";
@@ -50,15 +47,9 @@ const downloadAssetUsecase = new DownloadAsset({ assetGateway });
 const aggregateGateway = new AggregateGateway();
 const getAggregateValuesUseCase = new GetAggregateValues({ aggregateGateway });
 
-const getInitialSearchParameters = new GetInitialSearchParameters();
 const fileDownloadPresenter = new FileDownloadPresenter();
 
-const LandingPage = props => {
-  const historyGateway = new HistoryGateway(props.history);
-  let { searchParameters, page } = getInitialSearchParameters.execute(
-    props.location.search
-  );
-
+const LandingPage = () => {
   return (
     <div>
       <AggregatesProvider
@@ -72,14 +63,10 @@ const LandingPage = props => {
   );
 };
 
-const renderSearchPageAggregates = (searchQuery, searchParameters) => {
-  if (Object.keys(searchParameters).length === 0) {
-    return <span />;
-  }
-
+const renderSearchPageAggregates = searchParameters => {
   return (
     <AggregatesProvider
-      key={searchQuery}
+      key={JSON.stringify(searchParameters)}
       getAggregates={getAggregateValuesUseCase}
       searchParameters={searchParameters}
     >
@@ -88,61 +75,180 @@ const renderSearchPageAggregates = (searchQuery, searchParameters) => {
   );
 };
 
-const SearchPage = props => {
-  const historyGateway = new HistoryGateway(props.history);
-  let { searchParameters, page } = getInitialSearchParameters.execute(
-    props.location.search
+const renderIndividualAssetSearchBody = (
+  assets,
+  totalCount,
+  loading,
+  searchParameters,
+  onPageSelect,
+  numberOfPages,
+  currentPage
+) => {
+  if (Object.keys(searchParameters).length === 0) {
+    return (
+      <div className="govuk-grid-column-two-thirds">
+        <p className="govuk-body">To use this search:</p>
+        <ul className="govuk-list govuk-list--bullet">
+          <li>enter either a scheme id or address</li>
+          <li>select the asset to reveal more details</li>
+        </ul>
+        <p className="govuk-body">
+          At any point you can return to this page and refine your search
+          request.
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="govuk-grid-column-two-thirds">
+      <AssetList
+        linkComponent={Link}
+        assets={assets}
+        totalCount={totalCount}
+        loading={loading}
+      />
+      <CSVDownloadButton
+        searchParameters={searchParameters}
+        downloadSearch={downloadSearchResultsUsecase}
+        presenter={fileDownloadPresenter}
+      />
+      <Pagination
+        onPageSelect={onPageSelect}
+        max={numberOfPages}
+        current={currentPage}
+      />
+    </div>
   );
+};
+
+const renderAssetRegisterReporting = (
+  assets,
+  totalCount,
+  loading,
+  searchParameters,
+  onPageSelect,
+  numberOfPages,
+  currentPage
+) => {
+  return (
+    <div className="govuk-grid-column-two-thirds">
+      <p className="govuk-body">To use this reporting feature:</p>
+      <ul className="govuk-list govuk-list--bullet">
+        <li>take note of the asset register version</li>
+        <li>filter the totals to view new criteria</li>
+        <li>
+          view any of the assets that have been used to generate the new totals
+        </li>
+      </ul>
+      <p className="govuk-body">
+        At any point you can clear the filters to view the full Asset Register
+      </p>
+      <div className="govuk-grid-row">
+        {renderSearchPageAggregates(searchParameters)}
+      </div>
+      <CSVDownloadButton
+        searchParameters={searchParameters}
+        downloadSearch={downloadSearchResultsUsecase}
+        presenter={fileDownloadPresenter}
+      />
+      <AssetList
+        linkComponent={Link}
+        assets={assets}
+        totalCount={totalCount}
+        loading={loading}
+      />
+      <Pagination
+        onPageSelect={onPageSelect}
+        max={numberOfPages}
+        current={currentPage}
+      />
+    </div>
+  );
+};
+
+const SearchPage = () => {
+  const historyGateway = { storeSearch: () => {} };
 
   return (
-    <AssetsProvider
-      history={historyGateway}
-      searchAssets={searchAssetUsecase}
-      initialSearchParameters={{ searchParameters, page }}
-    >
-      {({
-        assets,
-        onSearch,
-        onPageSelect,
-        numberOfPages,
-        currentPage,
-        loading,
-        totalCount,
-        searchParameters
-      }) => (
-        <React.Fragment>
-          <div className="govuk-grid-row">
-            {renderSearchPageAggregates(
-              props.location.search,
-              searchParameters
-            )}
-          </div>
-          <div className="govuk-grid-row">
-            <div className="govuk-grid-column-one-third">
-              <SearchBox onSearch={onSearch} />
+    <React.Fragment>
+      <div className="govuk-grid-row">
+        <h1 className="govuk-heading-l">Homes England Asset Register</h1>
+      </div>
+      <AssetsProvider
+        history={historyGateway}
+        searchAssets={searchAssetUsecase}
+        initialSearchParameters={{}}
+      >
+        {({
+          assets,
+          onSearch,
+          onPageSelect,
+          numberOfPages,
+          currentPage,
+          loading,
+          totalCount,
+          searchParameters
+        }) => (
+          <React.Fragment>
+            <div className="govuk-grid-row">
+              <h2 className="govuk-heading-m">Individual Asset Search</h2>
+              <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
             </div>
-            <div className="govuk-grid-column-two-thirds">
-              <AssetList
-                linkComponent={Link}
-                assets={assets}
-                totalCount={totalCount}
-                loading={loading}
-              />
-              <CSVDownloadButton
-                searchParameters={searchParameters}
-                downloadSearch={downloadSearchResultsUsecase}
-                presenter={fileDownloadPresenter}
-              />
-              <Pagination
-                onPageSelect={onPageSelect}
-                max={numberOfPages}
-                current={currentPage}
-              />
+            <div className="govuk-grid-row">
+              <div className="govuk-grid-column-one-third">
+                <SearchBox onSearch={onSearch} />
+              </div>
+              {renderIndividualAssetSearchBody(
+                assets,
+                totalCount,
+                loading,
+                searchParameters,
+                onPageSelect,
+                numberOfPages,
+                currentPage
+              )}
             </div>
-          </div>
-        </React.Fragment>
-      )}
-    </AssetsProvider>
+          </React.Fragment>
+        )}
+      </AssetsProvider>
+      <AssetsProvider
+        history={historyGateway}
+        searchAssets={searchAssetUsecase}
+        initialSearchParameters={{}}
+      >
+        {({
+          assets,
+          onSearch,
+          onPageSelect,
+          numberOfPages,
+          currentPage,
+          loading,
+          totalCount,
+          searchParameters
+        }) => (
+          <React.Fragment>
+            <div className="govuk-grid-row" style={{ marginTop: "50px" }}>
+              <h2 className="govuk-heading-m">Asset Register Reporting</h2>
+              <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
+            </div>
+            <div className="govuk-grid-row">
+              <div className="govuk-grid-column-one-third">
+                <SearchBox onSearch={onSearch} />
+              </div>
+              {renderAssetRegisterReporting(
+                assets,
+                totalCount,
+                loading,
+                searchParameters,
+                onPageSelect,
+                numberOfPages,
+                currentPage
+              )}
+            </div>
+          </React.Fragment>
+        )}
+      </AssetsProvider>
+    </React.Fragment>
   );
 };
 

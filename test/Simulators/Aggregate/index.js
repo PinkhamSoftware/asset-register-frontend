@@ -7,10 +7,16 @@ export default class AggregateSimulator {
     this.filters = {};
     this.downloadCSV = false;
     this.fileResponse = undefined;
+    this.timesToRespond = 1;
   }
 
   getAggregatesWithFilters(filters) {
     this.filters = { ...filters };
+    return this;
+  }
+
+  times(times) {
+    this.timesToRespond = times;
     return this;
   }
 
@@ -22,6 +28,7 @@ export default class AggregateSimulator {
   successfully() {
     return nock(this.baseUrl)
       .get(`/api/v1/asset/search/aggregation?${this.queryStringFromFilters()}`)
+      .times(this.timesToRespond)
       .reply(200, {
         data: { assetAggregates: this.values }
       });

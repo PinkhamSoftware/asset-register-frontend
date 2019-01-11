@@ -1,0 +1,14 @@
+.asset-aggregate-value {
+  margin: 10px 0;
+  padding: 16px 0;
+  text-align: center;
+  background: #f8f4f4;
+}
+
+.background-color-dark {
+  background: #000;
+}
+
+.text-color-white {
+  color: #fff;
+}
