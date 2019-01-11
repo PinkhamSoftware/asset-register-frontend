@@ -23,7 +23,7 @@ export default class AssetList extends Component {
           </div>
         </div>
         <div className="govuk-grid-row">
-          <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
+          <hr className="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
         </div>
       </div>
     </div>
@@ -46,7 +46,7 @@ export default class AssetList extends Component {
             </h3>
           </div>
           <div className="govuk-grid-row">
-            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
+            <hr className="govuk-section-break govuk-section-break--l govuk-section-break--visible" />
           </div>
           {this.props.assets.map(asset => this.renderResult(asset))}
         </div>

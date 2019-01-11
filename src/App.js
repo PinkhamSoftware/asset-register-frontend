@@ -5,11 +5,8 @@ import "govuk-frontend/all.scss";
 
 import FileDownloadPresenter from "./Presenters/FileDownload";
 
-import GetInitialSearchParameters from "./UseCase/GetInitialSearchParameters";
 import DownloadSearchResults from "./UseCase/DownloadSearchResults";
 import DownloadAsset from "./UseCase/DownloadAsset";
-
-import HistoryGateway from "./Gateway/HistoryGateway";
 
 import SearchGateway from "./Gateway/SearchGateway";
 import SearchAssets from "./UseCase/SearchAssets";
@@ -48,15 +45,9 @@ const downloadAssetUsecase = new DownloadAsset({ assetGateway });
 const aggregateGateway = new AggregateGateway();
 const getAggregateValuesUseCase = new GetAggregateValues({ aggregateGateway });
 
-const getInitialSearchParameters = new GetInitialSearchParameters();
 const fileDownloadPresenter = new FileDownloadPresenter();
 
-const LandingPage = props => {
-  const historyGateway = new HistoryGateway(props.history);
-  let { searchParameters, page } = getInitialSearchParameters.execute(
-    props.location.search
-  );
-
+const LandingPage = () => {
   return (
     <div>
       <AggregatesProvider
@@ -70,10 +61,10 @@ const LandingPage = props => {
   );
 };
 
-const renderSearchPageAggregates = (searchQuery, searchParameters) => {
+const renderSearchPageAggregates = searchParameters => {
   return (
     <AggregatesProvider
-      key={searchQuery}
+      key={JSON.stringify(searchParameters)}
       getAggregates={getAggregateValuesUseCase}
       searchParameters={searchParameters}
     >
@@ -135,8 +126,7 @@ const renderAssetRegisterReporting = (
   searchParameters,
   onPageSelect,
   numberOfPages,
-  currentPage,
-  searchQueryString
+  currentPage
 ) => {
   return (
     <div className="govuk-grid-column-two-thirds">
@@ -152,7 +142,7 @@ const renderAssetRegisterReporting = (
         At any point you can clear the filters to view the full Asset Register
       </p>
       <div className="govuk-grid-row">
-        {renderSearchPageAggregates(searchQueryString, searchParameters)}
+        {renderSearchPageAggregates(searchParameters)}
       </div>
       <CSVDownloadButton
         searchParameters={searchParameters}
@@ -174,11 +164,8 @@ const renderAssetRegisterReporting = (
   );
 };
 
-const SearchPage = props => {
-  const historyGateway = new HistoryGateway(props.history);
-  let { searchParameters, page } = getInitialSearchParameters.execute(
-    props.location.search
-  );
+const SearchPage = () => {
+  const historyGateway = { storeSearch: () => {} };
 
   return (
     <React.Fragment>
@@ -188,7 +175,7 @@ const SearchPage = props => {
       <AssetsProvider
         history={historyGateway}
         searchAssets={searchAssetUsecase}
-        initialSearchParameters={{ searchParameters, page }}
+        initialSearchParameters={{}}
       >
         {({
           assets,
@@ -225,7 +212,7 @@ const SearchPage = props => {
       <AssetsProvider
         history={historyGateway}
         searchAssets={searchAssetUsecase}
-        initialSearchParameters={{ searchParameters, page }}
+        initialSearchParameters={{}}
       >
         {({
           assets,
@@ -253,8 +240,7 @@ const SearchPage = props => {
                 searchParameters,
                 onPageSelect,
                 numberOfPages,
-                currentPage,
-                props.location.search
+                currentPage
               )}
             </div>
           </React.Fragment>

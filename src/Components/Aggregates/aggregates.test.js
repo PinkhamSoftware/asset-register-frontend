@@ -29,21 +29,21 @@ describe("<Aggregates>", () => {
         let moneyPaidOut = aggregates.find({
           "data-test": "aggregates-money-paid-out"
         });
-        expect(moneyPaidOut.text()).toEqual("202");
+        expect(moneyPaidOut.text()).toEqual("£202");
       });
 
       it("Displays the asset value", () => {
         let assetValue = aggregates.find({
           "data-test": "aggregates-asset-value"
         });
-        expect(assetValue.text()).toEqual("303");
+        expect(assetValue.text()).toEqual("£303");
       });
 
       it("Displays the movement in asset value", () => {
         let assetValue = aggregates.find({
           "data-test": "aggregates-movement-in-asset-value"
         });
-        expect(assetValue.text()).toEqual("404");
+        expect(assetValue.text()).toEqual("£404");
       });
     });
 
@@ -70,21 +70,21 @@ describe("<Aggregates>", () => {
         let moneyPaidOut = aggregates.find({
           "data-test": "aggregates-money-paid-out"
         });
-        expect(moneyPaidOut.text()).toEqual("606");
+        expect(moneyPaidOut.text()).toEqual("£606");
       });
 
       it("Displays the asset value", () => {
         let assetValue = aggregates.find({
           "data-test": "aggregates-asset-value"
         });
-        expect(assetValue.text()).toEqual("707");
+        expect(assetValue.text()).toEqual("£707");
       });
 
       it("Displays the movement in asset value", () => {
         let assetValue = aggregates.find({
           "data-test": "aggregates-movement-in-asset-value"
         });
-        expect(assetValue.text()).toEqual("808");
+        expect(assetValue.text()).toEqual("£808");
       });
     });
   });

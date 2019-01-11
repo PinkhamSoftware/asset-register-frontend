@@ -6,6 +6,7 @@ import { exampleAssetOne } from "../test/Fixtures/assets";
 import SearchAssetSimulator from "../test/Simulators/SearchAsset";
 import GetAssetSimulator from "../test/Simulators/GetAsset";
 import AggregateSimulator from "../test/Simulators/Aggregate";
+import nock from "nock";
 
 const waitForRequestToResolve = async () => {
   await new Promise(resolve => setTimeout(resolve, 100));
@@ -38,21 +39,27 @@ class AppPage {
   }
 
   searchForSchemeId(schemeId) {
-    this.find('[data-test="search-scheme-id"]').simulate("change", {
-      target: { value: schemeId }
-    });
+    this.find('[data-test="search-scheme-id"]')
+      .first()
+      .simulate("change", {
+        target: { value: schemeId }
+      });
   }
 
   searchForAddress(address) {
-    this.find('[data-test="search-address"]').simulate("change", {
-      target: { value: address }
-    });
+    this.find('[data-test="search-address"]')
+      .first()
+      .simulate("change", {
+        target: { value: address }
+      });
   }
 
   async executeSearch() {
-    this.find('[data-test="search-form"]').simulate("submit", {
-      preventDefault: jest.fn()
-    });
+    this.find('[data-test="search-form"]')
+      .first()
+      .simulate("submit", {
+        preventDefault: jest.fn()
+      });
 
     await this.waitForRequestToResolve();
     this.update();
@@ -79,7 +86,7 @@ describe("When using the asset register", () => {
         .successfully();
 
       aggregateSimualtor
-        .getAggregatesWithFilters({ schemeId: "1", address: "Fake Street" })
+        .getAggregatesWithFilters({})
         .respondWithValues({})
         .successfully();
 
@@ -94,7 +101,10 @@ describe("When using the asset register", () => {
       let renderedAsset = app.find({ "data-test": "asset" });
 
       expect(
-        app.find({ "data-test": "asset-list-total-count" }).text()
+        app
+          .find({ "data-test": "asset-list-total-count" })
+          .first()
+          .text()
       ).toEqual("10");
 
       expect(
@@ -130,6 +140,11 @@ describe("When using the asset register", () => {
         .successfully();
 
       aggregateSimualtor
+        .getAggregatesWithFilters({})
+        .respondWithValues({})
+        .successfully();
+
+      aggregateSimualtor
         .getAggregatesWithFilters({ schemeId: "1", address: "Fake Street" })
         .respondWithValues({})
         .successfully();
@@ -154,43 +169,6 @@ describe("When using the asset register", () => {
       expect(app.find({ "data-test": "asset-accounting-year" }).text()).toEqual(
         "2018"
       );
-    });
-  });
-
-  describe("When viewing search results", () => {
-    it("Gets the search results from the API and displays them on the page", async () => {
-      process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
-      let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
-      let aggregateSimualtor = new AggregateSimulator("https://meow.cat");
-
-      searchAssetSimulator
-        .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
-        .searchAssetWithPage(1)
-        .respondWithAssets([exampleAssetOne])
-        .respondWithTotal(5)
-        .successfully();
-
-      aggregateSimualtor
-        .getAggregatesWithFilters({ schemeId: "1", address: "Fake Street" })
-        .respondWithValues({})
-        .successfully();
-
-      let app = new AppPage("/search?schemeId=1&address=Fake Street&page=1");
-      await app.load();
-
-      let renderedAsset = app.find({ "data-test": "asset" });
-
-      expect(
-        app.find({ "data-test": "asset-list-total-count" }).text()
-      ).toEqual("5");
-
-      expect(
-        renderedAsset.find({ "data-test": "asset-scheme-id" }).text()
-      ).toEqual("12345");
-
-      expect(
-        renderedAsset.find({ "data-test": "asset-address" }).text()
-      ).toEqual("123 Fake Street");
     });
   });
 

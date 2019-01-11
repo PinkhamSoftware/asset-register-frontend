@@ -7,10 +7,16 @@ export default class GetAsset {
     this.filters = {};
     this.downloadCSV = false;
     this.fileResponse = undefined;
+    this.timesToRespond = 1;
   }
 
   searchAssetWithFilters(filters) {
     this.filters = { ...filters };
+    return this;
+  }
+
+  times(times) {
+    this.timesToRespond = times;
     return this;
   }
 
@@ -50,12 +56,18 @@ export default class GetAsset {
     );
 
     if (!this.downloadCSV) {
-      return request.reply(200, {
-        data: { assets: this.assets, pages: this.pages, pages: this.pages, totalCount: this.total }
+      return request.times(this.timesToRespond).reply(200, {
+        data: {
+          assets: this.assets,
+          pages: this.pages,
+          pages: this.pages,
+          totalCount: this.total
+        }
       });
     } else {
       return request
         .matchHeader("accept", "text/csv")
+        .times(this.timesToRespond)
         .reply(200, this.fileResponse);
     }
   }

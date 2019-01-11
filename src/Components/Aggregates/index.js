@@ -31,7 +31,7 @@ export default class Aggregates extends React.Component {
               <p className="govuk-body govuk-!-font-size-19">Fair value</p>
               <p
                 className="govuk-body govuk-!-font-size-27 govuk-!-font-weight-bold"
-                data-test="aggregates-unique-records"
+                data-test="aggregates-money-paid-out"
               >
                 &#163;{moneyPaidOut}
               </p>
@@ -46,7 +46,7 @@ export default class Aggregates extends React.Component {
               </p>
               <p
                 className="govuk-body govuk-!-font-size-27 govuk-!-font-weight-bold"
-                data-test="aggregates-unique-records"
+                data-test="aggregates-asset-value"
               >
                 &#163;{assetValue}
               </p>
@@ -59,7 +59,7 @@ export default class Aggregates extends React.Component {
               </p>
               <p
                 className="govuk-body govuk-!-font-size-27 govuk-!-font-weight-bold text-color-white"
-                data-test="aggregates-unique-records"
+                data-test="aggregates-movement-in-asset-value"
               >
                 &#163;{movementInAssetValue}
               </p>
