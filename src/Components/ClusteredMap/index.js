@@ -17,12 +17,12 @@ const generateRandomLong = () => {
 };
 
 const generateRandomLat = () => {
-  var num = (Math.random() * 3).toFixed(3);
+  var num = (Math.random() * 3.5).toFixed(3);
   var posorneg = Math.floor(Math.random());
   if (posorneg === 0) {
     num = num * -1;
   }
-  return num + 54;
+  return num + 54.5;
 };
 
 const generatePositions = num => {
@@ -41,10 +41,10 @@ const MapWithAMarker = withScriptjs(
     return (
       <GoogleMap
         defaultOptions={{ disableDefaultUI: true, mapTypeControl: false }}
-        defaultZoom={6}
-        defaultCenter={{ lat: 53.5, lng: -0.0 }}
+        defaultZoom={7}
+        defaultCenter={{ lat: 52.8, lng: -1.0 }}
       >
-        <MarkerClusterer gridSize={60}>
+        <MarkerClusterer gridSize={70}>
           {positions.map(pos => (
             <Marker key={JSON.stringify(pos)} position={pos} />
           ))}
@@ -61,7 +61,7 @@ export default props => (
       process.env.REACT_APP_MAPS_API_KEY
     }&v=3.exp&libraries=geometry,drawing,places`}
     loadingElement={<div>loading</div>}
-    containerElement={<div style={{ height: `600px` }} />}
+    containerElement={<div style={{ height: `800px` }} />}
     mapElement={<div style={{ height: `100%` }} />}
   />
 );
