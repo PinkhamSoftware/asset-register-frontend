@@ -50,56 +50,24 @@ describe("<Asset>", () => {
   describe("Example one", () => {
     it("Renders the asset details", () => {
       let asset = new AssetComponent(assetOne);
-      expect(asset.assetId()).toEqual("1");
-      expect(asset.modifiedDateTime()).toEqual("13/11/2018 @ 11:04");
-      expect(asset.monthPaid()).toEqual("Jan");
-      expect(asset.accountingYear()).toEqual("2018");
       expect(asset.schemeId()).toEqual("12345");
-      expect(asset.locationLaRegionName()).toEqual("Yorkshire");
-      expect(asset.imsOldRegion()).toEqual("West Yorkshire");
-      expect(asset.noOfBeds()).toEqual("5");
       expect(asset.address()).toEqual("123 Fake Street");
-      expect(asset.developingRslName()).toEqual("Meow Meow");
-      expect(asset.completionDateForHpiStart()).toEqual("13/11/2018 @ 11:05");
-      expect(asset.imsActualCompletionDate()).toEqual("13/11/2018 @ 11:06");
-      expect(asset.imsExpectedCompletionDate()).toEqual("13/11/2018 @ 11:07");
-      expect(asset.imsLegalCompletionDate()).toEqual("13/11/2018 @ 11:08");
-      expect(asset.hopCompletionDate()).toEqual("13/11/2018 @ 11:09");
       expect(asset.deposit()).toEqual("1234");
       expect(asset.agencyEquityLoan()).toEqual("5678");
       expect(asset.developerEquityLoan()).toEqual("9123");
       expect(asset.shareOfRestrictedEquity()).toEqual("4567");
-      expect(
-        asset.differenceFromImsExpectedCompletionToHopCompletionDate()
-      ).toEqual("8912");
     });
   });
 
   describe("Example two", () => {
     it("Renders the asset details", () => {
       let asset = new AssetComponent(assetTwo);
-      expect(asset.assetId()).toEqual("2");
-      expect(asset.modifiedDateTime()).toEqual("13/11/2018 @ 11:05");
-      expect(asset.monthPaid()).toEqual("Feb");
-      expect(asset.accountingYear()).toEqual("2017");
       expect(asset.schemeId()).toEqual("54321");
-      expect(asset.locationLaRegionName()).toEqual("Lancashire");
-      expect(asset.imsOldRegion()).toEqual("West Lancashire");
-      expect(asset.noOfBeds()).toEqual("2");
       expect(asset.address()).toEqual("321 Fake Street");
-      expect(asset.developingRslName()).toEqual("Woof woof");
-      expect(asset.completionDateForHpiStart()).toEqual("13/11/2018 @ 11:07");
-      expect(asset.imsActualCompletionDate()).toEqual("13/11/2018 @ 11:08");
-      expect(asset.imsExpectedCompletionDate()).toEqual("13/11/2018 @ 11:09");
-      expect(asset.imsLegalCompletionDate()).toEqual("13/11/2018 @ 11:10");
-      expect(asset.hopCompletionDate()).toEqual("13/11/2018 @ 11:11");
       expect(asset.deposit()).toEqual("4321");
       expect(asset.agencyEquityLoan()).toEqual("8765");
       expect(asset.developerEquityLoan()).toEqual("3219");
       expect(asset.shareOfRestrictedEquity()).toEqual("7654");
-      expect(
-        asset.differenceFromImsExpectedCompletionToHopCompletionDate()
-      ).toEqual("2198");
     });
   });
 });
