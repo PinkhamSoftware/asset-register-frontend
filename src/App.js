@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
-import Login from "./Components/Login";
+import ClusteredMap from "./Components/ClusteredMap";
 
 import FileDownloadPresenter from "./Presenters/FileDownload";
 
@@ -48,6 +48,12 @@ const aggregateGateway = new AggregateGateway();
 const getAggregateValuesUseCase = new GetAggregateValues({ aggregateGateway });
 
 const fileDownloadPresenter = new FileDownloadPresenter();
+
+const displayMapsPage = () => {
+  console.log(process.env.REACT_APP_DISPLAY_MAPS);
+
+  return process.env.REACT_APP_DISPLAY_MAPS === "yes";
+};
 
 const LandingPage = () => {
   return (
@@ -282,6 +288,14 @@ class App extends Component {
                 <Route exact path="/" component={LandingPage} />
                 <Route exact path="/search" component={SearchPage} />
                 <Route path="/asset/:assetId" component={AssetPage} />
+                {displayMapsPage() && (
+                  <Route
+                    path="/maps/:positions"
+                    component={props => (
+                      <ClusteredMap positions={props.match.params.positions} />
+                    )}
+                  />
+                )}
               </Switch>
             </main>
           </div>

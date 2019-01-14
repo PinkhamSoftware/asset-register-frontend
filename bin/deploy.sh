@@ -15,6 +15,7 @@ if [ "${ENVIRONMENT_NAME}" == "production" ]; then
 else
   APP_NAME="${ENVIRONMENT_NAME}"
   REACT_APP_ASSET_REGISTER_API_URL="${API_URL_STAGING}"
+  DISPLAY_MAPS=yes
 fi
 
 curl -L "https://packages.cloudfoundry.org/stable?release=linux64-binary&source=github" | tar -zx
@@ -26,5 +27,7 @@ curl -L "https://packages.cloudfoundry.org/stable?release=linux64-binary&source=
 ./cf set-env "asset-register-frontend-${APP_NAME}" circle_commit "${CIRCLE_SHA1}"
 ./cf set-env "asset-register-frontend-${APP_NAME}" REACT_APP_SENTRY_DSN "${SENTRY_DSN}"
 ./cf set-env "asset-register-frontend-${APP_NAME}" REACT_APP_ASSET_REGISTER_API_URL "${REACT_APP_ASSET_REGISTER_API_URL}"
+./cf set-env "asset-register-frontend-${APP_NAME}" REACT_APP_DISPLAY_MAPS "${DISPLAY_MAPS}"
+./cf set-env "asset-register-frontend-${APP_NAME}" REACT_APP_MAPS_API_KEY "${MAPS_API_KEY}"
 
 ./cf push -f "deploy-manifests/${APP_NAME}.yml"
