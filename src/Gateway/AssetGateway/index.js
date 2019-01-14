@@ -54,8 +54,8 @@ export default class AssetGateway {
     asset.agencyEquityLoan = foundAsset.agencyEquityLoan;
     asset.developerEquityLoan = foundAsset.developerEquityLoan;
     asset.shareOfRestrictedEquity = foundAsset.shareOfRestrictedEquity;
-    asset.differenceFromImsExpectedCompletionToHopCompletionDate =
-      foundAsset.differenceFromImsExpectedCompletionToHopCompletionDate;
+    asset.differenceFromImsExpectedCompletionToHopCompletionDate = foundAsset.differenceFromImsExpectedCompletionToHopCompletionDate;
+
 
     return asset;
   }

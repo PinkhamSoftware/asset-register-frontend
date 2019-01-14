@@ -166,8 +166,8 @@ describe("When using the asset register", () => {
         "12345"
       );
 
-      expect(app.find({ "data-test": "asset-accounting-year" }).text()).toEqual(
-        "2018"
+      expect(app.find({ "data-test": "asset-address" }).text()).toEqual(
+        "123 Fake Street"
       );
     });
   });
@@ -196,8 +196,8 @@ describe("When using the asset register", () => {
         "12345"
       );
 
-      expect(app.find({ "data-test": "asset-accounting-year" }).text()).toEqual(
-        "2018"
+      expect(app.find({ "data-test": "asset-address" }).text()).toEqual(
+        "123 Fake Street"
       );
     });
   });
