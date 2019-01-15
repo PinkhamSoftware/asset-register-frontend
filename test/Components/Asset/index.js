@@ -1,10 +1,10 @@
-import React from 'react'
-import { mount } from 'enzyme'
-import Asset from '../../../src/Components/Asset'
+import React from "react";
+import { mount } from "enzyme";
+import Asset from "../../../src/Components/Asset";
 
 export default class AssetComponent {
-  constructor(assetData) {
-    this.component = mount(<Asset asset={assetData} />);
+  constructor(assetData, mapSpy) {
+    this.component = mount(<Asset asset={assetData} mapComponent={mapSpy} />);
   }
 
   find(dataTest) {

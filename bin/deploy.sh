@@ -29,5 +29,6 @@ curl -L "https://packages.cloudfoundry.org/stable?release=linux64-binary&source=
 ./cf set-env "asset-register-frontend-${APP_NAME}" REACT_APP_ASSET_REGISTER_API_URL "${REACT_APP_ASSET_REGISTER_API_URL}"
 ./cf set-env "asset-register-frontend-${APP_NAME}" REACT_APP_DISPLAY_MAPS "${DISPLAY_MAPS}"
 ./cf set-env "asset-register-frontend-${APP_NAME}" REACT_APP_MAPS_API_KEY "${MAPS_API_KEY}"
+./cf set-env "asset-register-frontend-${APP_NAME}" REACT_APP_POSTCODE_API_URL "${POSTCODE_API_URL}"
 
 ./cf push -f "deploy-manifests/${APP_NAME}.yml"

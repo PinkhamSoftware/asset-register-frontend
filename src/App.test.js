@@ -67,6 +67,12 @@ class AppPage {
 }
 
 describe("When using the asset register", () => {
+  const stubPostcodeResponse = () => {
+    nock(process.env.REACT_APP_POSTCODE_API_URL)
+      .post("/api/v1/geolocation")
+      .reply(200, []);
+  };
+
   describe("When searching for an asset", () => {
     it("Searches the API for an asset and displays it in the list", async () => {
       process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
@@ -118,6 +124,8 @@ describe("When using the asset register", () => {
 
     it("Allows us to navigate to a found asset from the search", async () => {
       process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
+      process.env.REACT_APP_POSTCODE_API_URL = "https://dog.woof/";
+      stubPostcodeResponse();
       let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
       let aggregateSimualtor = new AggregateSimulator("https://meow.cat");
       let getAssetSimulator = new GetAssetSimulator("https://meow.cat/");
@@ -175,6 +183,8 @@ describe("When using the asset register", () => {
   describe("When viewing an asset", () => {
     it("Get an asset from API and display it on the page", async () => {
       process.env.REACT_APP_ASSET_REGISTER_API_URL = "https://meow.cat/";
+      process.env.REACT_APP_POSTCODE_API_URL = "https://dog.woof/";
+      stubPostcodeResponse();
 
       let getAssetSimulator = new GetAssetSimulator("https://meow.cat/");
 

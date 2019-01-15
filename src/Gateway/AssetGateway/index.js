@@ -55,6 +55,7 @@ export default class AssetGateway {
     asset.developerEquityLoan = foundAsset.developerEquityLoan;
     asset.shareOfRestrictedEquity = foundAsset.shareOfRestrictedEquity;
     asset.differenceFromImsExpectedCompletionToHopCompletionDate = foundAsset.differenceFromImsExpectedCompletionToHopCompletionDate;
+    asset.propertyPostcode = foundAsset.propertyPostcode
 
 
     return asset;

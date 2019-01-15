@@ -18,7 +18,8 @@ let exampleAssetOne = {
   agencyEquityLoan: 5678,
   developerEquityLoan: 9123,
   shareOfRestrictedEquity: 4567,
-  differenceFromImsExpectedCompletionToHopCompletionDate: 8912
+  differenceFromImsExpectedCompletionToHopCompletionDate: 8912,
+  propertyPostcode: "FA1 1KE"
 };
 
 let exampleAssetTwo = {
@@ -41,7 +42,8 @@ let exampleAssetTwo = {
   agencyEquityLoan: 8765,
   developerEquityLoan: 3219,
   shareOfRestrictedEquity: 7654,
-  differenceFromImsExpectedCompletionToHopCompletionDate: 2198
+  differenceFromImsExpectedCompletionToHopCompletionDate: 2198,
+  propertyPostcode: "FA2 2KE"
 };
 
 export { exampleAssetOne, exampleAssetTwo };

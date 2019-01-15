@@ -20,5 +20,6 @@ export default class Asset {
     this.developerEquityLoan = undefined;
     this.shareOfRestrictedEquity = undefined;
     this.differenceFromImsExpectedCompletionToHopCompletionDate = undefined;
+    this.propertyPostcode = undefined;
   }
 }

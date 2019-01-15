@@ -3,55 +3,55 @@ import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
-import ClusteredMap from "./Components/ClusteredMap";
-
-import FileDownloadPresenter from "./Presenters/FileDownload";
-
-import DownloadSearchResults from "./UseCase/DownloadSearchResults";
-import DownloadAsset from "./UseCase/DownloadAsset";
-
-import SearchGateway from "./Gateway/SearchGateway";
-import SearchAssets from "./UseCase/SearchAssets";
-
-import AssetGateway from "./Gateway/AssetGateway";
-import GetAsset from "./UseCase/GetAsset";
-
-import AssetList from "./Components/AssetList";
-import AssetsProvider from "./Components/AssetsProvider";
-import AssetProvider from "./Components/AssetProvider";
-
-import AggregateGateway from "./Gateway/AggregateGatewayy";
-import GetAggregateValues from "./UseCase/GetAggregateValues";
-import AggregatesProvider from "./Components/AggregatesProvider";
 import Aggregates from "./Components/Aggregates";
-
+import AggregatesProvider from "./Components/AggregatesProvider";
+import AssetDownloadButton from "./Components/AssetDownloadButton";
 import Asset from "./Components/Asset";
-
+import AssetList from "./Components/AssetList";
+import AssetMap from "./Components/AssetMap";
+import AssetProvider from "./Components/AssetProvider";
+import AssetsProvider from "./Components/AssetsProvider";
+import ClusteredMap from "./Components/ClusteredMap";
+import CoordinateProvider from "./Components/CoordinateProvider";
+import CSVDownloadButton from "./Components/CSVDownloadButton";
 import Footer from "./Components/Footer";
 import Header from "./Components/Header";
 import Pagination from "./Components/Pagination";
 import SearchBox from "./Components/SearchBox";
-import AssetDownloadButton from "./Components/AssetDownloadButton";
-import CSVDownloadButton from "./Components/CSVDownloadButton";
 
+import AggregateGateway from "./Gateway/AggregateGatewayy";
+import AssetGateway from "./Gateway/AssetGateway";
+import SearchGateway from "./Gateway/SearchGateway";
+import PostcodeLookupGateway from "./Gateway/PostcodeLookupGateway";
+
+import DownloadAsset from "./UseCase/DownloadAsset";
+import DownloadSearchResults from "./UseCase/DownloadSearchResults";
+import GetAggregateValues from "./UseCase/GetAggregateValues";
+import GetAsset from "./UseCase/GetAsset";
+import GetCoordinatesForPostcode from "./UseCase/GetCoordinatesForPostcodes";
+import SearchAssets from "./UseCase/SearchAssets";
+
+import FileDownloadPresenter from "./Presenters/FileDownload";
+
+const aggregateGateway = new AggregateGateway();
+const assetGateway = new AssetGateway();
+const postcodeLookupGateway = new PostcodeLookupGateway();
 const searchGateway = new SearchGateway();
-const searchAssetUsecase = new SearchAssets({ searchGateway });
 const downloadSearchResultsUsecase = new DownloadSearchResults({
   searchGateway
 });
 
-const assetGateway = new AssetGateway();
-const getAssetUsecase = new GetAsset({ assetGateway });
 const downloadAssetUsecase = new DownloadAsset({ assetGateway });
-
-const aggregateGateway = new AggregateGateway();
+const getAssetUsecase = new GetAsset({ assetGateway });
 const getAggregateValuesUseCase = new GetAggregateValues({ aggregateGateway });
+const getCoordinatesForPostcode = new GetCoordinatesForPostcode({
+  postcodeLookupGateway
+});
+const searchAssetUsecase = new SearchAssets({ searchGateway });
 
 const fileDownloadPresenter = new FileDownloadPresenter();
 
 const displayMapsPage = () => {
-  console.log(process.env.REACT_APP_DISPLAY_MAPS);
-
   return process.env.REACT_APP_DISPLAY_MAPS === "yes";
 };
 
@@ -265,7 +265,19 @@ const AssetPage = props => (
   >
     {({ asset }) => (
       <div>
-        <Asset asset={asset} />
+        <Asset
+          asset={asset}
+          mapComponent={({ postcode }) => (
+            <CoordinateProvider
+              postcodes={[postcode]}
+              getCoordinatesForPostcode={getCoordinatesForPostcode}
+            >
+              {({ coordinates}) => { 
+                console.log(coordinates)
+                return <AssetMap position={coordinates[0]} />}}
+            </CoordinateProvider>
+          )}
+        />
         <AssetDownloadButton
           assetId={asset.id}
           downloadAsset={downloadAssetUsecase}

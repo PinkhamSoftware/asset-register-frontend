@@ -49,6 +49,9 @@ describe("GetAsset", () => {
     ).toEqual(
       actualAsset.differenceFromImsExpectedCompletionToHopCompletionDate
     );
+    expect(expectedAsset.propertyPostcode).toEqual(
+      actualAsset.propertyPostcode
+    );
   }
 
   describe("Example one", () => {
@@ -76,6 +79,7 @@ describe("GetAsset", () => {
       assetToReturn.developerEquityLoan = 9123;
       assetToReturn.shareOfRestrictedEquity = 4567;
       assetToReturn.differenceFromImsExpectedCompletionToHopCompletionDate = 8912;
+      assetToReturn.propertyPostcode = "FA1 1KE";
 
       assetGatewaySpy = {
         getAsset: jest.fn(() => ({ successful: true, asset: assetToReturn }))
@@ -142,6 +146,7 @@ describe("GetAsset", () => {
       assetToReturn.developerEquityLoan = 3219;
       assetToReturn.shareOfRestrictedEquity = 7654;
       assetToReturn.differenceFromImsExpectedCompletionToHopCompletionDate = 2198;
+      assetToReturn.propertyPostcode = "FA2 2KE";
 
       assetGatewaySpy = {
         getAsset: jest.fn(() => ({ successful: true, asset: assetToReturn }))

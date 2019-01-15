@@ -35,7 +35,8 @@ export default class SearchAssets {
       developerEquityLoan: asset.developerEquityLoan,
       shareOfRestrictedEquity: asset.shareOfRestrictedEquity,
       differenceFromImsExpectedCompletionToHopCompletionDate:
-        asset.differenceFromImsExpectedCompletionToHopCompletionDate
+        asset.differenceFromImsExpectedCompletionToHopCompletionDate,
+      propertyPostcode: asset.propertyPostcode
     }));
   }
 }
