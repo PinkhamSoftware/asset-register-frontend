@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
+import AssetMap from "./Components/AssetMap";
 import ClusteredMap from "./Components/ClusteredMap";
 
 import FileDownloadPresenter from "./Presenters/FileDownload";
@@ -33,6 +34,7 @@ import Pagination from "./Components/Pagination";
 import SearchBox from "./Components/SearchBox";
 import AssetDownloadButton from "./Components/AssetDownloadButton";
 import CSVDownloadButton from "./Components/CSVDownloadButton";
+import CoordinateProvider from "./Components/CoordinateProvider";
 
 const searchGateway = new SearchGateway();
 const searchAssetUsecase = new SearchAssets({ searchGateway });
@@ -50,8 +52,6 @@ const getAggregateValuesUseCase = new GetAggregateValues({ aggregateGateway });
 const fileDownloadPresenter = new FileDownloadPresenter();
 
 const displayMapsPage = () => {
-  console.log(process.env.REACT_APP_DISPLAY_MAPS);
-
   return process.env.REACT_APP_DISPLAY_MAPS === "yes";
 };
 
@@ -265,7 +265,20 @@ const AssetPage = props => (
   >
     {({ asset }) => (
       <div>
-        <Asset asset={asset} />
+        <Asset
+          asset={asset}
+          mapComponent={({ postcode }) => (
+            <CoordinateProvider
+              postcode={postcode}
+              getCoordinatesForPostcode={{
+                execute: presenter =>
+                  presenter.present({ coordinates: { lat: 51.5, lng: 0.0 } })
+              }}
+            >
+              {({ coordinates }) => <AssetMap position={coordinates} />}
+            </CoordinateProvider>
+          )}
+        />
         <AssetDownloadButton
           assetId={asset.id}
           downloadAsset={downloadAssetUsecase}

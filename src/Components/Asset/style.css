@@ -13,7 +13,10 @@ td:last-child {
   text-align: center;
 }
 
-.asset-detail-property {
+.text-center {
   text-align: center;
+}
+
+.background-dark {
   background: #f8f4f4;
 }
