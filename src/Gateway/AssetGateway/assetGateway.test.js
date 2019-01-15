@@ -1,51 +1,6 @@
 import GetAssetSimulator from "../../../test/Simulators/GetAsset";
 import AssetGateway from ".";
-
-let assetOne = {
-  id: 1,
-  modifiedDateTime: "2018-11-13T11:04:23.169Z",
-  monthPaid: "Jan",
-  accountingYear: "2018",
-  schemeId: "12345",
-  locationLaRegionName: "Yorkshire",
-  imsOldRegion: "West Yorkshire",
-  noOfBeds: "5",
-  address: "123 Fake Street",
-  developingRslName: "Meow Meow",
-  completionDateForHpiStart: "2018-11-13T11:04:24.169Z",
-  imsActualCompletionDate: "2018-11-13T11:04:25.169Z",
-  imsExpectedCompletionDate: "2018-11-13T11:04:26.169Z",
-  imsLegalCompletionDate: "2018-11-13T11:04:27.169Z",
-  hopCompletionDate: "2018-11-13T11:04:28.169Z",
-  deposit: 1234,
-  agencyEquityLoan: 5678,
-  developerEquityLoan: 9123,
-  shareOfRestrictedEquity: 4567,
-  differenceFromImsExpectedCompletionToHopCompletionDate: 8912
-};
-
-let assetTwo = {
-  id: 2,
-  modifiedDateTime: "2018-11-13T11:05:23.169Z",
-  monthPaid: "Feb",
-  accountingYear: "2017",
-  schemeId: "54321",
-  locationLaRegionName: "Lancashire",
-  imsOldRegion: "West Lancashire",
-  noOfBeds: "2",
-  address: "321 Fake Street",
-  developingRslName: "Woof woof",
-  completionDateForHpiStart: "2018-11-13T11:05:24.169Z",
-  imsActualCompletionDate: "2018-11-13T11:05:25.169Z",
-  imsExpectedCompletionDate: "2018-11-13T11:05:26.169Z",
-  imsLegalCompletionDate: "2018-11-13T11:05:27.169Z",
-  hopCompletionDate: "2018-11-13T11:05:28.169Z",
-  deposit: 4321,
-  agencyEquityLoan: 8765,
-  developerEquityLoan: 3219,
-  shareOfRestrictedEquity: 7654,
-  differenceFromImsExpectedCompletionToHopCompletionDate: 2198
-};
+import { exampleAssetOne, exampleAssetTwo } from '../../../test/Fixtures/assets'
 
 describe("AssetGateway", () => {
   describe("Getting an asset", () => {
@@ -61,7 +16,7 @@ describe("AssetGateway", () => {
           let simulator = new GetAssetSimulator("http://meow.cat/");
           getAssetRequest = simulator
             .getAssetWithId(1)
-            .respondWithData({ asset: assetOne })
+            .respondWithData({ asset: exampleAssetOne })
             .successfully();
         });
 
@@ -82,7 +37,7 @@ describe("AssetGateway", () => {
           expect(asset.modifiedDateTime).toEqual("2018-11-13T11:04:23.169Z");
           expect(asset.monthPaid).toEqual("Jan");
           expect(asset.accountingYear).toEqual("2018");
-          expect(asset.schemeId).toEqual("12345");
+          expect(asset.schemeId).toEqual(12345);
           expect(asset.locationLaRegionName).toEqual("Yorkshire");
           expect(asset.imsOldRegion).toEqual("West Yorkshire");
           expect(asset.noOfBeds).toEqual("5");
@@ -108,6 +63,7 @@ describe("AssetGateway", () => {
           expect(
             asset.differenceFromImsExpectedCompletionToHopCompletionDate
           ).toEqual(8912);
+          expect(asset.propertyPostcode).toEqual("FA1 1KE")
         });
       });
 
@@ -135,7 +91,7 @@ describe("AssetGateway", () => {
           let simulator = new GetAssetSimulator("http://woof.dog/");
           getAssetRequest = simulator
             .getAssetWithId(2)
-            .respondWithData({ asset: assetTwo })
+            .respondWithData({ asset: exampleAssetTwo })
             .successfully();
         });
 
@@ -155,7 +111,7 @@ describe("AssetGateway", () => {
           expect(asset.modifiedDateTime).toEqual("2018-11-13T11:05:23.169Z");
           expect(asset.monthPaid).toEqual("Feb");
           expect(asset.accountingYear).toEqual("2017");
-          expect(asset.schemeId).toEqual("54321");
+          expect(asset.schemeId).toEqual(54321);
           expect(asset.locationLaRegionName).toEqual("Lancashire");
           expect(asset.imsOldRegion).toEqual("West Lancashire");
           expect(asset.noOfBeds).toEqual("2");
@@ -181,6 +137,7 @@ describe("AssetGateway", () => {
           expect(
             asset.differenceFromImsExpectedCompletionToHopCompletionDate
           ).toEqual(2198);
+          expect(asset.propertyPostcode).toEqual("FA2 2KE")
         });
       });
 

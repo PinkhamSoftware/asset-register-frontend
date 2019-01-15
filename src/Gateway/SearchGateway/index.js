@@ -71,6 +71,7 @@ export default class SearchGateway {
     asset.shareOfRestrictedEquity = responseData.shareOfRestrictedEquity;
     asset.differenceFromImsExpectedCompletionToHopCompletionDate =
       responseData.differenceFromImsExpectedCompletionToHopCompletionDate;
+    asset.propertyPostcode = responseData.propertyPostcode;
 
     return asset;
   }

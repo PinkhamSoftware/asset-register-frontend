@@ -8,7 +8,7 @@ export default class CoordinateProvider extends Component {
 
   componentDidMount() {
     this.props.getCoordinatesForPostcode.execute(this, {
-      postcode: this.props.postcode
+      postcodes: this.props.postcodes
     });
   }
 

@@ -8,7 +8,7 @@ describe("<CoordinateProvider>", () => {
       let getCoordinatesSpy = { execute: jest.fn() };
       mount(
         <CoordinateProvider
-          postcode="FA1 1KE"
+          postcodes={["FA1 1KE"]}
           getCoordinatesForPostcode={getCoordinatesSpy}
         >
           {() => {}}
@@ -18,7 +18,7 @@ describe("<CoordinateProvider>", () => {
       expect(getCoordinatesSpy.execute).toHaveBeenCalledWith(
         expect.anything(),
         {
-          postcode: "FA1 1KE"
+          postcodes: ["FA1 1KE"]
         }
       );
     });
@@ -26,14 +26,14 @@ describe("<CoordinateProvider>", () => {
     it("Provides the found coordinates to the children", () => {
       let getCoordinatesStub = {
         execute: jest.fn(presenter => {
-          presenter.present({ coordinates: { lat: 0.0, lng: 0.0 } });
+          presenter.present({ coordinates: [{ lat: 0.0, lng: 0.0 }] });
         })
       };
       let childrenSpy = jest.fn();
 
       mount(
         <CoordinateProvider
-          postcode="FA2 2KE"
+          postcodes={["FA1 1KE"]}
           getCoordinatesForPostcode={getCoordinatesStub}
         >
           {childrenSpy}
@@ -41,7 +41,7 @@ describe("<CoordinateProvider>", () => {
       );
 
       expect(childrenSpy).toHaveBeenCalledWith({
-        coordinates: { lat: 0.0, lng: 0.0 }
+        coordinates: [{ lat: 0.0, lng: 0.0 }]
       });
     });
   });
@@ -52,7 +52,7 @@ describe("<CoordinateProvider>", () => {
 
       mount(
         <CoordinateProvider
-          postcode="FA2 2KE"
+          postcodes={["FA1 1KE", "FA2 2KE"]}
           getCoordinatesForPostcode={getCoordinatesSpy}
         >
           {() => {}}
@@ -62,7 +62,7 @@ describe("<CoordinateProvider>", () => {
       expect(getCoordinatesSpy.execute).toHaveBeenCalledWith(
         expect.anything(),
         {
-          postcode: "FA2 2KE"
+          postcodes: ["FA1 1KE", "FA2 2KE"]
         }
       );
     });
@@ -71,7 +71,7 @@ describe("<CoordinateProvider>", () => {
       let getCoordinatesStub = {
         execute: jest.fn(async presenter => {
           presenter.present({
-            coordinates: { lat: 10.0, lng: 20.0 }
+            coordinates: [{ lat: 10.0, lng: 20.0 }, { lat: 10.0, lng: 20.0 }]
           });
         })
       };
@@ -80,7 +80,7 @@ describe("<CoordinateProvider>", () => {
 
       mount(
         <CoordinateProvider
-          postcode="FA2 2KE"
+          postcodes={["FA1 1KE", "FA2 2KE"]}
           getCoordinatesForPostcode={getCoordinatesStub}
         >
           {childrenSpy}
@@ -88,7 +88,7 @@ describe("<CoordinateProvider>", () => {
       );
 
       expect(childrenSpy).toHaveBeenCalledWith({
-        coordinates: { lat: 10.0, lng: 20.0 }
+        coordinates: [{ lat: 10.0, lng: 20.0 }, { lat: 10.0, lng: 20.0 }]
       });
     });
   });

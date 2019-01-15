@@ -60,7 +60,6 @@ const Asset = props => {
                   className="govuk-grid-column-one-half"
                 >
                   <props.mapComponent postcode={asset.propertyPostcode} />
-                  {/* <Map position={{ lat: 51.5, lng: 0.0 }} /> */}
                 </div>
                 <div className="govuk-grid-column-one-half">
                   <AssetBlock
