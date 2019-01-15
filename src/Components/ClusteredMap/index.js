@@ -35,9 +35,6 @@ const generatePositions = num => {
 
 const MapWithAMarker = withScriptjs(
   withGoogleMap(props => {
-    console.log("generating positions");
-    const positions = generatePositions(props.positions);
-    console.log("Positions generated");
     return (
       <GoogleMap
         defaultOptions={{ disableDefaultUI: true, mapTypeControl: false }}
@@ -45,7 +42,7 @@ const MapWithAMarker = withScriptjs(
         defaultCenter={{ lat: 52.8, lng: -1.0 }}
       >
         <MarkerClusterer gridSize={70}>
-          {positions.map(pos => (
+          {props.positions.map(pos => (
             <Marker key={JSON.stringify(pos)} position={pos} />
           ))}
         </MarkerClusterer>

@@ -168,7 +168,26 @@ const renderAssetRegisterReporting = (
         max={numberOfPages}
         current={currentPage}
       />
+      {renderAssetsMap(assets, searchParameters)}
     </div>
+  );
+};
+
+const renderAssetsMap = (assets, searchParameters) => {
+  if (assets.length === 0) {
+    return <div />;
+  }
+  const postcodes = assets.map(({ propertyPostcode }) => propertyPostcode);
+  return (
+    <CoordinateProvider
+      key={JSON.stringify(searchParameters)}
+      postcodes={postcodes}
+      getCoordinatesForPostcode={getCoordinatesForPostcode}
+    >
+      {({ coordinates }) => {
+        return <ClusteredMap positions={coordinates} />;
+      }}
+    </CoordinateProvider>
   );
 };
 
@@ -272,9 +291,9 @@ const AssetPage = props => (
               postcodes={[postcode]}
               getCoordinatesForPostcode={getCoordinatesForPostcode}
             >
-              {({ coordinates}) => { 
-                console.log(coordinates)
-                return <AssetMap position={coordinates[0]} />}}
+              {({ coordinates }) => {
+                return <AssetMap position={coordinates[0]} />;
+              }}
             </CoordinateProvider>
           )}
         />
