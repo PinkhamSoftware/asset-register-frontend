@@ -72,6 +72,13 @@ export default class SearchGateway {
     asset.differenceFromImsExpectedCompletionToHopCompletionDate =
       responseData.differenceFromImsExpectedCompletionToHopCompletionDate;
     asset.propertyPostcode = responseData.propertyPostcode;
+    asset.originalAgencyPercentage = responseData.originalAgencyPercentage;
+    asset.developerDiscount = responseData.developerDiscount;
+    asset.mortgage = responseData.mortgage;
+    asset.lbha = responseData.lbha;
+    asset.purchasePrice = responseData.purchasePrice;
+    asset.equityOwner = responseData.equityOwner;
+    asset.programme = responseData.programme;
 
     return asset;
   }

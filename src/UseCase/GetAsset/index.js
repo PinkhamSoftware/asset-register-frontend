@@ -29,7 +29,14 @@ export default class GetAsset {
           shareOfRestrictedEquity: asset.shareOfRestrictedEquity,
           differenceFromImsExpectedCompletionToHopCompletionDate:
             asset.differenceFromImsExpectedCompletionToHopCompletionDate,
-          propertyPostcode: asset.propertyPostcode
+          propertyPostcode: asset.propertyPostcode,
+          originalAgencyPercentage: asset.originalAgencyPercentage,
+          developerDiscount: asset.developerDiscount,
+          mortgage: asset.mortgage,
+          lbha: asset.lbha,
+          purchasePrice: asset.purchasePrice,
+          equityOwner: asset.equityOwner,
+          programme: asset.programme
         }
       };
     }

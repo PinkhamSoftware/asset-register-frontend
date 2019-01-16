@@ -19,7 +19,14 @@ let exampleAssetOne = {
   developerEquityLoan: 9123,
   shareOfRestrictedEquity: 4567,
   differenceFromImsExpectedCompletionToHopCompletionDate: 8912,
-  propertyPostcode: "FA1 1KE"
+  propertyPostcode: "FA1 1KE",
+  originalAgencyPercentage: 20.0,
+  developerDiscount: 1111,
+  mortgage: 1212,
+  lbha: "Agent 1",
+  purchasePrice: 1232,
+  equityOwner: "Cats England",
+  programme: "Program 1"
 };
 
 let exampleAssetTwo = {
@@ -43,7 +50,14 @@ let exampleAssetTwo = {
   developerEquityLoan: 3219,
   shareOfRestrictedEquity: 7654,
   differenceFromImsExpectedCompletionToHopCompletionDate: 2198,
-  propertyPostcode: "FA2 2KE"
+  propertyPostcode: "FA2 2KE",
+  originalAgencyPercentage: 25.0,
+  developerDiscount: 2222,
+  mortgage: 2121,
+  lbha: "Agent 2",
+  purchasePrice: 2232,
+  equityOwner: "Homes England",
+  programme: "Program 2"
 };
 
 export { exampleAssetOne, exampleAssetTwo };

@@ -56,7 +56,14 @@ export default class AssetGateway {
     asset.shareOfRestrictedEquity = foundAsset.shareOfRestrictedEquity;
     asset.differenceFromImsExpectedCompletionToHopCompletionDate = foundAsset.differenceFromImsExpectedCompletionToHopCompletionDate;
     asset.propertyPostcode = foundAsset.propertyPostcode
-
+    asset.propertyPostcode = foundAsset.propertyPostcode;
+    asset.originalAgencyPercentage = foundAsset.originalAgencyPercentage;
+    asset.developerDiscount = foundAsset.developerDiscount;
+    asset.mortgage = foundAsset.mortgage;
+    asset.lbha = foundAsset.lbha;
+    asset.purchasePrice = foundAsset.purchasePrice;
+    asset.equityOwner = foundAsset.equityOwner;
+    asset.programme = foundAsset.programme;
 
     return asset;
   }

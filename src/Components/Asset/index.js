@@ -72,14 +72,14 @@ const Asset = props => {
             </div>
             <div className="govuk-grid-column-one-third">
               <AssetBlock
-                title="Address"
+                title="Equity Owner"
                 name="asset-equity-owner"
-                body={"PL Equity Owner"}
+                body={asset.equityOwner}
               />
               <AssetBlock
                 title="Program"
                 name="asset-program"
-                body={"PL Program"}
+                body={asset.programme}
               />
             </div>
           </div>
@@ -98,14 +98,14 @@ const Asset = props => {
               <AssetBlock
                 title="Agency equity loan"
                 name="asset-agency-equity-loan"
-                body={asset.agencyEquityLoan}
+                body={`£ ${asset.agencyEquityLoan}`}
               />
             </div>
             <div className="govuk-grid-column-one-third">
               <AssetBlock
                 title="Initial Homes England Share"
-                name="asset-share-of-restricted-equity"
-                body={asset.shareOfRestrictedEquity}
+                name="asset-original-agency-percentage"
+                body={`${asset.originalAgencyPercentage} %`}
               />
             </div>
             <div className="govuk-grid-column-one-third">
@@ -121,28 +121,36 @@ const Asset = props => {
             <div className="govuk-grid-column-one-third">
               <AssetBlock
                 title="Home owner deposit"
-                body={asset.deposit}
+                body={`£ ${asset.deposit}`}
                 name="asset-deposit"
               />
             </div>
             <div className="govuk-grid-column-one-third">
               <AssetBlock
                 title="Developer equity loan"
-                body={asset.developerEquityLoan}
+                body={`£ ${asset.developerEquityLoan}`}
                 name="asset-developer-equity-loan"
               />
             </div>
             <div className="govuk-grid-column-one-third">
-              <AssetBlock title="Developer discount" body="PL £0" />
+              <AssetBlock
+                title="Developer discount"
+                body={`£ ${asset.developerDiscount}`}
+                name="asset-developer-discount"
+              />
             </div>
           </div>
 
           <div className="govuk-grid-row">
             <div className="govuk-grid-column-one-third">
-              <AssetBlock title="Mortgage" body="PL £0" />
+              <AssetBlock
+                title="Mortgage"
+                body={`£ ${asset.mortgage}`}
+                name="asset-mortgage"
+              />
             </div>
             <div className="govuk-grid-column-one-third">
-              <AssetBlock title="Purchase price" body="PL £0" />
+              <AssetBlock title="Purchase price" body={`£ ${asset.purchasePrice}`} name="asset-purchase-price" />
             </div>
             <div className="govuk-grid-column-one-third">
               <AssetBlock title="Developer" body={asset.developingRslName} />
@@ -151,7 +159,7 @@ const Asset = props => {
 
           <div className="govuk-grid-row">
             <div className="govuk-grid-column-one-third">
-              <AssetBlock title="Agent" body="Group Limited" />
+              <AssetBlock title="Agent" name="asset-agent" body={asset.lbha} />
             </div>
           </div>
         </div>

@@ -52,6 +52,14 @@ describe("GetAsset", () => {
     expect(expectedAsset.propertyPostcode).toEqual(
       actualAsset.propertyPostcode
     );
+    expect(expectedAsset.developerDiscount).toEqual(
+      actualAsset.developerDiscount
+    );
+    expect(expectedAsset.mortgage).toEqual(actualAsset.mortgage);
+    expect(expectedAsset.lbha).toEqual(actualAsset.lbha);
+    expect(expectedAsset.purchasePrice).toEqual(actualAsset.purchasePrice);
+    expect(expectedAsset.equityOwner).toEqual(actualAsset.equityOwner);
+    expect(expectedAsset.programme).toEqual(actualAsset.programme);
   }
 
   describe("Example one", () => {
@@ -80,6 +88,12 @@ describe("GetAsset", () => {
       assetToReturn.shareOfRestrictedEquity = 4567;
       assetToReturn.differenceFromImsExpectedCompletionToHopCompletionDate = 8912;
       assetToReturn.propertyPostcode = "FA1 1KE";
+      assetToReturn.developerDiscount = 1111;
+      assetToReturn.mortgage = 1212;
+      assetToReturn.lbha = "Agent 1";
+      assetToReturn.purchasePrice = 1232;
+      assetToReturn.equityOwner = "Cats England";
+      assetToReturn.programme = "Program 1";
 
       assetGatewaySpy = {
         getAsset: jest.fn(() => ({ successful: true, asset: assetToReturn }))
@@ -147,6 +161,13 @@ describe("GetAsset", () => {
       assetToReturn.shareOfRestrictedEquity = 7654;
       assetToReturn.differenceFromImsExpectedCompletionToHopCompletionDate = 2198;
       assetToReturn.propertyPostcode = "FA2 2KE";
+      assetToReturn.originalAgencyPercentage = 25.0;
+      assetToReturn.developerDiscount = 2222;
+      assetToReturn.mortgage = 2121;
+      assetToReturn.lbha = "Agent 2";
+      assetToReturn.purchasePrice = 2232;
+      assetToReturn.equityOwner = "Homes England";
+      assetToReturn.programme = "Program 2";
 
       assetGatewaySpy = {
         getAsset: jest.fn(() => ({ successful: true, asset: assetToReturn }))

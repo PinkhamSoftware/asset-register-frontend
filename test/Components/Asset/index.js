@@ -92,4 +92,32 @@ export default class AssetComponent {
       "asset-difference-from-ims-expected-completion-to-hop-completion-date"
     ).text();
   }
+
+  originalAgencyPercentage() {
+    return this.find("asset-original-agency-percentage").text();
+  }
+
+  developerDiscount() {
+    return this.find("asset-developer-discount").text();
+  }
+
+  mortgage() {
+    return this.find("asset-mortgage").text();
+  }
+
+  agent() {
+    return this.find("asset-agent").text();
+  }
+
+  purchasePrice() {
+    return this.find("asset-purchase-price").text();
+  }
+
+  equityOwner() {
+    return this.find("asset-equity-owner").text();
+  }
+
+  program() {
+    return this.find("asset-program").text();
+  }
 }
