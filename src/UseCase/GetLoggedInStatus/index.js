@@ -6,7 +6,7 @@ export default class GetLoggedInStatus {
 
   async execute() {
     let apiKey = this.apiKeyGateway.get();
-    let response = await this.authenticationGateway.verifyToken(apiKey);
+    let response = await this.authenticationGateway.verifyApiKey(apiKey);
 
     return { loggedIn: response.valid };
   }

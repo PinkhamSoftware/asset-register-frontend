@@ -2,7 +2,7 @@ import GetLoggedInStatus from ".";
 
 describe("GetLoggedInStatus", () => {
   const authenticationGatewaySpyThatReturns = response => ({
-    verifyToken: jest.fn(() => response)
+    verifyApiKey: jest.fn(() => response)
   });
 
   describe("Example one", () => {
@@ -50,7 +50,7 @@ describe("GetLoggedInStatus", () => {
       it("Calls is logged in on the authentication gateway", async () => {
         await useCase.execute();
 
-        expect(authenticationGatewaySpy.verifyToken).toHaveBeenCalledWith(
+        expect(authenticationGatewaySpy.verifyApiKey).toHaveBeenCalledWith(
           "apiKey"
         );
       });
@@ -108,7 +108,7 @@ describe("GetLoggedInStatus", () => {
       it("Calls is logged in on the authentication gateway", async () => {
         await useCase.execute();
 
-        expect(authenticationGatewaySpy.verifyToken).toHaveBeenCalledWith(
+        expect(authenticationGatewaySpy.verifyApiKey).toHaveBeenCalledWith(
           "superSecret"
         );
       });
