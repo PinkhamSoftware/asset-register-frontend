@@ -6,12 +6,14 @@ import {
 } from "../../../test/Fixtures/assets";
 
 describe("AssetGateway", () => {
+  let apiKeyGatewayStub = { get: () => "meow" };
+
   describe("Getting an asset", () => {
     let gateway, getAssetRequest;
     describe("Example one", () => {
       beforeEach(() => {
         process.env.REACT_APP_ASSET_REGISTER_API_URL = "http://meow.cat/";
-        gateway = new AssetGateway();
+        gateway = new AssetGateway({ apiKeyGateway: apiKeyGatewayStub });
       });
 
       describe("Given an asset is found", () => {
@@ -56,7 +58,7 @@ describe("AssetGateway", () => {
     describe("Example two", () => {
       beforeEach(() => {
         process.env.REACT_APP_ASSET_REGISTER_API_URL = "http://woof.dog/";
-        gateway = new AssetGateway();
+        gateway = new AssetGateway({ apiKeyGateway: apiKeyGatewayStub });
       });
 
       describe("Given an asset is found", () => {
@@ -113,7 +115,7 @@ describe("AssetGateway", () => {
           .respondWithFile("File")
           .successfully();
 
-        gateway = new AssetGateway();
+        gateway = new AssetGateway({ apiKeyGateway: apiKeyGatewayStub });
       });
 
       it("Hits the API with the correct request", async () => {
@@ -143,7 +145,7 @@ describe("AssetGateway", () => {
           .respondWithFile("Super duper mega file")
           .successfully();
 
-        gateway = new AssetGateway();
+        gateway = new AssetGateway({ apiKeyGateway: apiKeyGatewayStub });
       });
 
       it("Hits the API with the correct request", async () => {
