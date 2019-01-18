@@ -23,7 +23,7 @@ export default class AuthenticationGateway {
     let response = await fetch(`${this.baseUrl()}verification`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer: ${apiKey}`
+        Authorization: `Bearer ${apiKey}`
       }
     });
 
@@ -39,7 +39,7 @@ export default class AuthenticationGateway {
 
     if (response.ok) {
       let jsonResponse = await response.json();
-      return { apiKey: jsonResponse.accessToken, authorized: true };
+      return { apiKey: jsonResponse.data.accessToken, authorized: true };
     } else {
       return { authorized: false };
     }

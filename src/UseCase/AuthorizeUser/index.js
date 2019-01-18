@@ -4,7 +4,10 @@ export default class AuthorizeUser {
   }
 
   async execute(presenter, { email, url }) {
-    let authorizeResponse = await this.authenticationGateway.authorize(email, url);
+    let authorizeResponse = await this.authenticationGateway.authorize(
+      email,
+      url
+    );
     presenter.present({ authorized: authorizeResponse.authorized });
   }
 }

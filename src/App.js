@@ -1,7 +1,19 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import qs from "qs";
 import "./App.css";
 import "govuk-frontend/all.scss";
+
+import AuthorizeUser from "./UseCase/AuthorizeUser";
+import GetLoggedInStatus from "./UseCase/GetLoggedInStatus";
+import GetApiKeyForToken from "./UseCase/GetApiKeyForToken";
+
+import AuthenticationGateway from "./Gateway/AuthenticationGateway";
+
+import LoginProvider from "./Components/LoginProvider";
+import Login from "./Components/Login";
+import LocationGateway from "./Gateway/LocationGateway";
+import ApiKeyGateway from "./Gateway/ApiKeyGateway";
 
 import Aggregates from "./Components/Aggregates";
 import AggregatesProvider from "./Components/AggregatesProvider";
@@ -32,6 +44,22 @@ import GetCoordinatesForPostcode from "./UseCase/GetCoordinatesForPostcodes";
 import SearchAssets from "./UseCase/SearchAssets";
 
 import FileDownloadPresenter from "./Presenters/FileDownload";
+
+const authenticationGateway = new AuthenticationGateway();
+const apiKeyGateway = new ApiKeyGateway();
+const authorizeUserUseCase = new AuthorizeUser({
+  authenticationGateway: authenticationGateway
+});
+const getApiKeyForTokenUseCase = new GetApiKeyForToken({
+  authenticationGateway,
+  apiKeyGateway
+});
+
+const getLoggedInStatus = new GetLoggedInStatus({
+  authenticationGateway,
+  apiKeyGateway
+});
+const locationGateway = new LocationGateway(window.location);
 
 const aggregateGateway = new AggregateGateway();
 const assetGateway = new AssetGateway();
@@ -333,6 +361,58 @@ const generatePositions = num => {
   return positions;
 };
 
+class Portal extends Component {
+  constructor() {
+    super();
+    this.state = { loading: true, loggedIn: false };
+  }
+
+  async componentDidMount() {
+    let response = await getLoggedInStatus.execute();
+    if (response.loggedIn) {
+      this.setState({ loading: false, loggedIn: true });
+    } else {
+      if (this.props.token) {
+        let response = await getApiKeyForTokenUseCase.execute({
+          token: this.props.token
+        });
+
+        if (response.authorized) {
+          this.setState({ loading: false, loggedIn: true });
+        } else {
+          this.setState({ loading: false });
+        }
+      } else {
+        this.setState({ loading: false });
+      }
+    }
+  }
+
+  render() {
+    if (this.state.loading) return <div>Loading...</div>;
+    if (this.state.loggedIn) {
+      return this.props.children;
+    } else {
+      return (
+        <LoginProvider
+          authorizeUser={authorizeUserUseCase}
+          locationGateway={locationGateway}
+        >
+          {({ onLogin, emailSent }) => {
+            if (!emailSent) {
+              return <Login onLogin={onLogin} />;
+            } else {
+              return (
+                <p>Email sent! Please check your inbox for your login link</p>
+              );
+            }
+          }}
+        </LoginProvider>
+      );
+    }
+  }
+}
+
 class App extends Component {
   render() {
     return (
@@ -341,23 +421,30 @@ class App extends Component {
           <Header linkComponent={Link} />
           <div className="govuk-width-container">
             <main className="govuk-main-wrapper">
-              <Switch>
-                <Route exact path="/" component={LandingPage} />
-                <Route exact path="/search" component={SearchPage} />
-                <Route path="/asset/:assetId" component={AssetPage} />
-                {displayMapsPage() && (
-                  <Route
-                    path="/maps/:positions"
-                    component={props => (
-                      <ClusteredMap
-                        positions={generatePositions(
-                          props.match.params.positions
-                        )}
-                      />
-                    )}
-                  />
-                )}
-              </Switch>
+              <Portal
+                token={
+                  qs.parse(window.location.search, { ignoreQueryPrefix: true })
+                    .token
+                }
+              >
+                <Switch>
+                  <Route exact path="/" component={LandingPage} />
+                  <Route exact path="/search" component={SearchPage} />
+                  <Route path="/asset/:assetId" component={AssetPage} />
+                  {displayMapsPage() && (
+                    <Route
+                      path="/maps/:positions"
+                      component={props => (
+                        <ClusteredMap
+                          positions={generatePositions(
+                            props.match.params.positions
+                          )}
+                        />
+                      )}
+                    />
+                  )}
+                </Switch>
+              </Portal>
             </main>
           </div>
           <Footer />

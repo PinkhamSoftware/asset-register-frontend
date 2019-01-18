@@ -79,6 +79,10 @@ describe("When using the asset register", () => {
       let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
       let aggregateSimualtor = new AggregateSimulator("https://meow.cat");
 
+      nock("https://meow.cat/")
+        .get("/api/v1/authentication/verification")
+        .reply(200, {});
+
       searchAssetSimulator
         .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
         .searchAssetWithPage(1)
@@ -97,6 +101,10 @@ describe("When using the asset register", () => {
         .successfully();
 
       let app = new AppPage("/search");
+
+      await app.load();
+
+      expect(app.find({ "data-test": "search-form" }).length).toEqual(2);
 
       app.searchForSchemeId("1");
 
@@ -130,6 +138,10 @@ describe("When using the asset register", () => {
       let aggregateSimualtor = new AggregateSimulator("https://meow.cat");
       let getAssetSimulator = new GetAssetSimulator("https://meow.cat/");
 
+      nock("https://meow.cat")
+        .get("/api/v1/authentication/verification")
+        .reply(200);
+
       searchAssetSimulator
         .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
         .searchAssetWithPage(1)
@@ -159,6 +171,8 @@ describe("When using the asset register", () => {
 
       let app = new AppPage("/search");
 
+      await app.load();
+
       app.searchForSchemeId("1");
 
       app.searchForAddress("Fake Street");
@@ -187,6 +201,10 @@ describe("When using the asset register", () => {
       stubPostcodeResponse();
 
       let getAssetSimulator = new GetAssetSimulator("https://meow.cat/");
+
+      nock("https://meow.cat")
+        .get("/api/v1/authentication/verification")
+        .reply(200);
 
       getAssetSimulator
         .getAssetWithId(1)
