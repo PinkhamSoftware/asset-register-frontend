@@ -61,10 +61,10 @@ const getLoggedInStatus = new GetLoggedInStatus({
 });
 const locationGateway = new LocationGateway(window.location);
 
-const aggregateGateway = new AggregateGateway();
-const assetGateway = new AssetGateway();
+const aggregateGateway = new AggregateGateway({ apiKeyGateway });
+const assetGateway = new AssetGateway({ apiKeyGateway });
 const postcodeLookupGateway = new PostcodeLookupGateway();
-const searchGateway = new SearchGateway();
+const searchGateway = new SearchGateway({ apiKeyGateway });
 const downloadSearchResultsUsecase = new DownloadSearchResults({
   searchGateway
 });

@@ -2,9 +2,18 @@ import fetch from "cross-fetch";
 import Asset from "../../Domain/Asset";
 
 export default class AssetGateway {
+  constructor({ apiKeyGateway }) {
+    this.apiKeyGateway = apiKeyGateway;
+  }
+
   getAsset = async id => {
     let response = await fetch(
-      `${process.env.REACT_APP_ASSET_REGISTER_API_URL}api/v1/asset/${id}`
+      `${process.env.REACT_APP_ASSET_REGISTER_API_URL}api/v1/asset/${id}`,
+      {
+        headers: {
+          authorization: `Bearer ${this.apiKeyGateway.get()}`
+        }
+      }
     );
 
     if (response.ok) {
@@ -21,10 +30,13 @@ export default class AssetGateway {
 
   async download(id) {
     let response = await fetch(
-      `${
-        process.env.REACT_APP_ASSET_REGISTER_API_URL
-      }api/v1/asset/${id}`,
-      { headers: { accept: "text/csv" } }
+      `${process.env.REACT_APP_ASSET_REGISTER_API_URL}api/v1/asset/${id}`,
+      {
+        headers: {
+          accept: "text/csv",
+          authorization: `Bearer ${this.apiKeyGateway.get()}`
+        }
+      }
     );
 
     let responseBody = await response.text();
@@ -54,8 +66,9 @@ export default class AssetGateway {
     asset.agencyEquityLoan = foundAsset.agencyEquityLoan;
     asset.developerEquityLoan = foundAsset.developerEquityLoan;
     asset.shareOfRestrictedEquity = foundAsset.shareOfRestrictedEquity;
-    asset.differenceFromImsExpectedCompletionToHopCompletionDate = foundAsset.differenceFromImsExpectedCompletionToHopCompletionDate;
-    asset.propertyPostcode = foundAsset.propertyPostcode
+    asset.differenceFromImsExpectedCompletionToHopCompletionDate =
+      foundAsset.differenceFromImsExpectedCompletionToHopCompletionDate;
+    asset.propertyPostcode = foundAsset.propertyPostcode;
     asset.propertyPostcode = foundAsset.propertyPostcode;
     asset.originalAgencyPercentage = foundAsset.originalAgencyPercentage;
     asset.developerDiscount = foundAsset.developerDiscount;
