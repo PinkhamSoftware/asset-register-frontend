@@ -4,17 +4,6 @@ import qs from "qs";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
-import AuthorizeUser from "./UseCase/AuthorizeUser";
-import GetLoggedInStatus from "./UseCase/GetLoggedInStatus";
-import GetApiKeyForToken from "./UseCase/GetApiKeyForToken";
-
-import AuthenticationGateway from "./Gateway/AuthenticationGateway";
-
-import LoginProvider from "./Components/LoginProvider";
-import Login from "./Components/Login";
-import LocationGateway from "./Gateway/LocationGateway";
-import ApiKeyGateway from "./Gateway/ApiKeyGateway";
-
 import Aggregates from "./Components/Aggregates";
 import AggregatesProvider from "./Components/AggregatesProvider";
 import AssetDownloadButton from "./Components/AssetDownloadButton";
@@ -28,19 +17,28 @@ import CoordinateProvider from "./Components/CoordinateProvider";
 import CSVDownloadButton from "./Components/CSVDownloadButton";
 import Footer from "./Components/Footer";
 import Header from "./Components/Header";
+import Login from "./Components/Login";
+import LoginProvider from "./Components/LoginProvider";
 import Pagination from "./Components/Pagination";
+import Portal from "./Components/Portal";
 import SearchBox from "./Components/SearchBox";
 
 import AggregateGateway from "./Gateway/AggregateGatewayy";
+import ApiKeyGateway from "./Gateway/ApiKeyGateway";
 import AssetGateway from "./Gateway/AssetGateway";
+import AuthenticationGateway from "./Gateway/AuthenticationGateway";
+import LocationGateway from "./Gateway/LocationGateway";
 import SearchGateway from "./Gateway/SearchGateway";
 import PostcodeLookupGateway from "./Gateway/PostcodeLookupGateway";
 
+import AuthorizeUser from "./UseCase/AuthorizeUser";
 import DownloadAsset from "./UseCase/DownloadAsset";
 import DownloadSearchResults from "./UseCase/DownloadSearchResults";
 import GetAggregateValues from "./UseCase/GetAggregateValues";
 import GetAsset from "./UseCase/GetAsset";
+import GetApiKeyForToken from "./UseCase/GetApiKeyForToken";
 import GetCoordinatesForPostcode from "./UseCase/GetCoordinatesForPostcodes";
+import GetLoggedInStatus from "./UseCase/GetLoggedInStatus";
 import SearchAssets from "./UseCase/SearchAssets";
 
 import FileDownloadPresenter from "./Presenters/FileDownload";
@@ -361,57 +359,38 @@ const generatePositions = num => {
   return positions;
 };
 
-class Portal extends Component {
-  constructor() {
-    super();
-    this.state = { loading: true, loggedIn: false };
-  }
+const renderRoutes = () => (
+  <Switch>
+    <Route exact path="/" component={LandingPage} />
+    <Route exact path="/search" component={SearchPage} />
+    <Route path="/asset/:assetId" component={AssetPage} />
+    {displayMapsPage() && (
+      <Route
+        path="/maps/:positions"
+        component={props => (
+          <ClusteredMap
+            positions={generatePositions(props.match.params.positions)}
+          />
+        )}
+      />
+    )}
+  </Switch>
+);
 
-  async componentDidMount() {
-    let response = await getLoggedInStatus.execute();
-    if (response.loggedIn) {
-      this.setState({ loading: false, loggedIn: true });
-    } else {
-      if (this.props.token) {
-        let response = await getApiKeyForTokenUseCase.execute({
-          token: this.props.token
-        });
-
-        if (response.authorized) {
-          this.setState({ loading: false, loggedIn: true });
-        } else {
-          this.setState({ loading: false });
-        }
+const renderLogin = () => (
+  <LoginProvider
+    authorizeUser={authorizeUserUseCase}
+    locationGateway={locationGateway}
+  >
+    {({ onLogin, emailSent }) => {
+      if (!emailSent) {
+        return <Login onLogin={onLogin} />;
       } else {
-        this.setState({ loading: false });
+        return <p>Email sent! Please check your inbox for your login link</p>;
       }
-    }
-  }
-
-  render() {
-    if (this.state.loading) return <div>Loading...</div>;
-    if (this.state.loggedIn) {
-      return this.props.children;
-    } else {
-      return (
-        <LoginProvider
-          authorizeUser={authorizeUserUseCase}
-          locationGateway={locationGateway}
-        >
-          {({ onLogin, emailSent }) => {
-            if (!emailSent) {
-              return <Login onLogin={onLogin} />;
-            } else {
-              return (
-                <p>Email sent! Please check your inbox for your login link</p>
-              );
-            }
-          }}
-        </LoginProvider>
-      );
-    }
-  }
-}
+    }}
+  </LoginProvider>
+);
 
 class App extends Component {
   render() {
@@ -421,30 +400,27 @@ class App extends Component {
           <Header linkComponent={Link} />
           <div className="govuk-width-container">
             <main className="govuk-main-wrapper">
-              <Portal
-                token={
-                  qs.parse(window.location.search, { ignoreQueryPrefix: true })
-                    .token
-                }
-              >
-                <Switch>
-                  <Route exact path="/" component={LandingPage} />
-                  <Route exact path="/search" component={SearchPage} />
-                  <Route path="/asset/:assetId" component={AssetPage} />
-                  {displayMapsPage() && (
-                    <Route
-                      path="/maps/:positions"
-                      component={props => (
-                        <ClusteredMap
-                          positions={generatePositions(
-                            props.match.params.positions
-                          )}
-                        />
-                      )}
-                    />
-                  )}
-                </Switch>
-              </Portal>
+              <Route path="/">
+                {props => (
+                  <Portal
+                    getLoggedInStatus={getLoggedInStatus}
+                    getApiKeyForToken={getApiKeyForTokenUseCase}
+                    token={
+                      qs.parse(props.location.search, {
+                        ignoreQueryPrefix: true
+                      }).token
+                    }
+                  >
+                    {({ loggedIn }) => {
+                      if (loggedIn) {
+                        return renderRoutes();
+                      } else {
+                        return renderLogin();
+                      }
+                    }}
+                  </Portal>
+                )}
+              </Route>
             </main>
           </div>
           <Footer />
