@@ -7,6 +7,7 @@ import {
 
 describe("SearchGateway", () => {
   let filters, page, gateway, searchRequest;
+  let apiKeyGatewayStub = { get: () => "meow" };
 
   describe("Example one", () => {
     beforeEach(() => {
@@ -25,7 +26,7 @@ describe("SearchGateway", () => {
           .respondWithTotal(100)
           .respondWithPages(10)
           .successfully();
-        gateway = new SearchGateway();
+        gateway = new SearchGateway({ apiKeyGateway: apiKeyGatewayStub });
       });
 
       it("Searches the API for the given filters and page", async () => {
@@ -65,7 +66,7 @@ describe("SearchGateway", () => {
           .searchAssetWithFilters(filters)
           .searchAssetWithPage(page)
           .unsuccessfully(404);
-        let gateway = new SearchGateway();
+        let gateway = new SearchGateway({ apiKeyGateway: apiKeyGatewayStub });
 
         let { assets, pages } = await gateway.searchWithFilters(filters, page);
         expect(assets).toEqual([]);
@@ -95,7 +96,7 @@ describe("SearchGateway", () => {
           .respondWithTotal(50)
           .respondWithPages(5)
           .successfully();
-        gateway = new SearchGateway();
+        gateway = new SearchGateway({ apiKeyGateway: apiKeyGatewayStub });
       });
 
       it("Searches the API for the given filters", async () => {
@@ -111,7 +112,7 @@ describe("SearchGateway", () => {
       });
 
       it("Returns the found asset", async () => {
-        let gateway = new SearchGateway();
+        let gateway = new SearchGateway({ apiKeyGateway: apiKeyGatewayStub });
 
         let { assets } = await gateway.searchWithFilters(
           {
@@ -148,7 +149,7 @@ describe("SearchGateway", () => {
           .searchAssetWithFilters(filters)
           .searchAssetWithPage(10)
           .unsuccessfully(404);
-        let gateway = new SearchGateway();
+        let gateway = new SearchGateway({ apiKeyGateway: apiKeyGatewayStub });
 
         let { assets, pages } = await gateway.searchWithFilters(filters, page);
         expect(assets).toEqual([]);
@@ -176,7 +177,7 @@ describe("SearchGateway", () => {
           .respondWithFile("File")
           .successfully();
 
-        gateway = new SearchGateway();
+        gateway = new SearchGateway({ apiKeyGateway: apiKeyGatewayStub });
       });
 
       it("Hits the API with the correct request", async () => {
@@ -210,7 +211,7 @@ describe("SearchGateway", () => {
           .respondWithFile("Super duper mega file")
           .successfully();
 
-        gateway = new SearchGateway();
+        gateway = new SearchGateway({ apiKeyGateway: apiKeyGatewayStub });
       });
 
       it("Hits the API with the correct request", async () => {

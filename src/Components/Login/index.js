@@ -19,7 +19,7 @@ export default class Login extends Component {
 
   render() {
     return (
-      <form onSubmit={this.onEmailSubmit}>
+      <form data-test="login-form" onSubmit={this.onEmailSubmit}>
         <fieldset className="govuk-fieldset">
           <div className="govuk-form-group">
             <label className="govuk-label" htmlFor="login-email">

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import qs from "qs";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
@@ -16,27 +17,52 @@ import CoordinateProvider from "./Components/CoordinateProvider";
 import CSVDownloadButton from "./Components/CSVDownloadButton";
 import Footer from "./Components/Footer";
 import Header from "./Components/Header";
+import Login from "./Components/Login";
+import LoginProvider from "./Components/LoginProvider";
 import Pagination from "./Components/Pagination";
+import Portal from "./Components/Portal";
 import SearchBox from "./Components/SearchBox";
 
 import AggregateGateway from "./Gateway/AggregateGatewayy";
+import ApiKeyGateway from "./Gateway/ApiKeyGateway";
 import AssetGateway from "./Gateway/AssetGateway";
+import AuthenticationGateway from "./Gateway/AuthenticationGateway";
+import LocationGateway from "./Gateway/LocationGateway";
 import SearchGateway from "./Gateway/SearchGateway";
 import PostcodeLookupGateway from "./Gateway/PostcodeLookupGateway";
 
+import AuthorizeUser from "./UseCase/AuthorizeUser";
 import DownloadAsset from "./UseCase/DownloadAsset";
 import DownloadSearchResults from "./UseCase/DownloadSearchResults";
 import GetAggregateValues from "./UseCase/GetAggregateValues";
 import GetAsset from "./UseCase/GetAsset";
+import GetApiKeyForToken from "./UseCase/GetApiKeyForToken";
 import GetCoordinatesForPostcode from "./UseCase/GetCoordinatesForPostcodes";
+import GetLoggedInStatus from "./UseCase/GetLoggedInStatus";
 import SearchAssets from "./UseCase/SearchAssets";
 
 import FileDownloadPresenter from "./Presenters/FileDownload";
 
-const aggregateGateway = new AggregateGateway();
-const assetGateway = new AssetGateway();
+const authenticationGateway = new AuthenticationGateway();
+const apiKeyGateway = new ApiKeyGateway();
+const authorizeUserUseCase = new AuthorizeUser({
+  authenticationGateway: authenticationGateway
+});
+const getApiKeyForTokenUseCase = new GetApiKeyForToken({
+  authenticationGateway,
+  apiKeyGateway
+});
+
+const getLoggedInStatus = new GetLoggedInStatus({
+  authenticationGateway,
+  apiKeyGateway
+});
+const locationGateway = new LocationGateway(window.location);
+
+const aggregateGateway = new AggregateGateway({ apiKeyGateway });
+const assetGateway = new AssetGateway({ apiKeyGateway });
 const postcodeLookupGateway = new PostcodeLookupGateway();
-const searchGateway = new SearchGateway();
+const searchGateway = new SearchGateway({ apiKeyGateway });
 const downloadSearchResultsUsecase = new DownloadSearchResults({
   searchGateway
 });
@@ -333,6 +359,39 @@ const generatePositions = num => {
   return positions;
 };
 
+const renderRoutes = () => (
+  <Switch>
+    <Route exact path="/" component={LandingPage} />
+    <Route exact path="/search" component={SearchPage} />
+    <Route path="/asset/:assetId" component={AssetPage} />
+    {displayMapsPage() && (
+      <Route
+        path="/maps/:positions"
+        component={props => (
+          <ClusteredMap
+            positions={generatePositions(props.match.params.positions)}
+          />
+        )}
+      />
+    )}
+  </Switch>
+);
+
+const renderLogin = () => (
+  <LoginProvider
+    authorizeUser={authorizeUserUseCase}
+    locationGateway={locationGateway}
+  >
+    {({ onLogin, emailSent }) => {
+      if (!emailSent) {
+        return <Login onLogin={onLogin} />;
+      } else {
+        return <p>Email sent! Please check your inbox for your login link</p>;
+      }
+    }}
+  </LoginProvider>
+);
+
 class App extends Component {
   render() {
     return (
@@ -341,23 +400,27 @@ class App extends Component {
           <Header linkComponent={Link} />
           <div className="govuk-width-container">
             <main className="govuk-main-wrapper">
-              <Switch>
-                <Route exact path="/" component={LandingPage} />
-                <Route exact path="/search" component={SearchPage} />
-                <Route path="/asset/:assetId" component={AssetPage} />
-                {displayMapsPage() && (
-                  <Route
-                    path="/maps/:positions"
-                    component={props => (
-                      <ClusteredMap
-                        positions={generatePositions(
-                          props.match.params.positions
-                        )}
-                      />
-                    )}
-                  />
+              <Route path="/">
+                {props => (
+                  <Portal
+                    getLoggedInStatus={getLoggedInStatus}
+                    getApiKeyForToken={getApiKeyForTokenUseCase}
+                    token={
+                      qs.parse(props.location.search, {
+                        ignoreQueryPrefix: true
+                      }).token
+                    }
+                  >
+                    {({ loggedIn }) => {
+                      if (loggedIn) {
+                        return renderRoutes();
+                      } else {
+                        return renderLogin();
+                      }
+                    }}
+                  </Portal>
                 )}
-              </Switch>
+              </Route>
             </main>
           </div>
           <Footer />

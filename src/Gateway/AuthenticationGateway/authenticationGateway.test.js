@@ -130,7 +130,7 @@ describe("AuthenticationGateway", () => {
           request = nock("http://meow.cat/")
             .get("/api/v1/authentication/verification")
             .matchHeader("Content-Type", "application/json")
-            .matchHeader("Authorization", "Bearer: SuperSecret")
+            .matchHeader("Authorization", "Bearer SuperSecret")
             .reply(200);
 
           gateway = new AuthenticationGateway();
@@ -153,7 +153,7 @@ describe("AuthenticationGateway", () => {
           let request = nock("http://meow.cat/")
             .get("/api/v1/authentication/verification")
             .matchHeader("Content-Type", "application/json")
-            .matchHeader("Authorization", "Bearer: SuperSecret")
+            .matchHeader("Authorization", "Bearer SuperSecret")
             .reply(401);
 
           let gateway = new AuthenticationGateway();
@@ -174,7 +174,7 @@ describe("AuthenticationGateway", () => {
           request = nock("http://woof.dog/")
             .get("/api/v1/authentication/verification")
             .matchHeader("Content-Type", "application/json")
-            .matchHeader("Authorization", "Bearer: MegaSecret")
+            .matchHeader("Authorization", "Bearer MegaSecret")
             .reply(200);
 
           gateway = new AuthenticationGateway();
@@ -197,7 +197,7 @@ describe("AuthenticationGateway", () => {
           nock("http://woof.dog/")
             .get("/api/v1/authentication/verification")
             .matchHeader("Content-Type", "application/json")
-            .matchHeader("Authorization", "Bearer: MegaSecret")
+            .matchHeader("Authorization", "Bearer MegaSecret")
             .reply(401);
 
           let gateway = new AuthenticationGateway();
@@ -222,7 +222,7 @@ describe("AuthenticationGateway", () => {
               token: "oneTimeOnly"
             })
             .matchHeader("Content-Type", "application/json")
-            .reply(200, { accessToken: "secretKey" });
+            .reply(200, { data: { accessToken: "secretKey" } });
 
           gateway = new AuthenticationGateway();
 
@@ -272,7 +272,7 @@ describe("AuthenticationGateway", () => {
               token: "authToken"
             })
             .matchHeader("Content-Type", "application/json")
-            .reply(200, { accessToken: "superSecret" });
+            .reply(200, { data: { accessToken: "superSecret" } });
 
           gateway = new AuthenticationGateway();
 

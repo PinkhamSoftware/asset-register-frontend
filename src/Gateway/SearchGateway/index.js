@@ -2,6 +2,10 @@ import fetch from "cross-fetch";
 import Asset from "../../Domain/Asset";
 
 export default class SearchGateway {
+  constructor({ apiKeyGateway }) {
+    this.apiKeyGateway = apiKeyGateway;
+  }
+
   async searchWithFilters(filters, page) {
     let response = await fetch(
       `${
@@ -9,7 +13,10 @@ export default class SearchGateway {
       }api/v1/asset/search?${this.buildQueryStringFromFiltersAndPage(
         filters,
         page
-      )}`
+      )}`,
+      {
+        headers: { Authorization: `Bearer ${this.apiKeyGateway.get()}` }
+      }
     );
 
     if (response.ok) {
@@ -34,7 +41,12 @@ export default class SearchGateway {
         filters,
         1
       )}`,
-      { headers: { accept: "text/csv" } }
+      {
+        headers: {
+          Authorization: `Bearer ${this.apiKeyGateway.get()}`,
+          accept: "text/csv"
+        }
+      }
     );
 
     let responseBody = await response.text();

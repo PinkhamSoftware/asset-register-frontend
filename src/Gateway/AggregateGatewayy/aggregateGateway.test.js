@@ -2,6 +2,8 @@ import AggregateGateway from ".";
 import AggregateSimulator from "../../../test/Simulators/Aggregate";
 
 describe("AggregateGateway", () => {
+  let apiKeyGatewayStub = { get: () => "meow" };
+
   describe("When the aggregate search is unsuccessful", () => {
     let gateway;
 
@@ -10,11 +12,9 @@ describe("AggregateGateway", () => {
 
       let simulator = new AggregateSimulator("http://meow.cat/");
 
-      simulator
-        .getAggregatesWithFilters({ cow: "moo" })
-        .unsuccessfully();
+      simulator.getAggregatesWithFilters({ cow: "moo" }).unsuccessfully();
 
-      gateway = new AggregateGateway();
+      gateway = new AggregateGateway({ apiKeyGateway: apiKeyGatewayStub });
     });
 
     it("Returns an empty object", async () => {
@@ -44,7 +44,7 @@ describe("AggregateGateway", () => {
           })
           .successfully();
 
-        gateway = new AggregateGateway();
+        gateway = new AggregateGateway({ apiKeyGateway: apiKeyGatewayStub });
       });
 
       it("Calls the endpoint with the search parameters", async () => {
@@ -81,7 +81,7 @@ describe("AggregateGateway", () => {
           })
           .successfully();
 
-        gateway = new AggregateGateway();
+        gateway = new AggregateGateway({ apiKeyGateway: apiKeyGatewayStub });
       });
 
       it("Calls the endpoint with the search parameters", async () => {
