@@ -115,6 +115,15 @@ class AuthenticationSimulator {
       })
       .reply(200, {});
   }
+
+  failedToAuthoriseUserWithEmailAndUrl(email, url) {
+    return nock("https://meow.cat/")
+      .post("/api/v1/authentication/authorise", {
+        email,
+        url
+      })
+      .reply(401, {});
+  }
 }
 
 describe("When using the asset register", () => {
@@ -204,6 +213,18 @@ describe("When using the asset register", () => {
           authenticationSimulator.rejectToken("oneTimeToken");
 
           let app = new AppPage("/search?token=oneTimeToken");
+
+          await app.load();
+
+          expect(app.loginFormDisplayed()).toBeTruthy();
+        });
+      });
+
+      describe("And the user is not on the email whitelist", () => {
+        it("displays a message telling them to contact homes england", async () => {
+          authenticationSimulator.failedToAuthoriseUserWithEmailAndUrl("test@test.com", "https://www.testurl.com")
+
+          let app = new AppPage("/");
 
           await app.load();
 
