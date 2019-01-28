@@ -19,8 +19,9 @@ export default class AssetsProvider extends Component {
   };
 
   searchAssets = ({ parameters, page }) => {
+    let filters = { ...parameters, assetRegisterVersionId: this.props.version };
     this.props.searchAssets.execute(this, {
-      filters: parameters,
+      filters: filters,
       page
     });
 
@@ -46,6 +47,15 @@ export default class AssetsProvider extends Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.version != this.props.version) {
+      this.searchAssets({
+        parameters: this.state.searchParameters,
+        page: this.state.page
+      });
+    }
+  }
+
   render() {
     return (
       <div>
@@ -57,7 +67,7 @@ export default class AssetsProvider extends Component {
           currentPage: this.state.page,
           loading: this.state.loading,
           totalCount: this.state.totalCount,
-          searchParameters: this.state.searchParameters,
+          searchParameters: this.state.searchParameters
         })}
       </div>
     );

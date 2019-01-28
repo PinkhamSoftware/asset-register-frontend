@@ -43,6 +43,14 @@ import SearchAssets from "./UseCase/SearchAssets";
 
 import FileDownloadPresenter from "./Presenters/FileDownload";
 
+// Spike
+
+import VersionProvider from "./Components/VersionProvider";
+import VersionSelector from "./Components/VersionSelector";
+import VersionGateway from "./Gateway/VersionGateway";
+
+// End Spike
+
 const authenticationGateway = new AuthenticationGateway();
 const apiKeyGateway = new ApiKeyGateway();
 const authorizeUserUseCase = new AuthorizeUser({
@@ -63,6 +71,7 @@ const aggregateGateway = new AggregateGateway({ apiKeyGateway });
 const assetGateway = new AssetGateway({ apiKeyGateway });
 const postcodeLookupGateway = new PostcodeLookupGateway();
 const searchGateway = new SearchGateway({ apiKeyGateway });
+const versionGateway = new VersionGateway({ apiKeyGateway });
 const downloadSearchResultsUsecase = new DownloadSearchResults({
   searchGateway
 });
@@ -95,9 +104,10 @@ const LandingPage = () => {
   );
 };
 
-const renderSearchPageAggregates = searchParameters => {
+const renderSearchPageAggregates = (searchParameters, versionSelected) => {
   return (
     <AggregatesProvider
+      version={versionSelected}
       key={JSON.stringify(searchParameters)}
       getAggregates={getAggregateValuesUseCase}
       searchParameters={searchParameters}
@@ -160,7 +170,8 @@ const renderAssetRegisterReporting = (
   searchParameters,
   onPageSelect,
   numberOfPages,
-  currentPage
+  currentPage,
+  versionSelected
 ) => {
   return (
     <div className="govuk-grid-column-two-thirds">
@@ -176,7 +187,7 @@ const renderAssetRegisterReporting = (
         At any point you can clear the filters to view the full Asset Register
       </p>
       <div className="govuk-grid-row">
-        {renderSearchPageAggregates(searchParameters)}
+        {renderSearchPageAggregates(searchParameters, versionSelected)}
       </div>
       <CSVDownloadButton
         searchParameters={searchParameters}
@@ -225,80 +236,96 @@ const SearchPage = () => {
       <div className="govuk-grid-row">
         <h1 className="govuk-heading-l">Homes England Asset Register</h1>
       </div>
-      <AssetsProvider
-        history={historyGateway}
-        searchAssets={searchAssetUsecase}
-        initialSearchParameters={{}}
-      >
-        {({
-          assets,
-          onSearch,
-          onPageSelect,
-          numberOfPages,
-          currentPage,
-          loading,
-          totalCount,
-          searchParameters
-        }) => (
+      <VersionProvider versionGateway={versionGateway}>
+        {({ versions, versionSelected, onVersionSelect }) => (
           <React.Fragment>
-            <div className="govuk-grid-row">
-              <h2 className="govuk-heading-m">Individual Asset Search</h2>
-              <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
-            </div>
-            <div className="govuk-grid-row">
-              <div className="govuk-grid-column-one-third">
-                <SearchBox onSearch={onSearch} />
-              </div>
-              {renderIndividualAssetSearchBody(
+            <VersionSelector
+              versions={versions}
+              versionSelected={versionSelected}
+              onVersionSelect={onVersionSelect}
+            />
+            <AssetsProvider
+              version={versionSelected}
+              history={historyGateway}
+              searchAssets={searchAssetUsecase}
+              initialSearchParameters={{}}
+            >
+              {({
                 assets,
-                totalCount,
-                loading,
-                searchParameters,
+                onSearch,
                 onPageSelect,
                 numberOfPages,
-                currentPage
-              )}
-            </div>
-          </React.Fragment>
-        )}
-      </AssetsProvider>
-      <AssetsProvider
-        history={historyGateway}
-        searchAssets={searchAssetUsecase}
-        initialSearchParameters={{}}
-      >
-        {({
-          assets,
-          onSearch,
-          onPageSelect,
-          numberOfPages,
-          currentPage,
-          loading,
-          totalCount,
-          searchParameters
-        }) => (
-          <React.Fragment>
-            <div className="govuk-grid-row" style={{ marginTop: "50px" }}>
-              <h2 className="govuk-heading-m">Asset Register Reporting</h2>
-              <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
-            </div>
-            <div className="govuk-grid-row">
-              <div className="govuk-grid-column-one-third">
-                <SearchBox onSearch={onSearch} />
-              </div>
-              {renderAssetRegisterReporting(
-                assets,
-                totalCount,
+                currentPage,
                 loading,
-                searchParameters,
+                totalCount,
+                searchParameters
+              }) => (
+                <React.Fragment>
+                  <div className="govuk-grid-row">
+                    <h2 className="govuk-heading-m">Individual Asset Search</h2>
+                    <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
+                  </div>
+                  <div className="govuk-grid-row">
+                    <div className="govuk-grid-column-one-third">
+                      <SearchBox onSearch={onSearch} />
+                    </div>
+                    {renderIndividualAssetSearchBody(
+                      assets,
+                      totalCount,
+                      loading,
+                      searchParameters,
+                      onPageSelect,
+                      numberOfPages,
+                      currentPage
+                    )}
+                  </div>
+                </React.Fragment>
+              )}
+            </AssetsProvider>
+            <AssetsProvider
+              version={versionSelected}
+              history={historyGateway}
+              searchAssets={searchAssetUsecase}
+              initialSearchParameters={{}}
+            >
+              {({
+                assets,
+                onSearch,
                 onPageSelect,
                 numberOfPages,
-                currentPage
+                currentPage,
+                loading,
+                totalCount,
+                searchParameters
+              }) => (
+                <React.Fragment>
+                  <div className="govuk-grid-row" style={{ marginTop: "50px" }}>
+                    <h2 className="govuk-heading-m">
+                      Asset Register Reporting
+                    </h2>
+                    <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
+                  </div>
+                  <div className="govuk-grid-row">
+                    <div className="govuk-grid-column-one-third">
+                      <SearchBox onSearch={onSearch} />
+                    </div>
+                    {renderAssetRegisterReporting(
+                      assets,
+                      totalCount,
+                      loading,
+                      searchParameters,
+                      onPageSelect,
+                      numberOfPages,
+                      currentPage,
+                      versionSelected
+                    )}
+                  </div>
+                </React.Fragment>
               )}
-            </div>
+            </AssetsProvider>
           </React.Fragment>
         )}
-      </AssetsProvider>
+      </VersionProvider>
     </React.Fragment>
   );
 };
