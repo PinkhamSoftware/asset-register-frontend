@@ -7,7 +7,7 @@ export default (props) => (
       <div className="govuk-header__logo">
         <props.linkComponent to="/" className="govuk-header__link govuk-header__link--homepage">
           <span className="govuk-header__logotype">
-            <span className="govuk-header__logotype-text">Homes Equity Asset Register</span>
+            <span className="govuk-header__logotype-text">Homes Equity</span>
           </span>
         </props.linkComponent>
       </div>
