@@ -222,6 +222,7 @@ describe("When using the asset register", () => {
 
       describe("And the user is not on the email whitelist", () => {
         it("displays a message telling them to contact homes england", async () => {
+          authenticationSimulator.userIsNotLoggedIn();
           authenticationSimulator.failedToAuthoriseUserWithEmailAndUrl("test@test.com", "https://www.testurl.com")
 
           let app = new AppPage("/");

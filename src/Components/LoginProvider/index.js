@@ -4,8 +4,9 @@ export default class LoginProvider extends Component {
   constructor() {
     super();
 
-    this.state = { emailSent: false, failedAuthorize:false };
+    this.state = { emailSent: false, failedAuthorize: false };
   }
+
   onLogin = ({ email }) => {
     let url = this.props.locationGateway.getRoot();
     this.props.authorizeUser.execute(this, { email, url });
@@ -13,9 +14,9 @@ export default class LoginProvider extends Component {
 
   present = ({ authorized }) => {
     if (authorized) {
-      this.setState({ emailSent: true, failedAuthorize:false });
-    }else{
-      this.setState({emailSent:false, failedAuthorize:true})
+      this.setState({ emailSent: true, failedAuthorize: false });
+    } else {
+      this.setState({ emailSent: false, failedAuthorize: true });
     }
   };
 
