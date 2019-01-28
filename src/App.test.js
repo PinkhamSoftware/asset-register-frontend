@@ -207,7 +207,7 @@ describe("When using the asset register", () => {
       describe("And the user is not on the email whitelist", () => {
         it("displays a message telling them to contact homes england", async () => {
           authenticationSimulator.userIsNotLoggedIn();
-          authenticationSimulator.failedToAuthoriseUserWithEmailAndUrl("test@test.com", "http://localhost");
+          let failedLoginRequest = authenticationSimulator.failedToAuthoriseUserWithEmailAndUrl("test@test.com", "http://localhost");
     
           let app = new AppPage("/");
     
@@ -216,6 +216,11 @@ describe("When using the asset register", () => {
           expect(app.loginFormDisplayed()).toBeTruthy();
     
           app.loginWithEmail("test@test.com");
+
+          await app.waitForRequestToResolve();
+          app.update();
+          
+          expect(failedLoginRequest.isDone()).toBeTruthy();
     
           expect(app.notAuthorisedToLoginMessageIsDisplayed()).toBeTruthy();
         });
