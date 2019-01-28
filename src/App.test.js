@@ -76,6 +76,10 @@ class AppPage {
 
     this.find("login-email-submit").simulate("submit");
   }
+
+  notAuthorisedToLoginMessageIsDisplayed() {
+    return this.find("not-authorised").length === 1;
+  }
 }
 
 class AuthenticationSimulator {
@@ -200,6 +204,23 @@ describe("When using the asset register", () => {
         });
       });
 
+      describe("And the user is not on the email whitelist", () => {
+        it("displays a message telling them to contact homes england", async () => {
+          authenticationSimulator.userIsNotLoggedIn();
+          authenticationSimulator.failedToAuthoriseUserWithEmailAndUrl("test@test.com", "http://localhost");
+    
+          let app = new AppPage("/");
+    
+          await app.load();
+    
+          expect(app.loginFormDisplayed()).toBeTruthy();
+    
+          app.loginWithEmail("test@test.com");
+    
+          expect(app.notAuthorisedToLoginMessageIsDisplayed()).toBeTruthy();
+        });
+      });
+
       describe("And the user provides an invalid token", () => {
         it("Gets an access token and displays the search form", async () => {
           authenticationSimulator.userIsNotLoggedIn();
@@ -213,19 +234,6 @@ describe("When using the asset register", () => {
           authenticationSimulator.rejectToken("oneTimeToken");
 
           let app = new AppPage("/search?token=oneTimeToken");
-
-          await app.load();
-
-          expect(app.loginFormDisplayed()).toBeTruthy();
-        });
-      });
-
-      describe("And the user is not on the email whitelist", () => {
-        it("displays a message telling them to contact homes england", async () => {
-          authenticationSimulator.userIsNotLoggedIn();
-          authenticationSimulator.failedToAuthoriseUserWithEmailAndUrl("test@test.com", "https://www.testurl.com")
-
-          let app = new AppPage("/");
 
           await app.load();
 
@@ -372,4 +380,6 @@ describe("When using the asset register", () => {
       });
     });
   });
+
+
 });

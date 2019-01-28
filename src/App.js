@@ -387,7 +387,7 @@ const renderLogin = () => (
         return <Login onLogin={onLogin} />;
       }
       if (!emailSent && failedAuthorize) {
-        return <p>This email address has not been added as an authorized user. Please contact Homes England for access</p>;
+        return <p data-test="not-authorised">This email address has not been added as an authorized user. Please contact Homes England for access</p>;
       } else {
         return <p>Email sent! Please check your inbox for your login link</p>;
       }
