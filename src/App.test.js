@@ -78,6 +78,18 @@ class AppPage {
   }
 }
 
+class VersionSimulator {
+  constructor(baseUrl) {
+    this.baseUrl = baseUrl;
+  }
+
+  assetRegisterVersions(versions) {
+    nock(this.baseUrl)
+      .get("/api/v1/assetRegisterVersion")
+      .reply(200, { data: { assetRegisterVersions: versions } });
+  }
+}
+
 class AuthenticationSimulator {
   constructor(baseUrl) {
     this.baseUrl = baseUrl;
@@ -118,7 +130,7 @@ class AuthenticationSimulator {
 }
 
 describe("When using the asset register", () => {
-  let authenticationSimulator;
+  let authenticationSimulator, versionSimulator;
 
   const baseUrl = "https://meow.cat/";
 
@@ -131,6 +143,11 @@ describe("When using the asset register", () => {
   beforeEach(() => {
     process.env.REACT_APP_ASSET_REGISTER_API_URL = baseUrl;
     authenticationSimulator = new AuthenticationSimulator(baseUrl);
+    versionSimulator = new VersionSimulator(baseUrl);
+
+    versionSimulator.assetRegisterVersions([
+      { id: 1, createdAt: "2019-01-28T10:59:39.363434" }
+    ]);
   });
 
   afterEach(() => {
@@ -173,7 +190,7 @@ describe("When using the asset register", () => {
           let aggregateSimualtor = new AggregateSimulator("https://meow.cat");
 
           aggregateSimualtor
-            .getAggregatesWithFilters({})
+            .getAggregatesWithFilters({ assetRegisterVersionId: 1 })
             .respondWithValues({})
             .successfully();
 
@@ -197,7 +214,7 @@ describe("When using the asset register", () => {
           let aggregateSimualtor = new AggregateSimulator("https://meow.cat");
 
           aggregateSimualtor
-            .getAggregatesWithFilters({})
+            .getAggregatesWithFilters({ assetRegisterVersionId: 1 })
             .respondWithValues({})
             .successfully();
 
@@ -220,19 +237,23 @@ describe("When using the asset register", () => {
         authenticationSimulator.userIsLoggedIn();
 
         searchAssetSimulator
-          .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
+          .searchAssetWithFilters({
+            schemeId: "1",
+            address: "Fake Street",
+            assetRegisterVersionId: 1
+          })
           .searchAssetWithPage(1)
           .respondWithAssets([exampleAssetOne])
           .respondWithTotal(10)
           .successfully();
 
         aggregateSimualtor
-          .getAggregatesWithFilters({})
+          .getAggregatesWithFilters({ assetRegisterVersionId: 1 })
           .respondWithValues({})
           .successfully();
 
         aggregateSimualtor
-          .getAggregatesWithFilters({})
+          .getAggregatesWithFilters({ assetRegisterVersionId: 1 })
           .respondWithValues({})
           .successfully();
 
@@ -277,7 +298,11 @@ describe("When using the asset register", () => {
         authenticationSimulator.userIsLoggedIn();
 
         searchAssetSimulator
-          .searchAssetWithFilters({ schemeId: "1", address: "Fake Street" })
+          .searchAssetWithFilters({
+            schemeId: "1",
+            address: "Fake Street",
+            assetRegisterVersionId: 1
+          })
           .searchAssetWithPage(1)
           .respondWithAssets([exampleAssetOne])
           .respondWithTotal(1)
@@ -289,17 +314,17 @@ describe("When using the asset register", () => {
           .successfully();
 
         aggregateSimualtor
-          .getAggregatesWithFilters({})
+          .getAggregatesWithFilters({ assetRegisterVersionId: 1 })
           .respondWithValues({})
           .successfully();
 
         aggregateSimualtor
-          .getAggregatesWithFilters({})
+          .getAggregatesWithFilters({ assetRegisterVersionId: 1 })
           .respondWithValues({})
           .successfully();
 
         aggregateSimualtor
-          .getAggregatesWithFilters({ schemeId: "1", address: "Fake Street" })
+          .getAggregatesWithFilters({ schemeId: "1", address: "Fake Street", assetRegisterVersionId: 1 })
           .respondWithValues({})
           .successfully();
 
