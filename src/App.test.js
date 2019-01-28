@@ -76,6 +76,10 @@ class AppPage {
 
     this.find("login-email-submit").simulate("submit");
   }
+
+  notAuthorisedToLoginMessageIsDisplayed() {
+    return this.find("not-authorised").length === 1;
+  }
 }
 
 class AuthenticationSimulator {
@@ -114,6 +118,15 @@ class AuthenticationSimulator {
         url
       })
       .reply(200, {});
+  }
+
+  failedToAuthoriseUserWithEmailAndUrl(email, url) {
+    return nock("https://meow.cat/")
+      .post("/api/v1/authentication/authorise", {
+        email,
+        url
+      })
+      .reply(401, {});
   }
 }
 
@@ -188,6 +201,28 @@ describe("When using the asset register", () => {
           expect(tokenRequest.isDone()).toBeTruthy();
 
           expect(app.find("search-form").length).toEqual(2);
+        });
+      });
+
+      describe("And the user is not on the email whitelist", () => {
+        it("displays a message telling them to contact homes england", async () => {
+          authenticationSimulator.userIsNotLoggedIn();
+          let failedLoginRequest = authenticationSimulator.failedToAuthoriseUserWithEmailAndUrl("test@test.com", "http://localhost");
+    
+          let app = new AppPage("/");
+    
+          await app.load();
+    
+          expect(app.loginFormDisplayed()).toBeTruthy();
+    
+          app.loginWithEmail("test@test.com");
+
+          await app.waitForRequestToResolve();
+          app.update();
+          
+          expect(failedLoginRequest.isDone()).toBeTruthy();
+    
+          expect(app.notAuthorisedToLoginMessageIsDisplayed()).toBeTruthy();
         });
       });
 
@@ -350,4 +385,6 @@ describe("When using the asset register", () => {
       });
     });
   });
+
+
 });

@@ -382,9 +382,12 @@ const renderLogin = () => (
     authorizeUser={authorizeUserUseCase}
     locationGateway={locationGateway}
   >
-    {({ onLogin, emailSent }) => {
-      if (!emailSent) {
+    {({ onLogin, emailSent, failedAuthorize }) => {
+      if (!emailSent && !failedAuthorize) {
         return <Login onLogin={onLogin} />;
+      }
+      if (!emailSent && failedAuthorize) {
+        return <p data-test="not-authorised">This email address has not been added as an authorized user. Please contact Homes England for access</p>;
       } else {
         return <p>Email sent! Please check your inbox for your login link</p>;
       }
