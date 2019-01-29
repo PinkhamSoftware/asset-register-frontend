@@ -453,11 +453,17 @@ const AssetPage = props => (
   </AssetProvider>
 );
 
+const MappingPage = () => (
+  <div>
+    Mapping page coming soon...
+  </div>
+)
 const renderRoutes = () => (
   <Switch>
     <Route exact path="/" component={LandingPage} />
     <Route exact path="/search" component={SearchPage} />
     <Route exact path="/reporting" component={ReportingPage} />
+    <Route exact path="/mapping" component={MappingPage} />
     <Route path="/asset/:assetId" component={AssetPage} />
   </Switch>
 );
