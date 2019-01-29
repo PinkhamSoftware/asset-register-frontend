@@ -58,7 +58,7 @@ export default props => (
       process.env.REACT_APP_MAPS_API_KEY
     }&v=3.exp&libraries=geometry,drawing,places`}
     loadingElement={<div>loading</div>}
-    containerElement={<div style={{ height: `800px` }} />}
+    containerElement={<div style={{ height: `500px` }} />}
     mapElement={<div style={{ height: `100%` }} />}
   />
 );
