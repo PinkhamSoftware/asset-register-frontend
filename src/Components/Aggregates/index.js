@@ -11,7 +11,7 @@ export default class Aggregates extends React.Component {
       movementInAssetValue
     } = this.props.aggregateValues;
     return (
-      <div>
+      <div data-test="asset-aggregates">
         <div className="govuk-grid-row">
           <div className="govuk-grid-column-one-half">
             <div className="asset-aggregate-value">

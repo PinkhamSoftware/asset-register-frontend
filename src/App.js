@@ -4,6 +4,10 @@ import qs from "qs";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
+import houseIcon from "./icons/house.png";
+import dollarBagIcon from "./icons/dollar_bag.png";
+import chartIcon from "./icons/chart.png";
+
 import Aggregates from "./Components/Aggregates";
 import AggregatesProvider from "./Components/AggregatesProvider";
 import AssetDownloadButton from "./Components/AssetDownloadButton";
@@ -43,13 +47,9 @@ import SearchAssets from "./UseCase/SearchAssets";
 
 import FileDownloadPresenter from "./Presenters/FileDownload";
 
-// Spike
-
 import VersionProvider from "./Components/VersionProvider";
 import VersionSelector from "./Components/VersionSelector";
 import VersionGateway from "./Gateway/VersionGateway";
-
-// End Spike
 
 const authenticationGateway = new AuthenticationGateway();
 const apiKeyGateway = new ApiKeyGateway();
@@ -90,16 +90,67 @@ const displayMapsPage = () => {
   return process.env.REACT_APP_DISPLAY_MAPS === "yes";
 };
 
+const LandingPageLink = props => {
+  let { title, linkLocation, icon } = props;
+  return (
+    <props.linkComponent
+      data-test={props.name}
+      to={linkLocation}
+      style={{ textDecoration: "none" }}
+    >
+      <div
+        style={{
+          width: "100%",
+          backgroundColor: "#0059a8",
+          textAlign: "center",
+          padding: "24px 0 20px 0"
+        }}
+      >
+        <img src={icon} alt="Icon" />
+        <p
+          className="govuk-!-font-size-24"
+          style={{ margin: 0, color: "#fff" }}
+        >
+          {title}
+        </p>
+      </div>
+    </props.linkComponent>
+  );
+};
+
 const LandingPage = () => {
   return (
     <div>
-      <AggregatesProvider
-        getAggregates={getAggregateValuesUseCase}
-        searchParameters={{}}
-      >
-        {({ aggregates }) => <Aggregates aggregateValues={aggregates} />}
-      </AggregatesProvider>
-      <Link to="/search">Search the register</Link>
+      <div className="govuk-grid-row">
+        <div className="govuk-grid-column-one-third">
+          <LandingPageLink
+            title="Individual Asset Search"
+            name="individual-search-link"
+            linkComponent={Link}
+            linkLocation="/search"
+            icon={houseIcon}
+          />
+        </div>
+        <div className="govuk-grid-column-one-third">
+          <LandingPageLink
+            title="Reporting Services"
+            name="reporting-link"
+            linkComponent={Link}
+            linkComponent={Link}
+            linkLocation="/reporting"
+            icon={dollarBagIcon}
+          />
+        </div>
+        <div className="govuk-grid-column-one-third">
+          <LandingPageLink
+            title="Data Mapping"
+            name="data-mapping-link"
+            linkComponent={Link}
+            linkLocation="/mapping"
+            icon={chartIcon}
+          />
+        </div>
+      </div>
     </div>
   );
 };
@@ -108,7 +159,6 @@ const renderSearchPageAggregates = (searchParameters, versionSelected) => {
   return (
     <AggregatesProvider
       version={versionSelected}
-      key={JSON.stringify(searchParameters)}
       getAggregates={getAggregateValuesUseCase}
       searchParameters={searchParameters}
     >
@@ -189,6 +239,7 @@ const renderAssetRegisterReporting = (
       <div className="govuk-grid-row">
         {renderSearchPageAggregates(searchParameters, versionSelected)}
       </div>
+      {renderAssetsMap(assets, searchParameters)}
       <CSVDownloadButton
         searchParameters={searchParameters}
         downloadSearch={downloadSearchResultsUsecase}
@@ -205,7 +256,6 @@ const renderAssetRegisterReporting = (
         max={numberOfPages}
         current={currentPage}
       />
-      {renderAssetsMap(assets, searchParameters)}
     </div>
   );
 };
@@ -228,13 +278,93 @@ const renderAssetsMap = (assets, searchParameters) => {
   );
 };
 
+const ReportingPage = () => {
+  const historyGateway = { storeSearch: () => {} };
+
+  return (
+    <React.Fragment>
+      <div className="govuk-grid-row">
+        <div className="govuk-grid-column-one-third">
+          <Link to="/">Back</Link>
+        </div>
+      </div>
+      <div className="govuk-grid-row">
+        <div className="govuk-grid-column-full">
+          <h1 className="govuk-heading-l">Homes Equity Asset Register</h1>
+        </div>
+      </div>
+      <VersionProvider versionGateway={versionGateway}>
+        {({ versions, versionSelected, onVersionSelect }) => (
+          <React.Fragment>
+            <VersionSelector
+              versions={versions}
+              versionSelected={versionSelected}
+              onVersionSelect={onVersionSelect}
+            />
+            <AssetsProvider
+              version={versionSelected}
+              history={historyGateway}
+              searchAssets={searchAssetUsecase}
+              initialSearchParameters={{}}
+            >
+              {({
+                assets,
+                onSearch,
+                onPageSelect,
+                numberOfPages,
+                currentPage,
+                loading,
+                totalCount,
+                searchParameters
+              }) => (
+                <React.Fragment>
+                  <div className="govuk-grid-row" style={{ marginTop: "50px" }}>
+                    <div className="govuk-grid-column-full">
+                      <h2 className="govuk-heading-m">
+                        Asset Register Reporting
+                      </h2>
+                      <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
+                    </div>
+                  </div>
+                  <div className="govuk-grid-row">
+                    <div className="govuk-grid-column-one-third">
+                      <SearchBox onSearch={onSearch} />
+                    </div>
+                    {renderAssetRegisterReporting(
+                      assets,
+                      totalCount,
+                      loading,
+                      searchParameters,
+                      onPageSelect,
+                      numberOfPages,
+                      currentPage,
+                      versionSelected
+                    )}
+                  </div>
+                </React.Fragment>
+              )}
+            </AssetsProvider>
+          </React.Fragment>
+        )}
+      </VersionProvider>
+    </React.Fragment>
+  );
+};
+
 const SearchPage = () => {
   const historyGateway = { storeSearch: () => {} };
 
   return (
     <React.Fragment>
       <div className="govuk-grid-row">
-        <h1 className="govuk-heading-l">Homes England Asset Register</h1>
+        <div className="govuk-grid-column-one-third">
+          <Link to="/">Back</Link>
+        </div>
+      </div>
+      <div className="govuk-grid-row">
+        <div className="govuk-grid-column-full">
+          <h1 className="govuk-heading-l">Homes Equity Asset Register</h1>
+        </div>
       </div>
       <VersionProvider versionGateway={versionGateway}>
         {({ versions, versionSelected, onVersionSelect }) => (
@@ -262,8 +392,12 @@ const SearchPage = () => {
               }) => (
                 <React.Fragment>
                   <div className="govuk-grid-row">
-                    <h2 className="govuk-heading-m">Individual Asset Search</h2>
-                    <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
+                    <div className="govuk-grid-column-full">
+                      <h2 className="govuk-heading-m">
+                        Individual Asset Search
+                      </h2>
+                      <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
+                    </div>
                   </div>
                   <div className="govuk-grid-row">
                     <div className="govuk-grid-column-one-third">
@@ -277,47 +411,6 @@ const SearchPage = () => {
                       onPageSelect,
                       numberOfPages,
                       currentPage
-                    )}
-                  </div>
-                </React.Fragment>
-              )}
-            </AssetsProvider>
-            <AssetsProvider
-              version={versionSelected}
-              history={historyGateway}
-              searchAssets={searchAssetUsecase}
-              initialSearchParameters={{}}
-            >
-              {({
-                assets,
-                onSearch,
-                onPageSelect,
-                numberOfPages,
-                currentPage,
-                loading,
-                totalCount,
-                searchParameters
-              }) => (
-                <React.Fragment>
-                  <div className="govuk-grid-row" style={{ marginTop: "50px" }}>
-                    <h2 className="govuk-heading-m">
-                      Asset Register Reporting
-                    </h2>
-                    <hr className="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
-                  </div>
-                  <div className="govuk-grid-row">
-                    <div className="govuk-grid-column-one-third">
-                      <SearchBox onSearch={onSearch} />
-                    </div>
-                    {renderAssetRegisterReporting(
-                      assets,
-                      totalCount,
-                      loading,
-                      searchParameters,
-                      onPageSelect,
-                      numberOfPages,
-                      currentPage,
-                      versionSelected
                     )}
                   </div>
                 </React.Fragment>
@@ -360,47 +453,12 @@ const AssetPage = props => (
   </AssetProvider>
 );
 
-const generateRandomLong = () => {
-  var num = (Math.random() * 3).toFixed(3);
-  var posorneg = Math.floor(Math.random());
-  if (posorneg === 0) {
-    num = num * -1;
-  }
-  return num;
-};
-
-const generateRandomLat = () => {
-  var num = (Math.random() * 3.5).toFixed(3);
-  var posorneg = Math.floor(Math.random());
-  if (posorneg === 0) {
-    num = num * -1;
-  }
-  return num + 54.5;
-};
-
-const generatePositions = num => {
-  let positions = [];
-  for (let i = 0; i < num; i++) {
-    positions.push({ lat: generateRandomLat(), lng: generateRandomLong() });
-  }
-  return positions;
-};
-
 const renderRoutes = () => (
   <Switch>
     <Route exact path="/" component={LandingPage} />
     <Route exact path="/search" component={SearchPage} />
+    <Route exact path="/reporting" component={ReportingPage} />
     <Route path="/asset/:assetId" component={AssetPage} />
-    {displayMapsPage() && (
-      <Route
-        path="/maps/:positions"
-        component={props => (
-          <ClusteredMap
-            positions={generatePositions(props.match.params.positions)}
-          />
-        )}
-      />
-    )}
   </Switch>
 );
 
@@ -414,7 +472,12 @@ const renderLogin = () => (
         return <Login onLogin={onLogin} />;
       }
       if (!emailSent && failedAuthorize) {
-        return <p data-test="not-authorised">This email address has not been added as an authorized user. Please contact Homes England for access</p>;
+        return (
+          <p data-test="not-authorised">
+            This email address has not been added as an authorized user. Please
+            contact Homes England for access
+          </p>
+        );
       } else {
         return <p>Email sent! Please check your inbox for your login link</p>;
       }

@@ -11,7 +11,10 @@ export default class AggregatesProvider extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.version != prevProps.version) {
+    if (
+      this.props.version != prevProps.version ||
+      this.props.searchParameters != prevProps.searchParameters
+    ) {
       this.fetchData();
     }
   }

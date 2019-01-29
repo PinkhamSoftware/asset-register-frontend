@@ -1,7 +1,4 @@
-import React from "react";
-import { mount } from "enzyme";
-import App from "./App";
-import { MemoryRouter } from "react-router-dom";
+import AppPage from "../test/Pages/App";
 import { exampleAssetOne } from "../test/Fixtures/assets";
 import SearchAssetSimulator from "../test/Simulators/SearchAsset";
 import GetAssetSimulator from "../test/Simulators/GetAsset";
@@ -11,76 +8,6 @@ import nock from "nock";
 const waitForRequestToResolve = async () => {
   await new Promise(resolve => setTimeout(resolve, 100));
 };
-
-class AppPage {
-  constructor(path) {
-    this.page = mount(
-      <MemoryRouter initialEntries={[path]}>
-        <App />
-      </MemoryRouter>
-    );
-  }
-
-  async load() {
-    await this.waitForRequestToResolve();
-    this.update();
-  }
-
-  async waitForRequestToResolve() {
-    await new Promise(resolve => setTimeout(resolve, 100));
-  }
-
-  find(params) {
-    return this.page.find({ "data-test": params });
-  }
-
-  update() {
-    this.page.update();
-  }
-
-  searchForSchemeId(schemeId) {
-    this.find("search-scheme-id")
-      .first()
-      .simulate("change", {
-        target: { value: schemeId }
-      });
-  }
-
-  searchForAddress(address) {
-    this.find("search-address")
-      .first()
-      .simulate("change", {
-        target: { value: address }
-      });
-  }
-
-  async executeSearch() {
-    this.find("search-form")
-      .first()
-      .simulate("submit", {
-        preventDefault: jest.fn()
-      });
-
-    await this.waitForRequestToResolve();
-    this.update();
-  }
-
-  loginFormDisplayed() {
-    return this.find("login-form").length === 1;
-  }
-
-  loginWithEmail(email) {
-    this.find("login-email-input").simulate("change", {
-      target: { value: email }
-    });
-
-    this.find("login-email-submit").simulate("submit");
-  }
-
-  notAuthorisedToLoginMessageIsDisplayed() {
-    return this.find("not-authorised").length === 1;
-  }
-}
 
 class VersionSimulator {
   constructor(baseUrl) {
@@ -217,28 +144,31 @@ describe("When using the asset register", () => {
 
           expect(tokenRequest.isDone()).toBeTruthy();
 
-          expect(app.find("search-form").length).toEqual(2);
+          expect(app.find("search-form").length).toEqual(1);
         });
       });
 
       describe("And the user is not on the email whitelist", () => {
         it("displays a message telling them to contact homes england", async () => {
           authenticationSimulator.userIsNotLoggedIn();
-          let failedLoginRequest = authenticationSimulator.failedToAuthoriseUserWithEmailAndUrl("test@test.com", "http://localhost");
-    
+          let failedLoginRequest = authenticationSimulator.failedToAuthoriseUserWithEmailAndUrl(
+            "test@test.com",
+            "http://localhost"
+          );
+
           let app = new AppPage("/");
-    
+
           await app.load();
-    
+
           expect(app.loginFormDisplayed()).toBeTruthy();
-    
+
           app.loginWithEmail("test@test.com");
 
           await app.waitForRequestToResolve();
           app.update();
-          
+
           expect(failedLoginRequest.isDone()).toBeTruthy();
-    
+
           expect(app.notAuthorisedToLoginMessageIsDisplayed()).toBeTruthy();
         });
       });
@@ -267,7 +197,6 @@ describe("When using the asset register", () => {
     describe("When searching for an asset", () => {
       it("Searches the API for an asset and displays it in the list", async () => {
         let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
-        let aggregateSimualtor = new AggregateSimulator("https://meow.cat");
 
         authenticationSimulator.userIsLoggedIn();
 
@@ -282,21 +211,13 @@ describe("When using the asset register", () => {
           .respondWithTotal(10)
           .successfully();
 
-        aggregateSimualtor
-          .getAggregatesWithFilters({ assetRegisterVersionId: 1 })
-          .respondWithValues({})
-          .successfully();
-
-        aggregateSimualtor
-          .getAggregatesWithFilters({ assetRegisterVersionId: 1 })
-          .respondWithValues({})
-          .successfully();
-
-        let app = new AppPage("/search");
+        let app = new AppPage("/");
 
         await app.load();
 
-        expect(app.find("search-form").length).toEqual(2);
+        await app.navigateToSearchPage();
+
+        expect(app.find("search-form").length).toEqual(1);
 
         app.searchForSchemeId("1");
 
@@ -327,7 +248,6 @@ describe("When using the asset register", () => {
         stubPostcodeResponse();
 
         let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
-        let aggregateSimualtor = new AggregateSimulator("https://meow.cat");
         let getAssetSimulator = new GetAssetSimulator("https://meow.cat/");
 
         authenticationSimulator.userIsLoggedIn();
@@ -348,24 +268,11 @@ describe("When using the asset register", () => {
           .respondWithData({ asset: exampleAssetOne })
           .successfully();
 
-        aggregateSimualtor
-          .getAggregatesWithFilters({ assetRegisterVersionId: 1 })
-          .respondWithValues({})
-          .successfully();
-
-        aggregateSimualtor
-          .getAggregatesWithFilters({ assetRegisterVersionId: 1 })
-          .respondWithValues({})
-          .successfully();
-
-        aggregateSimualtor
-          .getAggregatesWithFilters({ schemeId: "1", address: "Fake Street", assetRegisterVersionId: 1 })
-          .respondWithValues({})
-          .successfully();
-
-        let app = new AppPage("/search");
+        let app = new AppPage("/");
 
         await app.load();
+
+        await app.navigateToSearchPage();
 
         app.searchForSchemeId("1");
 
@@ -382,6 +289,82 @@ describe("When using the asset register", () => {
 
         expect(app.find("asset-scheme-id").text()).toEqual("12345");
 
+        expect(app.find("asset-address").text()).toEqual("123 Fake Street");
+      });
+    });
+
+    describe("When viewing the reporting services", () => {
+      beforeEach(() => {
+        process.env.REACT_APP_POSTCODE_API_URL = "https://dog.woof/";
+        stubPostcodeResponse();
+
+        authenticationSimulator.userIsLoggedIn();
+
+        let aggregateSimualtor = new AggregateSimulator("https://meow.cat");
+        let searchAssetSimulator = new SearchAssetSimulator("https://meow.cat");
+
+        searchAssetSimulator
+          .searchAssetWithFilters({
+            address: "123 Fake Street",
+            assetRegisterVersionId: 1
+          })
+          .searchAssetWithPage(1)
+          .respondWithAssets([exampleAssetOne])
+          .respondWithTotal(1)
+          .successfully();
+
+        aggregateSimualtor
+          .getAggregatesWithFilters({ assetRegisterVersionId: 1 })
+          .respondWithValues({
+            uniqueRecords: 1001,
+            moneyPaidOut: 2002,
+            assetValue: 3003,
+            movementInAssetValue: 4004
+          })
+          .successfully();
+
+        aggregateSimualtor
+          .getAggregatesWithFilters({
+            address: "123 Fake Street",
+            assetRegisterVersionId: 1
+          })
+          .respondWithValues({
+            uniqueRecords: 5005,
+            moneyPaidOut: 6006,
+            assetValue: 7007,
+            movementInAssetValue: 8008
+          })
+          .successfully();
+      });
+
+      it("Allows the user to report and filter", async () => {
+        let app = new AppPage("/");
+
+        await app.load();
+
+        await app.navigateToReportingPage();
+
+        expect(app.displaysAggregates()).toBeTruthy();
+
+        expect(app.find("aggregates-unique-records").text()).toEqual("1001");
+        expect(app.find("aggregates-money-paid-out").text()).toEqual("£2002");
+        expect(app.find("aggregates-asset-value").text()).toEqual("£3003");
+        expect(app.find("aggregates-movement-in-asset-value").text()).toEqual(
+          "£4004"
+        );
+
+        app.searchForAddress("123 Fake Street");
+
+        await app.executeSearch();
+
+        expect(app.find("aggregates-unique-records").text()).toEqual("5005");
+        expect(app.find("aggregates-money-paid-out").text()).toEqual("£6006");
+        expect(app.find("aggregates-asset-value").text()).toEqual("£7007");
+        expect(app.find("aggregates-movement-in-asset-value").text()).toEqual(
+          "£8008"
+        );
+
+        expect(app.find("asset-scheme-id").text()).toEqual("12345");
         expect(app.find("asset-address").text()).toEqual("123 Fake Street");
       });
     });
@@ -410,6 +393,4 @@ describe("When using the asset register", () => {
       });
     });
   });
-
-
 });
