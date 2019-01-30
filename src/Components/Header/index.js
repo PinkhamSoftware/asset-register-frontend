@@ -19,7 +19,7 @@ export default props => (
           to="/"
           className="govuk-header__link govuk-header__link--service-name"
         >
-          Homes Equity Asset Register
+          Home Equity Asset Register
         </props.linkComponent>
       </div>
     </div>

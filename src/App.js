@@ -290,7 +290,7 @@ const ReportingPage = () => {
       </div>
       <div className="govuk-grid-row">
         <div className="govuk-grid-column-full">
-          <h1 className="govuk-heading-l">Homes Equity Asset Register</h1>
+          <h1 className="govuk-heading-l">Home Equity Asset Register</h1>
         </div>
       </div>
       <VersionProvider versionGateway={versionGateway}>
@@ -363,7 +363,7 @@ const SearchPage = () => {
       </div>
       <div className="govuk-grid-row">
         <div className="govuk-grid-column-full">
-          <h1 className="govuk-heading-l">Homes Equity Asset Register</h1>
+          <h1 className="govuk-heading-l">Home Equity Asset Register</h1>
         </div>
       </div>
       <VersionProvider versionGateway={versionGateway}>
