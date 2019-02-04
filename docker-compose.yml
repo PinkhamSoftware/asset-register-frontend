@@ -22,5 +22,5 @@ services:
     environment:
       - REACT_APP_ASSET_REGISTER_API_URL=http://localhost:5000/
       - REACT_APP_POSTCODE_API_URL=http://localhost:5001/
-      - REACT_APP_DISPLAY_MAPS=yes
+      - REACT_APP_DISPLAY_UPLOAd=yes
       - REACT_APP_MAPS_API_KEY=${MAP_API_KEY}

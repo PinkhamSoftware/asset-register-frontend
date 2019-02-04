@@ -119,6 +119,21 @@ const LandingPageLink = props => {
   );
 };
 
+const renderUpload = () => {
+  if (process.env.REACT_APP_DISPLAY_UPLOAD === "yes") {
+    return (
+      <div className="govuk-grid-row">
+        <div className="govuk-grid-column-full">
+          <h4 className="govuk-heading-sm">
+            Upload a new version of the asset register:
+          </h4>
+          <FileUpload handleUpload={uploadNewAssetRegisterVersion} />
+        </div>
+      </div>
+    );
+  }
+};
+
 const LandingPage = () => {
   return (
     <div>
@@ -151,14 +166,7 @@ const LandingPage = () => {
           />
         </div>
       </div>
-      <div className="govuk-grid-row">
-        <div className="govuk-grid-column-full">
-          <h4 className="govuk-heading-sm">
-            Upload a new version of the asset register:
-          </h4>
-          <FileUpload handleUpload={uploadNewAssetRegisterVersion} />
-        </div>
-      </div>
+      {renderUpload()}
     </div>
   );
 };
