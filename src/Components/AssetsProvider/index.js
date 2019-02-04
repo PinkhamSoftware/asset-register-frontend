@@ -48,7 +48,7 @@ export default class AssetsProvider extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.version != this.props.version) {
+    if (prevProps.version !== this.props.version) {
       this.searchAssets({
         parameters: this.state.searchParameters,
         page: this.state.page

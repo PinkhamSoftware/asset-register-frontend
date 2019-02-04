@@ -22,4 +22,23 @@ export default class VersionGateway {
 
     return { versions: responseJson.data.assetRegisterVersions };
   }
+
+  async uploadNewVersion(fileToUpload) {
+    let formData = new FormData();
+    formData.append("files", fileToUpload);
+
+    let response = await fetch(`${this.baseUrl()}api/v1/assetRegisterVersion`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.apiKeyGateway.get()}`
+      },
+      body: formData
+    });
+
+    if (response.ok) {
+      return { success: true };
+    }
+
+    return { success: false };
+  }
 }
