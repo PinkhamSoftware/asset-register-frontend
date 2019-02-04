@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   withScriptjs,
   withGoogleMap,
@@ -6,32 +6,6 @@ import {
   Marker
 } from "react-google-maps";
 import { MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
-
-const generateRandomLong = () => {
-  var num = (Math.random() * 3).toFixed(3);
-  var posorneg = Math.floor(Math.random());
-  if (posorneg === 0) {
-    num = num * -1;
-  }
-  return num;
-};
-
-const generateRandomLat = () => {
-  var num = (Math.random() * 3.5).toFixed(3);
-  var posorneg = Math.floor(Math.random());
-  if (posorneg === 0) {
-    num = num * -1;
-  }
-  return num + 54.5;
-};
-
-const generatePositions = num => {
-  let positions = [];
-  for (let i = 0; i < num; i++) {
-    positions.push({ lat: generateRandomLat(), lng: generateRandomLong() });
-  }
-  return positions;
-};
 
 const MapWithAMarker = withScriptjs(
   withGoogleMap(props => {

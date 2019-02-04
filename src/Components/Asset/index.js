@@ -1,13 +1,6 @@
 import React from "react";
-import Map from "../AssetMap";
 import PropTypes from "prop-types";
-import moment from "moment";
 import "./style.css";
-import { runInThisContext } from "vm";
-
-function formatDate(date) {
-  return moment(date).format("DD/MM/YYYY @ HH:mm");
-}
 
 const AssetBlock = ({ title, body, name }) => (
   <div className="text-center background-dark">
