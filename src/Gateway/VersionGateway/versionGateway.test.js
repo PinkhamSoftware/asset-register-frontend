@@ -44,4 +44,57 @@ describe("VersionGateway", () => {
       ]);
     });
   });
+
+  describe("When uploading a new version to the API", () => {
+    let baseUrl = "http://meow.cat/";
+    let apiKeyGateway, gateway;
+
+    describe("And it is successful", () => {
+      let versionRequest;
+
+      beforeEach(() => {
+        process.env.REACT_APP_ASSET_REGISTER_API_URL = baseUrl;
+
+        versionRequest = nock(baseUrl)
+          .post("/api/v1/assetRegisterVersion")
+          .matchHeader("Authorization", "Bearer apiKey")
+          .reply(200);
+
+        apiKeyGateway = { get: () => "apiKey" };
+        gateway = new VersionGateway({ apiKeyGateway });
+      });
+
+      it("Submits the file to the api", async () => {
+        await gateway.uploadNewVersion("meow");
+
+        expect(versionRequest.isDone()).toBeTruthy();
+      });
+
+      it("Returns successful", async () => {
+        let response = await gateway.uploadNewVersion("meow");
+
+        expect(response.success).toBeTruthy();
+      });
+    });
+
+    describe("And it is not successful", () => {
+      beforeEach(() => {
+        process.env.REACT_APP_ASSET_REGISTER_API_URL = baseUrl;
+
+        nock(baseUrl)
+          .post("/api/v1/assetRegisterVersion")
+          .matchHeader("Authorization", "Bearer apiKey")
+          .reply(500);
+
+        apiKeyGateway = { get: () => "apiKey" };
+        gateway = new VersionGateway({ apiKeyGateway });
+      });
+
+      it("Returns unsuccessful", async () => {
+        let response = await gateway.uploadNewVersion("meow");
+
+        expect(response.success).toBeFalsy();
+      });
+    });
+  });
 });

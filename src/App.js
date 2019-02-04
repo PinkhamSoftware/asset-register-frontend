@@ -19,6 +19,7 @@ import AssetsProvider from "./Components/AssetsProvider";
 import ClusteredMap from "./Components/ClusteredMap";
 import CoordinateProvider from "./Components/CoordinateProvider";
 import CSVDownloadButton from "./Components/CSVDownloadButton";
+import FileUpload from "./Components/FileUpload";
 import Footer from "./Components/Footer";
 import Header from "./Components/Header";
 import Login from "./Components/Login";
@@ -50,6 +51,7 @@ import FileDownloadPresenter from "./Presenters/FileDownload";
 import VersionProvider from "./Components/VersionProvider";
 import VersionSelector from "./Components/VersionSelector";
 import VersionGateway from "./Gateway/VersionGateway";
+import UploadNewAssetRegisterVersion from "./UseCase/UploadNewAssetRegisterVersion";
 
 const authenticationGateway = new AuthenticationGateway();
 const apiKeyGateway = new ApiKeyGateway();
@@ -83,12 +85,11 @@ const getCoordinatesForPostcode = new GetCoordinatesForPostcode({
   postcodeLookupGateway
 });
 const searchAssetUsecase = new SearchAssets({ searchGateway });
+const uploadNewAssetRegisterVersion = new UploadNewAssetRegisterVersion({
+  versionGateway
+});
 
 const fileDownloadPresenter = new FileDownloadPresenter();
-
-const displayMapsPage = () => {
-  return process.env.REACT_APP_DISPLAY_MAPS === "yes";
-};
 
 const LandingPageLink = props => {
   let { title, linkLocation, icon } = props;
@@ -136,7 +137,6 @@ const LandingPage = () => {
             title="Reporting Services"
             name="reporting-link"
             linkComponent={Link}
-            linkComponent={Link}
             linkLocation="/reporting"
             icon={dollarBagIcon}
           />
@@ -149,6 +149,14 @@ const LandingPage = () => {
             linkLocation="/mapping"
             icon={chartIcon}
           />
+        </div>
+      </div>
+      <div className="govuk-grid-row">
+        <div className="govuk-grid-column-full">
+          <h4 className="govuk-heading-sm">
+            Upload a new version of the asset register:
+          </h4>
+          <FileUpload handleUpload={uploadNewAssetRegisterVersion} />
         </div>
       </div>
     </div>
@@ -453,11 +461,7 @@ const AssetPage = props => (
   </AssetProvider>
 );
 
-const MappingPage = () => (
-  <div>
-    Mapping page coming soon...
-  </div>
-)
+const MappingPage = () => <div>Mapping page coming soon...</div>;
 const renderRoutes = () => (
   <Switch>
     <Route exact path="/" component={LandingPage} />
