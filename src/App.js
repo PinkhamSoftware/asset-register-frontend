@@ -4,10 +4,6 @@ import qs from "qs";
 import "./App.css";
 import "govuk-frontend/all.scss";
 
-import houseIcon from "./icons/house.png";
-import dollarBagIcon from "./icons/dollar_bag.png";
-import chartIcon from "./icons/chart.png";
-
 import Aggregates from "./Components/Aggregates";
 import AggregatesProvider from "./Components/AggregatesProvider";
 import AssetDownloadButton from "./Components/AssetDownloadButton";
@@ -53,6 +49,8 @@ import VersionSelector from "./Components/VersionSelector";
 import VersionGateway from "./Gateway/VersionGateway";
 import UploadNewAssetRegisterVersion from "./UseCase/UploadNewAssetRegisterVersion";
 
+import LandingPage from "./Pages/Landing";
+
 const authenticationGateway = new AuthenticationGateway();
 const apiKeyGateway = new ApiKeyGateway();
 const authorizeUserUseCase = new AuthorizeUser({
@@ -90,86 +88,6 @@ const uploadNewAssetRegisterVersion = new UploadNewAssetRegisterVersion({
 });
 
 const fileDownloadPresenter = new FileDownloadPresenter();
-
-const LandingPageLink = props => {
-  let { title, linkLocation, icon } = props;
-  return (
-    <props.linkComponent
-      data-test={props.name}
-      to={linkLocation}
-      style={{ textDecoration: "none" }}
-    >
-      <div
-        style={{
-          width: "100%",
-          backgroundColor: "#0059a8",
-          textAlign: "center",
-          padding: "24px 0 20px 0"
-        }}
-      >
-        <img src={icon} alt="Icon" />
-        <p
-          className="govuk-!-font-size-24"
-          style={{ margin: 0, color: "#fff" }}
-        >
-          {title}
-        </p>
-      </div>
-    </props.linkComponent>
-  );
-};
-
-const renderUpload = () => {
-  if (process.env.REACT_APP_DISPLAY_UPLOAD === "yes") {
-    return (
-      <div className="govuk-grid-row">
-        <div className="govuk-grid-column-full">
-          <h4 className="govuk-heading-sm">
-            Upload a new version of the asset register:
-          </h4>
-          <FileUpload handleUpload={uploadNewAssetRegisterVersion} />
-        </div>
-      </div>
-    );
-  }
-};
-
-const LandingPage = () => {
-  return (
-    <div>
-      <div className="govuk-grid-row">
-        <div className="govuk-grid-column-one-third">
-          <LandingPageLink
-            title="Individual Asset Search"
-            name="individual-search-link"
-            linkComponent={Link}
-            linkLocation="/search"
-            icon={houseIcon}
-          />
-        </div>
-        <div className="govuk-grid-column-one-third">
-          <LandingPageLink
-            title="Reporting Services"
-            name="reporting-link"
-            linkComponent={Link}
-            linkLocation="/reporting"
-            icon={dollarBagIcon}
-          />
-        </div>
-        <div className="govuk-grid-column-one-third">
-          <LandingPageLink
-            title="Data Mapping"
-            name="data-mapping-link"
-            linkComponent={Link}
-            linkLocation="/mapping"
-            icon={chartIcon}
-          />
-        </div>
-      </div>
-      {renderUpload()}
-    </div>
-  );
-};
 
 const renderSearchPageAggregates = (searchParameters, versionSelected) => {
   return (
@@ -472,7 +390,16 @@ const AssetPage = props => (
 const MappingPage = () => <div>Mapping page coming soon...</div>;
 const renderRoutes = () => (
   <Switch>
-    <Route exact path="/" component={LandingPage} />
+    <Route
+      exact
+      path="/"
+      render={() => (
+        <LandingPage
+          useCaseFactory={{ uploadNewAssetRegisterVersion }}
+          componentFactory={{ Link, FileUpload }}
+        />
+      )}
+    />
     <Route exact path="/search" component={SearchPage} />
     <Route exact path="/reporting" component={ReportingPage} />
     <Route exact path="/mapping" component={MappingPage} />
