@@ -31,11 +31,11 @@ const LandingPageLink = props => {
   );
 };
 
-const renderUpload = ({ useCaseFactory, componentFactory }) => {
+const renderUpload = ({ useCaseFactory, componentFactory, displayUpload }) => {
   const { uploadNewAssetRegisterVersion } = useCaseFactory;
   const { FileUpload } = componentFactory;
 
-  if (process.env.REACT_APP_DISPLAY_UPLOAD === "yes") {
+  if (displayUpload) {
     return (
       <div className="govuk-grid-row">
         <div className="govuk-grid-column-full">
@@ -49,7 +49,7 @@ const renderUpload = ({ useCaseFactory, componentFactory }) => {
   }
 };
 
-export default ({ useCaseFactory, componentFactory }) => {
+export default ({ useCaseFactory, componentFactory, displayUpload }) => {
   const { Link } = componentFactory;
   return (
     <div>
@@ -82,7 +82,7 @@ export default ({ useCaseFactory, componentFactory }) => {
           />
         </div>
       </div>
-      {renderUpload({ useCaseFactory, componentFactory })}
+      {renderUpload({ useCaseFactory, componentFactory, displayUpload })}
     </div>
   );
 };

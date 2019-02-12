@@ -387,6 +387,7 @@ const AssetPage = props => (
   </AssetProvider>
 );
 
+const displayUpload = process.env.REACT_APP_DISPLAY_UPLOAD === "yes";
 const MappingPage = () => <div>Mapping page coming soon...</div>;
 const renderRoutes = () => (
   <Switch>
@@ -397,6 +398,7 @@ const renderRoutes = () => (
         <LandingPage
           useCaseFactory={{ uploadNewAssetRegisterVersion }}
           componentFactory={{ Link, FileUpload }}
+          displayUpload={displayUpload}
         />
       )}
     />
