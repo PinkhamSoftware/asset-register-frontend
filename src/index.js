@@ -1,4 +1,5 @@
 import "react-app-polyfill/ie11";
+import "core-js/features/object/entries";
 import React from "react";
 import ReactDOM from "react-dom";
 import { init } from "@sentry/browser";
