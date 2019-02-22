@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@sentry/browser": "^4.3.4",
+    "core-js": "^2.6.5",
     "cross-fetch": "^3.0.0",
     "google-maps-react": "^2.0.2",
     "govuk-frontend": "^2.4.0",
